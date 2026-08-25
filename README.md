@@ -1,7 +1,7 @@
 ## *Note: This repository is an unofficial continuation of The Other Roles*
 
 ![tor banner](./Images/TOR_logo.png)
-<p align="center"><a href="https://github.com/FangkuaiYa/TheOtherRoles/releases/"><img src="https://badgen.net/github/release/fangkuaiYa/theotherroles"></a></p>
+<p align="center"><a href="https://github.com/FangkuaiYa/TheOtherRoles-R/releases/"><img src="https://badgen.net/github/release/FangkuaiYa/TheOtherRoles-R"></a></p>
 
 
 This mod is not affiliated with Among Us or Innersloth LLC, and the content contained therein is not endorsed or otherwise sponsored by Innersloth LLC. Portions of the materials contained herein are property of Innersloth LLC. © Innersloth LLC.</p>
@@ -62,77 +62,77 @@ The [Role Assignment](#role-assignment) section explains how the roles are being
 | 2023.07.12s| v4.4.2| [Download](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.2/TheOtherRoles.zip)
 | 2023.07.12s| v4.4.1| [Download](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.1/TheOtherRoles.zip)
 | 2023.07.12s| v4.4.0| [Download](https://github.com/TheOtherRolesAU/TheOtherRoles/releases/download/v4.4.0/TheOtherRoles.zip)
-| 2023.07.12s| v4.3.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.3.4/TheOtherRoles.zip)
-| 2023.07.12s| v4.3.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.3.3/TheOtherRoles.zip)
-| 2023.03.28s| v4.3.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.3.2/TheOtherRoles.zip)
-| 2023.03.28s| v4.3.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.3.1/TheOtherRoles.zip)
-| 2023.02.28s| v4.3.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.3.0/TheOtherRoles.zip)
-| 2022.12.14s| v4.2.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.2.1/TheOtherRoles.zip)
-| 2022.10.25s| v4.2.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.2.0/TheOtherRoles.zip)
-| 2022.9.20s| v4.1.7| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.1.7/TheOtherRoles.zip)
-| 2022.6.21s| v4.1.6| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.1.6/TheOtherRoles.zip)
-| 2022.6.21s| v4.1.5| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.1.5/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.1.4/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.1.3/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.1.2/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.1.1/TheOtherRoles.zip)
-| 2022.3.29s| v4.1.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.1.0/TheOtherRoles.zip)
-| 2022.3.29s| v4.0.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v4.0.0/TheOtherRoles.zip)
-| 2022.3.29s| v3.4.5| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.4.5/TheOtherRoles.zip)
-| 2022.2.23s| v3.4.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.4.4/TheOtherRoles.zip)
-| 2021.12.15s| v3.4.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.4.3/TheOtherRoles.zip)
-| 2021.12.15s| v3.4.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.4.2/TheOtherRoles.zip)
-| 2021.12.15s| v3.4.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.4.1/TheOtherRoles.zip)
-| 2021.12.15s| v3.4.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.4.0/TheOtherRoles.zip)
-| 2021.12.15s| v3.3.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.3.3/TheOtherRoles.zip)
-| 2021.12.15s| v3.3.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.3.2/TheOtherRoles.zip)
-| 2021.12.14s| v3.3.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.3.1/TheOtherRoles.zip)
-| 2021.12.14s| v3.3.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.3.0/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.2.4/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.2.3/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.2.2/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.2.1/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.2.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.2.0/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.1.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.1.2/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.1.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.1.1/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.1.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.1.0/TheOtherRoles.zip)
-| 2021.11.9.5s| v3.0.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v3.0.0/TheOtherRoles.zip)
-| 2021.6.30s| v2.9.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.9.2/TheOtherRoles.zip)
-| 2021.6.30s| v2.9.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.9.1/TheOtherRoles.zip)
-| 2021.6.30s| v2.9.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.9.0/TheOtherRoles.zip)
-| 2021.6.30s| v2.8.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.8.1/TheOtherRoles.zip)
-| 2021.6.30s| v2.8.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.8.0/TheOtherRoles.zip)
-| 2021.6.30s| v2.7.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.7.3/TheOtherRoles.zip)
-| 2021.6.15s| v2.7.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.7.1/TheOtherRoles.zip)
-| 2021.6.15s| v2.7.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.7.0/TheOtherRoles.zip)
-| 2021.5.25.2s| v2.6.7| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.6.7/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.6| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.6.6/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.5| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.6.5/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.6.4/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.6.3/TheOtherRoles.zip)
-| 2021.5.10s| v2.6.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.6.2/TheOtherRoles.zip)
-| 2021.4.14s| v2.6.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.6.1/TheOtherRoles.zip)
-| 2021.4.14s| v2.6.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.6.0/TheOtherRoles.zip)
-| 2021.4.14s| v2.5.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.5.1/TheOtherRoles.zip)
-| 2021.4.14s| v2.5.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.5.0/TheOtherRoles.zip)
-| 2021.4.14s| v2.4.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.4.0/TheOtherRoles.zip)
-| 2021.4.14s| v2.3.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.3.0/TheOtherRoles.zip)
-| 2021.4.14s| v2.2.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.2.2/TheOtherRoles.zip)
-| 2021.4.12s| v2.2.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.2.1/TheOtherRoles.zip)
-| 2021.4.12s| v2.2.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.2.0/TheOtherRoles.zip)
-| 2021.3.31.3s| v2.1.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.1.0/TheOtherRoles.zip)
-| 2021.3.31.3s| v2.0.1 beta| [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.0.1/TheOtherRoles.zip)
-| 2021.3.31.3s | v2.0.0 beta | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v2.0.0/TheOtherRoles.zip)
-| 2021.3.5s | v1.8.2 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.8.2/TheOtherRoles.zip)
-| 2021.3.5s | v1.8.1 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.8.1/TheOtherRoles.zip)
-| 2021.3.5s | v1.8 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.8/TheOtherRoles.zip)
-| 2021.3.5s | v1.7 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.7/TheOtherRoles.zip)
-| 2021.3.5s | v1.6 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.6/TheOtherRoles.zip)
-| 2021.3.5s | v1.5 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.5/TheOtherRoles.zip)
-| 2021.3.5s | v1.4 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.4/TheOtherRoles.zip)
-| 2021.3.5s | v1.3 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.3/TheOtherRoles.zip)
-| 2020.12.19s | v1.1 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/releases/download/v1.1/TheOtherRoles.zip)
-| 2020.12.19s | v1.0 | [Download](https://github.com/FangkuaiYa/TheOtherRoles/files/6097191/TheOtherRoles.zip)
+| 2023.07.12s| v4.3.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.3.4/TheOtherRoles.zip)
+| 2023.07.12s| v4.3.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.3.3/TheOtherRoles.zip)
+| 2023.03.28s| v4.3.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.3.2/TheOtherRoles.zip)
+| 2023.03.28s| v4.3.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.3.1/TheOtherRoles.zip)
+| 2023.02.28s| v4.3.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.3.0/TheOtherRoles.zip)
+| 2022.12.14s| v4.2.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.2.1/TheOtherRoles.zip)
+| 2022.10.25s| v4.2.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.2.0/TheOtherRoles.zip)
+| 2022.9.20s| v4.1.7| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.1.7/TheOtherRoles.zip)
+| 2022.6.21s| v4.1.6| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.1.6/TheOtherRoles.zip)
+| 2022.6.21s| v4.1.5| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.1.5/TheOtherRoles.zip)
+| 2022.3.29s| v4.1.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.1.4/TheOtherRoles.zip)
+| 2022.3.29s| v4.1.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.1.3/TheOtherRoles.zip)
+| 2022.3.29s| v4.1.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.1.2/TheOtherRoles.zip)
+| 2022.3.29s| v4.1.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.1.1/TheOtherRoles.zip)
+| 2022.3.29s| v4.1.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.1.0/TheOtherRoles.zip)
+| 2022.3.29s| v4.0.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v4.0.0/TheOtherRoles.zip)
+| 2022.3.29s| v3.4.5| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.4.5/TheOtherRoles.zip)
+| 2022.2.23s| v3.4.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.4.4/TheOtherRoles.zip)
+| 2021.12.15s| v3.4.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.4.3/TheOtherRoles.zip)
+| 2021.12.15s| v3.4.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.4.2/TheOtherRoles.zip)
+| 2021.12.15s| v3.4.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.4.1/TheOtherRoles.zip)
+| 2021.12.15s| v3.4.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.4.0/TheOtherRoles.zip)
+| 2021.12.15s| v3.3.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.3.3/TheOtherRoles.zip)
+| 2021.12.15s| v3.3.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.3.2/TheOtherRoles.zip)
+| 2021.12.14s| v3.3.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.3.1/TheOtherRoles.zip)
+| 2021.12.14s| v3.3.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.3.0/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.2.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.2.4/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.2.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.2.3/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.2.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.2.2/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.2.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.2.1/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.2.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.2.0/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.1.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.1.2/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.1.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.1.1/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.1.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.1.0/TheOtherRoles.zip)
+| 2021.11.9.5s| v3.0.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v3.0.0/TheOtherRoles.zip)
+| 2021.6.30s| v2.9.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.9.2/TheOtherRoles.zip)
+| 2021.6.30s| v2.9.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.9.1/TheOtherRoles.zip)
+| 2021.6.30s| v2.9.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.9.0/TheOtherRoles.zip)
+| 2021.6.30s| v2.8.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.8.1/TheOtherRoles.zip)
+| 2021.6.30s| v2.8.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.8.0/TheOtherRoles.zip)
+| 2021.6.30s| v2.7.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.7.3/TheOtherRoles.zip)
+| 2021.6.15s| v2.7.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.7.1/TheOtherRoles.zip)
+| 2021.6.15s| v2.7.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.7.0/TheOtherRoles.zip)
+| 2021.5.25.2s| v2.6.7| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.6.7/TheOtherRoles.zip)
+| 2021.5.10s| v2.6.6| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.6.6/TheOtherRoles.zip)
+| 2021.5.10s| v2.6.5| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.6.5/TheOtherRoles.zip)
+| 2021.5.10s| v2.6.4| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.6.4/TheOtherRoles.zip)
+| 2021.5.10s| v2.6.3| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.6.3/TheOtherRoles.zip)
+| 2021.5.10s| v2.6.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.6.2/TheOtherRoles.zip)
+| 2021.4.14s| v2.6.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.6.1/TheOtherRoles.zip)
+| 2021.4.14s| v2.6.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.6.0/TheOtherRoles.zip)
+| 2021.4.14s| v2.5.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.5.1/TheOtherRoles.zip)
+| 2021.4.14s| v2.5.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.5.0/TheOtherRoles.zip)
+| 2021.4.14s| v2.4.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.4.0/TheOtherRoles.zip)
+| 2021.4.14s| v2.3.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.3.0/TheOtherRoles.zip)
+| 2021.4.14s| v2.2.2| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.2.2/TheOtherRoles.zip)
+| 2021.4.12s| v2.2.1| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.2.1/TheOtherRoles.zip)
+| 2021.4.12s| v2.2.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.2.0/TheOtherRoles.zip)
+| 2021.3.31.3s| v2.1.0| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.1.0/TheOtherRoles.zip)
+| 2021.3.31.3s| v2.0.1 beta| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.0.1/TheOtherRoles.zip)
+| 2021.3.31.3s | v2.0.0 beta | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v2.0.0/TheOtherRoles.zip)
+| 2021.3.5s | v1.8.2 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.8.2/TheOtherRoles.zip)
+| 2021.3.5s | v1.8.1 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.8.1/TheOtherRoles.zip)
+| 2021.3.5s | v1.8 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.8/TheOtherRoles.zip)
+| 2021.3.5s | v1.7 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.7/TheOtherRoles.zip)
+| 2021.3.5s | v1.6 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.6/TheOtherRoles.zip)
+| 2021.3.5s | v1.5 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.5/TheOtherRoles.zip)
+| 2021.3.5s | v1.4 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.4/TheOtherRoles.zip)
+| 2021.3.5s | v1.3 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.3/TheOtherRoles.zip)
+| 2020.12.19s | v1.1 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/download/v1.1/TheOtherRoles.zip)
+| 2020.12.19s | v1.0 | [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/files/6097191/TheOtherRoles.zip)
 </details>
   
   
@@ -821,7 +821,7 @@ The [Role Assignment](#role-assignment) section explains how the roles are being
 # Installation
 
 ## Windows Installation Steam
-1. Download the newest [release](https://github.com/FangkuaiYa/TheOtherRoles/releases/latest)
+1. Download the newest [release](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/latest)
 2. Find the folder of your game. You can right click on the game in your library, a menu will appear, click on properties, local data, browse
 3. Go back one folder to common and make a copy of your Among Us game folder and paste it somewhere on the same drive.
 4. Now unzip and drag or extract the files from the .zip into your Among Us game folder that you just copied, at the `.exe` level (just into the folder).
@@ -830,7 +830,7 @@ The [Role Assignment](#role-assignment) section explains how the roles are being
 Not working? You might want to install the dependency [vc_redist](https://aka.ms/vs/16/release/vc_redist.x86.exe)
 
 ## Windows Installation Epic
-1. Download the newest [release](https://github.com/FangkuaiYa/TheOtherRoles/releases/latest)
+1. Download the newest [release](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/latest)
 2. Find the folder of your game. Should be stored in "Epic/AmongUs" (wherever you installed Epic on your PC)
 3. Now unzip and drag or extract the files from the .zip into the original Epic Among Us game folder.
 4. Run the game by starting the game in your Epic Games launcher (the first launch might take a while).
@@ -841,7 +841,7 @@ Not working? You might want to install the dependency [vc_redist](https://aka.ms
 
 ## Linux Installation
 1. Install Among Us via Steam
-2. Download newest [release](https://github.com/FangkuaiYa/TheOtherRoles/releases/latest) and extract it to ~/.steam/steam/steamapps/common/Among Us
+2. Download newest [release](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/latest) and extract it to ~/.steam/steam/steamapps/common/Among Us
 3. Enable winhttp.dll via the proton winecfg (https://docs.bepinex.dev/articles/advanced/proton_wine.html)
 4. Launch the game via Steam
 
@@ -2329,7 +2329,7 @@ In order to do this, create a file called `noupdater.txt` in your modded Among U
 # License
 TheOtherRolesAU/TheOtherRoles is licensed under the
 
-[GNU General Public License v3.0](https://github.com/FangkuaiYa/TheOtherRoles/blob/main/LICENSE)
+[GNU General Public License v3.0](https://github.com/FangkuaiYa/TheOtherRoles-R/blob/main/LICENSE)
 
 Permissions of this strong copyleft license are conditioned on making available **complete source code of licensed works and modifications**, which include larger works using a licensed work, under the same license. Copyright and license notices must be preserved. Contributors provide an express grant of patent rights.
 
