@@ -1,8 +1,9 @@
 using System;
-using UnityEngine;
 using System.Collections.Generic;
-
+using System.Reflection;
+using Reactor.Utilities.Extensions;
 using TheOtherRoles.Utilities;
+using UnityEngine;
 using static TheOtherRoles.TheOtherRoles;
 
 namespace TheOtherRoles.Objects {
@@ -34,7 +35,21 @@ namespace TheOtherRoles.Objects {
             if (portalFgAnimationSprites == null || portalFgAnimationSprites.Length == 0) return null;
             index = Mathf.Clamp(index, 0, portalFgAnimationSprites.Length - 1);
             if (portalFgAnimationSprites[index] == null)
-                portalFgAnimationSprites[index] = (Helpers.loadSpriteFromResources($"TheOtherRoles.Resources.PortalAnimation.portal_{(index):000}.png", 115f));
+            {
+                try
+                {
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    var resourceBundle = assembly.GetManifestResourceStream("TheOtherRoles.Resources.Animation.animation");
+                    if (resourceBundle == null) return null;
+                    var assetBundle = AssetBundle.LoadFromMemory(resourceBundle.ReadFully());
+                    if (assetBundle == null) return null;
+                    portalFgAnimationSprites[index] = assetBundle.LoadAsset<Sprite>($"Assets/Animation/PortalAnimation.portal_{(index):000}.png");
+                }
+                catch (Exception e)
+                {
+                    TheOtherRolesPlugin.Logger.LogWarning($"Failed to load PortalAnimation animation: {e}");
+                }
+            }
             return portalFgAnimationSprites[index];
         }
 
@@ -151,7 +166,7 @@ namespace TheOtherRoles.Objects {
             for (int i = 0; i < portalFgAnimationSprites.Length; i++) {
                 getFgAnimationSprite(i);
             }
-            portalSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.PortalAnimation.plattform.png", 115f);
+            portalSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.PortalPlattform.png", 115f);
         }
 
         public static void clearPortals() {

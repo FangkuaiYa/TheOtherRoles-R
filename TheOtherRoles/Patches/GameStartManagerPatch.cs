@@ -18,9 +18,9 @@ namespace TheOtherRoles.Patches {
         private static bool versionSent = false;
         private static string lobbyCodeText = "";
 
-        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
-        public class AmongUsClientOnPlayerJoinedPatch {
-            public static void Postfix(AmongUsClient __instance) {
+        [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), nameof(PlayerPhysics._CoSpawnPlayer_d__42.MoveNext))]
+        public class PlayerPhysicsCoSpawnPlayerPatch {
+            public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance) {
                 if (PlayerControl.LocalPlayer != null) {
                     Helpers.shareGameVersion();
                 }
@@ -101,7 +101,7 @@ namespace TheOtherRoles.Patches {
                     } else {
                         __instance.GameStartText.transform.localPosition = Vector3.zero;
                         __instance.GameStartText.transform.localScale = new Vector3(1.2f, 1.2f, 1f);
-                        if (!__instance.GameStartText.text.StartsWith("Starting")) {
+                        if (!__instance.GameStartText.text.Contains(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", ""))) {
                             __instance.GameStartText.text = String.Empty;
                             __instance.GameStartTextParent.SetActive(false);
                         }
@@ -164,15 +164,15 @@ namespace TheOtherRoles.Patches {
                     } else {
                         __instance.GameStartText.transform.localPosition = Vector3.zero;
                         __instance.GameStartText.transform.localScale = new Vector3(1.2f, 1.2f, 1f);
-                        if (!__instance.GameStartText.text.StartsWith("Starting")) {
+                        if (!__instance.GameStartText.text.Contains(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", ""))) {
                             __instance.GameStartText.text = String.Empty;
                             __instance.GameStartTextParent.SetActive(false);
                         }
                     }
 
-                    if (!__instance.GameStartText.text.StartsWith("Starting") || !CustomOptionHolder.anyPlayerCanStopStart.getBool())
+                    if (!__instance.GameStartText.text.Contains(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", "")) || !CustomOptionHolder.anyPlayerCanStopStart.getBool())
                         copiedStartButton?.Destroy();
-                    if (CustomOptionHolder.anyPlayerCanStopStart.getBool() && copiedStartButton == null && __instance.GameStartText.text.StartsWith("Starting")) {
+                    if (CustomOptionHolder.anyPlayerCanStopStart.getBool() && copiedStartButton == null && __instance.GameStartText.text.Contains(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", ""))) {
 
                         // Activate Stop-Button
                         copiedStartButton = GameObject.Instantiate(__instance.StartButton.gameObject, __instance.StartButton.gameObject.transform.parent);

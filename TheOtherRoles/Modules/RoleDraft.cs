@@ -27,6 +27,8 @@ namespace TheOtherRoles.Modules
         public static List<byte> alreadyPicked = new();
         public static IEnumerator CoSelectRoles(IntroCutscene __instance)
         {
+            if (!CustomOptionHolder.isDraftMode.getBool()) yield break;
+
             isRunning = true;
             SoundEffectsManager.play("draft", volume: 1f, true, true);
             alreadyPicked.Clear();
@@ -239,8 +241,9 @@ namespace TheOtherRoles.Modules
                             SoundEffectsManager.play("timemasterShield");
                             int i = 0;
                             int buttonsPerRow = 4;
-                            int lastRow = availableRoles.Count / buttonsPerRow;
-                            int buttonsInLastRow = availableRoles.Count % buttonsPerRow;
+                            int totalButtons = availableRoles.Count + 1; // +1 for Random button
+                            int lastRow = totalButtons / buttonsPerRow;
+                            int buttonsInLastRow = totalButtons % buttonsPerRow;
 
                             foreach (RoleInfo roleInfo in availableRoles) {
                                 float row = i / buttonsPerRow;
@@ -263,8 +266,6 @@ namespace TheOtherRoles.Modules
                                 text.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
                                 text.fontSize = 5;
                                 textHolder.layer = actionButton.gameObject.layer;
-                                text.outlineWidth = 0.1f;
-                                text.outlineColor = Color.white;
                                 text.color = roleInfo.color;
                                 textHolder.transform.SetParent(actionButton.transform, false);
                                 textHolder.transform.localPosition = new Vector3(0, text.text.Contains("\n") ? -1.975f : -2.2f, -1);
@@ -282,6 +283,45 @@ namespace TheOtherRoles.Modules
                                 })));
                                 buttons.Add(actionButton);
                                 i++;
+                            }
+
+                            // Add Random button at the end
+                            {
+                                float row = i / buttonsPerRow;
+                                float col = i % buttonsPerRow;
+                                if (buttonsInLastRow != 0 && row == lastRow) {
+                                    col += (buttonsPerRow - buttonsInLastRow) / 2f;
+                                }
+                                row += (4 - lastRow - 1) / 2f;
+
+                                ActionButton randomButton = UnityEngine.Object.Instantiate(HudManager.Instance.KillButton, __instance.TeamTitle.transform);
+                                randomButton.gameObject.SetActive(true);
+                                randomButton.gameObject.name = "RoleButton";
+                                randomButton.transform.localPosition = new Vector3(-8.4f + col * 5.5f, -10 - row * 3f);
+                                randomButton.transform.localScale = new Vector3(2f, 2f);
+                                randomButton.SetCoolDown(0, 0);
+                                GameObject randomTextHolder = new GameObject("textHolder");
+                                var randomText = randomTextHolder.AddComponent<TMPro.TextMeshPro>();
+                                randomText.text = "Random";
+                                randomText.horizontalAlignment = TMPro.HorizontalAlignmentOptions.Center;
+                                randomText.fontSize = 5;
+                                randomTextHolder.layer = randomButton.gameObject.layer;
+                                randomText.color = Color.green;
+                                randomTextHolder.transform.SetParent(randomButton.transform, false);
+                                randomTextHolder.transform.localPosition = new Vector3(0, -2.2f, -1);
+                                SpriteRenderer randomButtonRenderer = randomButton.graphic;
+
+                                PassiveButton randomPassiveButton = randomButton.GetComponent<PassiveButton>();
+                                randomPassiveButton.OnClick = new Button.ButtonClickedEvent();
+                                randomPassiveButton.OnClick.AddListener((Action)(() => {
+                                    // Randomly select one of the available roles
+                                    var randomRole = availableRoles.OrderBy(_ => Guid.NewGuid()).First();
+                                    sendPick((byte)randomRole.roleId);
+                                }));
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
+                                    randomButton.OverrideText("");
+                                })));
+                                buttons.Add(randomButton);
                             }
                         }
 
@@ -395,40 +435,6 @@ namespace TheOtherRoles.Modules
             {
                 pickOrder.Add(reader.ReadByte());
             }
-        }
-
-        class PatchedEnumerator() : IEnumerable
-        {
-            public IEnumerator enumerator;
-            public IEnumerator Postfix;
-            public IEnumerator GetEnumerator()
-            {
-                while (enumerator.MoveNext())
-                {
-                    yield return enumerator.Current;
-                }
-                while (Postfix.MoveNext())
-                    yield return Postfix.Current;
-            }
-        }
-
-
-        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowTeam))]
-
-        class ShowRolePatch
-        {
-            [HarmonyPostfix]
-            public static void Postfix(IntroCutscene __instance, ref Il2CppSystem.Collections.IEnumerator __result)
-            {
-                if (!isEnabled) return;
-                var newEnumerator = new PatchedEnumerator()
-                {
-                    enumerator = __result.WrapToManaged(),
-                    Postfix = CoSelectRoles(__instance)
-                };
-                __result = newEnumerator.GetEnumerator().WrapToIl2Cpp();
-            }
-
         }
     }
 }

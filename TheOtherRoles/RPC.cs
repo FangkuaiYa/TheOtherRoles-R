@@ -1020,18 +1020,18 @@ namespace TheOtherRoles
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(dyingTarget.KillSfx, false, 0.8f);
             if (MeetingHud.Instance) {
                 foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates) {
-                    if (pva.TargetPlayerId == dyingTargetId || pva.TargetPlayerId == partnerId || lawyerDiedAdditionally && Lawyer.lawyer.PlayerId == pva.TargetPlayerId) {
-                        pva.SetDead(pva.DidReport, true);
+                    if (pva.PlayerId == dyingTargetId || pva.PlayerId == partnerId || lawyerDiedAdditionally && Lawyer.lawyer.PlayerId == pva.PlayerId) {
+                        pva.SetDead(true);
                         pva.Overlay.gameObject.SetActive(true);
-                        MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, pva.TargetPlayerId);
+                        MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, pva.PlayerId);
                     }
 
                     //Give players back their vote if target is shot dead
-                    if (pva.VotedFor != dyingTargetId && pva.VotedFor != partnerId && (!lawyerDiedAdditionally || Lawyer.lawyer.PlayerId != pva.VotedFor)) continue;
+                    if (pva.VotedForId != dyingTargetId && pva.VotedForId != partnerId && (!lawyerDiedAdditionally || Lawyer.lawyer.PlayerId != pva.VotedForId)) continue;
                     pva.UnsetVote();
-                    var voteAreaPlayer = Helpers.playerById(pva.TargetPlayerId);
+                    var voteAreaPlayer = Helpers.playerById(pva.PlayerId);
                     if (!voteAreaPlayer.AmOwner) continue;
-                    MeetingHud.Instance.ClearVote();
+                    MeetingHud.Instance.ClearVote(pva.PlayerId, true);
 
                 }
                 if (AmongUsClient.Instance.AmHost) 
@@ -1048,9 +1048,9 @@ namespace TheOtherRoles
 
             // remove shoot button from targets for all guessers and close their guesserUI
             if (GuesserGM.isGuesser(PlayerControl.LocalPlayer.PlayerId) && PlayerControl.LocalPlayer != guesser && !PlayerControl.LocalPlayer.Data.IsDead && GuesserGM.remainingShots(PlayerControl.LocalPlayer.PlayerId) > 0 && MeetingHud.Instance) {
-                MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+                MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.PlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
                 if (dyingLoverPartner != null)
-                    MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == dyingLoverPartner.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+                    MeetingHud.Instance.playerStates.ToList().ForEach(x => { if (x.PlayerId == dyingLoverPartner.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
 
                 if (MeetingHudPatch.guesserUI != null && MeetingHudPatch.guesserUIExitButton != null) {
                     if (MeetingHudPatch.guesserCurrentTarget == dyingTarget.PlayerId)

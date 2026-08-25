@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-
 using TheOtherRoles.Utilities;
 using Reactor.Utilities.Extensions;
+using System.Reflection;
 
 namespace TheOtherRoles.Objects {
 
@@ -18,7 +18,21 @@ namespace TheOtherRoles.Objects {
             if (boxAnimationSprites == null || boxAnimationSprites.Length == 0) return null;
             index = Mathf.Clamp(index, 0, boxAnimationSprites.Length - 1);
             if (boxAnimationSprites[index] == null)
-                boxAnimationSprites[index] = (Helpers.loadSpriteFromResources($"TheOtherRoles.Resources.TricksterAnimation.trickster_box_00{(index + 1):00}.png", 175f));
+            {
+                try
+                {
+                    Assembly assembly = Assembly.GetExecutingAssembly();
+                    var resourceBundle = assembly.GetManifestResourceStream("TheOtherRoles.Resources.Animation.animation");
+                    if (resourceBundle == null) return null;
+                    var assetBundle = AssetBundle.LoadFromMemory(resourceBundle.ReadFully());
+                    if (assetBundle == null) return null;
+                    boxAnimationSprites[index] = assetBundle.LoadAsset<Sprite>($"Assets/Animation/TricksterAnimation.trickster_box_00{(index + 1):00}.png");
+                }
+                catch (Exception e)
+                {
+                    TheOtherRolesPlugin.Logger.LogWarning($"Failed to load JackInTheBox animation: {e}");
+                }
+            }
             return boxAnimationSprites[index];
         }
 

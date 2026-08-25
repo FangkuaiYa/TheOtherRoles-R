@@ -23,7 +23,7 @@ namespace TheOtherRoles.Patches {
 
         public static PlayerControl setTarget(bool onlyCrewmates = false, bool targetPlayersInVents = false, List<PlayerControl> untargetablePlayers = null, PlayerControl targetingPlayer = null) {
             PlayerControl result = null;
-            float num = AmongUs.GameOptions.GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentNormalGameOptions.KillDistance, 0, 2)];
+            float num = AmongUs.GameOptions.LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentNormalGameOptions.KillDistance, 0, 2)];
             if (!MapUtilities.CachedShipStatus) return result;
             if (targetingPlayer == null) targetingPlayer = PlayerControl.LocalPlayer;
             if (targetingPlayer.Data.IsDead) return result;
@@ -491,7 +491,7 @@ namespace TheOtherRoles.Patches {
             foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                 
                 // Colorblind Text in Meeting
-                PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
+                PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.PlayerId == p.PlayerId);
                 if (playerVoteArea != null && playerVoteArea.ColorBlindName.gameObject.active) {
                     playerVoteArea.ColorBlindName.transform.localPosition = colorBlindTextMeetingInitialLocalPos + new Vector3(0f, 0.4f, 0f);
                     playerVoteArea.ColorBlindName.transform.localScale = colorBlindTextMeetingInitialLocalScale * 0.8f;
@@ -562,7 +562,7 @@ namespace TheOtherRoles.Patches {
 
                     playerInfo.text = playerInfoText;
                     playerInfo.gameObject.SetActive(p.Visible);
-                    if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : meetingInfoText;
+                    if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.MeetingStates.Results ? "" : meetingInfoText;
                 }                
             }
         }
@@ -1361,12 +1361,12 @@ namespace TheOtherRoles.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(KillAnimation), nameof(KillAnimation.CoPerformKill))]
+    [HarmonyPatch(typeof(KillAnimation._CoPerformKill_d__2), nameof(KillAnimation._CoPerformKill_d__2.MoveNext))]
     class KillAnimationCoPerformKillPatch {
         public static bool hideNextAnimation = false;
-        public static void Prefix(KillAnimation __instance, [HarmonyArgument(0)]ref PlayerControl source, [HarmonyArgument(1)]ref PlayerControl target) {
+        public static void Prefix(KillAnimation._CoPerformKill_d__2 __instance) {
             if (hideNextAnimation)
-                source = target;
+                __instance.source = __instance.target;
             hideNextAnimation = false;
         }
     }

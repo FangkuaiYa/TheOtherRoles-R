@@ -21,10 +21,11 @@ using Reactor.Networking.Attributes;
 using AmongUs.Data;
 using TheOtherRoles.Modules.CustomHats;
 using static TheOtherRoles.Modules.ModUpdater;
+using AmongUs.Data.Player;
 
 namespace TheOtherRoles
 {
-    [BepInPlugin(Id, "The Other Roles", VersionString)]
+    [BepInPlugin(Id, "The Other Roles Reactivated", VersionString)]
     [BepInDependency(SubmergedCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Among Us.exe")]
     [ReactorModFlags(Reactor.Networking.ModFlags.RequireOnAllClients)]
@@ -32,8 +33,8 @@ namespace TheOtherRoles
     public class TheOtherRolesPlugin : BasePlugin
     {
         public const string Id = "me.eisbison.theotherroles";
-        public const string VersionString = "4.8.0";
-        public static uint betaDays = 0;  // amount of days for the build to be usable (0 for infinite!)
+        public const string VersionString = "5.0.0";
+        public static bool isBeta = true;
 
         public static Version Version = Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -65,7 +66,7 @@ namespace TheOtherRoles
 
         // This is part of the Mini.RegionInstaller, Licensed under GPLv3
         // file="RegionInstallPlugin.cs" company="miniduikboot">
-        public static void UpdateRegions() {
+        /*public static void UpdateRegions() {
             ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
             var regions = new IRegionInfo[] {
                 new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, Ip.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", Ip.Value, Port.Value, false) })).CastFast<IRegionInfo>()
@@ -88,13 +89,12 @@ namespace TheOtherRoles
                 Logger.LogDebug("Resetting previous region");
                 serverManager.SetRegion(currentRegion);
             }
-        }
+        }*/
 
         public override void Load() {
             Logger = Log;
             Instance = this;
   
-            _ = Helpers.checkBeta(); // Exit if running an expired beta
             _ = Patches.CredentialsPatch.MOTD.loadMOTDs();
 
             DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
@@ -115,22 +115,16 @@ namespace TheOtherRoles
             defaultRegions = ServerManager.DefaultRegions;
             // Removes vanilla Servers
             ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
-            UpdateRegions();
+            // UpdateRegions();
 
             // Reactor Credits (future use?)
-            // Reactor.Utilities.ReactorCredits.Register("TheOtherRoles", VersionString, betaDays > 0, location => location == Reactor.Utilities.ReactorCredits.Location.PingTracker);
+            // Reactor.Utilities.ReactorCredits.Register("TheOtherRoles-R", VersionString, isBeta, location => location == Reactor.Utilities.ReactorCredits.Location.PingTracker);
 
-            DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
             Harmony.PatchAll();
             
             CustomOptionHolder.Load();
             CustomColors.Load();
             CustomHatManager.LoadHats();
-            if (BepInExUpdater.UpdateRequired)
-            {
-                AddComponent<BepInExUpdater>();
-                return;
-            }
 
             AddComponent<ModUpdater>();
 
@@ -144,8 +138,8 @@ namespace TheOtherRoles
     }
 
     // Deactivate bans, since I always leave my local testing game and ban myself
-    [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
-    public static class AmBannedPatch
+    [HarmonyPatch(typeof(PlayerBanData), nameof(PlayerBanData.IsBanned), MethodType.Getter)]
+    public static class IsBannedPatch
     {
         public static void Postfix(out bool __result)
         {
@@ -183,12 +177,12 @@ namespace TheOtherRoles
 
 
             // Spawn dummys
-            /*if (Input.GetKeyDown(KeyCode.F)) {
+            if (Input.GetKeyDown(KeyCode.F)) {
                 var playerControl = UnityEngine.Object.Instantiate(AmongUsClient.Instance.PlayerPrefab);
                 var i = playerControl.PlayerId = (byte) GameData.Instance.GetAvailableId();
 
                 bots.Add(playerControl);
-                GameData.Instance.AddPlayer(playerControl, new InnerNet.ClientData(0));
+                GameData.Instance.AddDummy(playerControl);
                 AmongUsClient.Instance.Spawn(playerControl, -2, InnerNet.SpawnFlags.None);
                 
                 playerControl.transform.position = PlayerControl.LocalPlayer.transform.position;
@@ -197,7 +191,7 @@ namespace TheOtherRoles
                 playerControl.SetName(RandomString(10));
                 playerControl.SetColor((byte) random.Next(Palette.PlayerColors.Length));
                 playerControl.Data.RpcSetTasks(new byte[0]);
-            }*/
+            }
 
             // Terminate round
             if(Input.GetKeyDown(KeyCode.L)) {

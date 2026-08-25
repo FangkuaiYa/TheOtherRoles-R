@@ -187,6 +187,21 @@ namespace TheOtherRoles {
             return selection + 1;
         }
 
+        public static bool isOptionHiddenByAncestor(CustomOption option) {
+            CustomOption current = option;
+            while (current.parent != null) {
+                if (current.invertedParent) {
+                    // For inverted options, hide when parent is enabled (selection != 0)
+                    if (current.parent.selection != 0) return true;
+                } else {
+                    // For normal options, hide when parent is disabled (selection == 0)
+                    if (current.parent.selection == 0) return true;
+                }
+                current = current.parent;
+            }
+            return false;
+        }
+
 
         public void updateSelection(int newSelection, bool notifyUsers = true) {
             newSelection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
@@ -273,6 +288,7 @@ namespace TheOtherRoles {
                     CustomOption option = options.First(option => option.id == id);
                     option.entry = TheOtherRolesPlugin.Instance.Config.Bind($"Preset{preset}", option.id.ToString(), option.defaultSelection);
                     option.selection = selection;
+                    option.entry.Value = selection; // Save to config file
                     if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption) {
                         stringOption.oldValue = stringOption.Value = option.selection;
                         stringOption.ValueText.text = option.selections[option.selection].ToString();
@@ -302,6 +318,16 @@ namespace TheOtherRoles {
                 string vanillaSettingsSub = settingsSplit[2];
                 torOptionsFine = deserializeOptions(Convert.FromBase64String(torSettings));
                 ShareOptionSelections();
+                // Refresh all tabs after paste
+                if (AmongUsClient.Instance?.AmHost == true) {
+                    foreach (var entry in GameOptionsMenuStartPatch.currentGOMs) {
+                        CustomOptionType optionType = (CustomOptionType)entry.Key;
+                        GameOptionsMenu gom = entry.Value;
+                        if (gom != null) {
+                            GameOptionsMenuStartPatch.updateGameOptionsMenu(optionType, gom);
+                        }
+                    }
+                }
                 if (TheOtherRolesPlugin.Version > versionInfo && versionInfo < Version.Parse("4.6.0")) {
                     vanillaOptionsFine = false;
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, "Host Info: Pasting vanilla settings failed, TOR Options applied!");
@@ -450,7 +476,7 @@ namespace TheOtherRoles {
                 relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Crewmate && x.isHeader));
                 relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Modifier && x.isHeader));
                 foreach (var option in options) {
-                    if (option.parent != null && option.parent.getSelection() > 0) {
+                    if (option.parent != null && !isOptionHiddenByAncestor(option)) {
                         if (option.id == 103) //Deputy
                             relevantOptions.Insert(relevantOptions.IndexOf(CustomOptionHolder.sheriffSpawnRate) + 1, option);
                         else if (option.id == 224) //Sidekick
@@ -492,15 +518,13 @@ namespace TheOtherRoles {
                     if ((int)optionType == 99)
                         categoryHeaderMasked.Title.text = new Dictionary<CustomOptionType, string>() { { CustomOptionType.Impostor, "Impostor Roles" }, { CustomOptionType.Neutral, "Neutral Roles" },
                             { CustomOptionType.Crewmate, "Crewmate Roles" }, { CustomOptionType.Modifier, "Modifiers" } }[curType];
-                    categoryHeaderMasked.Title.outlineColor = Color.white;
-                    categoryHeaderMasked.Title.outlineWidth = 0.2f;
                     categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
                     categoryHeaderMasked.transform.localScale = Vector3.one;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
                     __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
                     num -= 1.05f;
                     i = 0;
-                } else if (option.parent != null && (option.parent.selection == 0 || option.parent.parent != null && option.parent.parent.selection == 0)) continue;  // Hides options, for which the parent is disabled!
+                } else if (option.parent != null && isOptionHiddenByAncestor(option)) continue;  // Hides options, for which any ancestor is disabled!
                 if (option == CustomOptionHolder.crewmateRolesCountMax || option == CustomOptionHolder.neutralRolesCountMax || option == CustomOptionHolder.impostorRolesCountMax || option == CustomOptionHolder.modifiersCountMax || option == CustomOptionHolder.crewmateRolesFill)
                     continue;
 
@@ -526,10 +550,8 @@ namespace TheOtherRoles {
                     viewSettingsInfoPanel.titleText.text = "Spawn Chance";
                 }
                 if ((int)optionType == 99) {
-                    viewSettingsInfoPanel.titleText.outlineColor = Color.white;
-                    viewSettingsInfoPanel.titleText.outlineWidth = 0.2f;
                     if (option.type == CustomOptionType.Modifier)
-                        viewSettingsInfoPanel.settingText.text = viewSettingsInfoPanel.settingText.text + GameOptionsDataPatch.buildModifierExtras(option);
+                        viewSettingsInfoPanel.settingText.text = viewSettingsInfoPanel.settingText.text + LegacyGameOptionsPatch.buildModifierExtras(option);
                 }
                 __instance.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
 
@@ -717,13 +739,10 @@ namespace TheOtherRoles {
                     CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                     categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 20);
                     categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
-                    categoryHeaderMasked.Title.outlineColor = Color.white;
-                    categoryHeaderMasked.Title.outlineWidth = 0.2f;
                     categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, -2f);
                     num -= 0.63f;
-                } else if (option.parent != null && (option.parent.selection == 0 && !option.invertedParent || option.parent.parent != null && option.parent.parent.selection == 0 && !option.parent.invertedParent)) continue;  // Hides options, for which the parent is disabled!
-                else if (option.parent != null && option.parent.selection != 0 && option.invertedParent) continue;
+                } else if (option.parent != null && isOptionHiddenByAncestor(option)) continue;  // Hides options, for which any ancestor is disabled!
                 OptionBehaviour optionBehaviour = UnityEngine.Object.Instantiate<StringOption>(menu.stringOptionOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                 optionBehaviour.transform.localPosition = new Vector3(0.952f, num, -2f);
                 optionBehaviour.SetClickMask(menu.ButtonClickMask);
@@ -940,24 +959,25 @@ namespace TheOtherRoles {
     {
         public static void Postfix()
         {
-            //CustomOption.ShareOptionSelections();
             CustomOption.saveVanillaOptions();
         }
     }
 
-    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoSpawnPlayer))]
-    public class AmongUsClientOnPlayerJoinedPatch {
-        public static void Postfix() {
-            if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost) {
+    [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), nameof(PlayerPhysics._CoSpawnPlayer_d__42.MoveNext))]
+    public class PlayerPhysicsCoSpawnPlayerPatch
+    {
+        public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance)
+        {
+            if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost)
+            {
                 GameManager.Instance.LogicOptions.SyncOptions();
                 CustomOption.ShareOptionSelections();
             }
         }
     }
-
-
+    
     [HarmonyPatch] 
-    class GameOptionsDataPatch
+    class LegacyGameOptionsPatch
     {
         private static string buildRoleOptions() {
             var impRoles = buildOptionsOfType(CustomOption.CustomOptionType.Impostor, true) + "\n";
@@ -1015,7 +1035,7 @@ namespace TheOtherRoles {
                 if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek && option.type != CustomOptionType.HideNSeekMain && option.type != CustomOptionType.HideNSeekRoles) continue;
                 if (TORMapOptions.gameMode == CustomGamemodes.PropHunt && option.type != CustomOptionType.PropHunt) continue;
                 if (option.parent != null) {
-                    bool isIrrelevant = (option.parent.getSelection() == 0 && !option.invertedParent) || (option.parent.parent != null && option.parent.parent.getSelection() == 0 && !option.parent.invertedParent);
+                    bool isIrrelevant = isOptionHiddenByAncestor(option);
 
                     Color c = isIrrelevant ? Color.grey : Color.white;  // No use for now
                     if (isIrrelevant) continue;
@@ -1141,15 +1161,15 @@ namespace TheOtherRoles {
     [HarmonyPatch]
     public class AddToKillDistanceSetting
     {
-        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.AreInvalid))]
+        [HarmonyPatch(typeof(LegacyGameOptions), nameof(LegacyGameOptions.AreInvalid))]
         [HarmonyPrefix]
         
-        public static bool Prefix(GameOptionsData __instance, ref int maxExpectedPlayers)
+        public static bool Prefix(LegacyGameOptions __instance, ref int maxExpectedPlayers)
         {
             //making the killdistances bound check higher since extra short is added
             return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
                     || __instance.NumImpostors > 3 || __instance.KillDistance < 0
-                    || __instance.KillDistance >= GameOptionsData.KillDistances.Count
+                    || __instance.KillDistance >= LegacyGameOptions.KillDistances.Count
                     || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
         }
 
@@ -1160,7 +1180,7 @@ namespace TheOtherRoles {
         {
             return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
                     || __instance.NumImpostors > 3 || __instance.KillDistance < 0
-                    || __instance.KillDistance >= GameOptionsData.KillDistances.Count
+                    || __instance.KillDistance >= LegacyGameOptions.KillDistances.Count
                     || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
         }
 
@@ -1203,7 +1223,7 @@ namespace TheOtherRoles {
                 else {
                     index = GameOptionsManager.Instance.currentHideNSeekGameOptions.KillDistance;
                 }
-                value = GameOptionsData.KillDistanceStrings[index];
+                value = LegacyGameOptions.KillDistanceStrings[index];
             }
         }
 
@@ -1222,15 +1242,15 @@ namespace TheOtherRoles {
 
         public static void addKillDistance()
         {
-            GameOptionsData.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
-            GameOptionsData.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
+            LegacyGameOptions.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
+            LegacyGameOptions.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
         }
 
         [HarmonyPatch(typeof(StringGameSetting), nameof(StringGameSetting.GetValueString))]
         [HarmonyPrefix]
         public static bool AjdustStringForViewPanel(StringGameSetting __instance, float value, ref string __result) {
             if (__instance.OptionName != Int32OptionNames.KillDistance) return true;
-            __result = GameOptionsData.KillDistanceStrings[(int)value];
+            __result = LegacyGameOptions.KillDistanceStrings[(int)value];
             return false;
         }
     }
@@ -1269,103 +1289,34 @@ namespace TheOtherRoles {
                 HudManagerUpdate.ToggleSettings(HudManager.Instance);
             if (Input.GetKeyDown(KeyCode.F2) && LobbyBehaviour.Instance)
                 HudManagerUpdate.ToggleSummary(HudManager.Instance);
-            if (TheOtherRolesPlugin.optionsPage >= GameOptionsDataPatch.maxPage) TheOtherRolesPlugin.optionsPage = 0;
+            if (TheOtherRolesPlugin.optionsPage >= LegacyGameOptionsPatch.maxPage) TheOtherRolesPlugin.optionsPage = 0;
         }
     }
 
     
-    //This class is taken and adapted from Town of Us Reactivated, https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/CustomOption/Patches.cs, Licensed under GPLv3
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class HudManagerUpdate {
-        private static GameObject GameSettingsObject;
-        private static TextMeshPro GameSettings;
-        public static float
-            MinX,/*-5.3F*/
-            OriginalY = 2.9F,
-            MinY = 2.9F;
-
-        public static Scroller Scroller;
-        private static Vector3 LastPosition;
-        private static float lastAspect;
-        private static bool setLastPosition = false;
-
-        public static void Prefix(HudManager __instance) {
-            if (GameSettings?.transform == null) return;
-
-            // Sets the MinX position to the left edge of the screen + 0.1 units
-            Rect safeArea = Screen.safeArea;
-            float aspect = Mathf.Min((Camera.main).aspect, safeArea.width / safeArea.height);
-            float safeOrthographicSize = CameraSafeArea.GetSafeOrthographicSize(Camera.main);
-            MinX = 0.1f - safeOrthographicSize * aspect;
-
-            if (!setLastPosition || aspect != lastAspect) {
-                LastPosition = new Vector3(MinX, MinY);
-                lastAspect = aspect;
-                setLastPosition = true;
-                if (Scroller != null) Scroller.ContentXBounds = new FloatRange(MinX, MinX);                
-            }
-
-            CreateScroller(__instance);
-
-            Scroller.gameObject.SetActive(GameSettings.gameObject.activeSelf);
-
-            if (!Scroller.gameObject.active) return;
-
-            var rows = GameSettings.text.Count(c => c == '\n');
-            float LobbyTextRowHeight = 0.06F;
-            var maxY = Mathf.Max(MinY, rows * LobbyTextRowHeight + (rows - 38) * LobbyTextRowHeight);
-
-            Scroller.ContentYBounds = new FloatRange(MinY, maxY);
-
-            // Prevent scrolling when the player is interacting with a menu
-            if (PlayerControl.LocalPlayer.CanMove != true) {
-                GameSettings.transform.localPosition = LastPosition;
-
-                return;
-            }
-
-            if (GameSettings.transform.localPosition.x != MinX ||
-                GameSettings.transform.localPosition.y < MinY) return;
-
-            LastPosition = GameSettings.transform.localPosition;
-        }
-
-        private static void CreateScroller(HudManager __instance) {
-            if (Scroller != null) return;
-
-            Transform target = GameSettings.transform;
-
-            Scroller = new GameObject("SettingsScroller").AddComponent<Scroller>();
-            Scroller.transform.SetParent(GameSettings.transform.parent);
-            Scroller.gameObject.layer = 5;
-
-            Scroller.transform.localScale = Vector3.one;
-            Scroller.allowX = false;
-            Scroller.allowY = true;
-            Scroller.active = true;
-            Scroller.velocity = new Vector2(0, 0);
-            Scroller.ScrollbarYBounds = new FloatRange(0, 0);
-            Scroller.ContentXBounds = new FloatRange(MinX, MinX);
-            Scroller.enabled = true;
-
-            Scroller.Inner = target;
-            target.SetParent(Scroller.transform);
-        }
-
         [HarmonyPrefix]
-        public static void Prefix2(HudManager __instance) {
+        public static void Prefix2(HudManager __instance)
+        {
             if (!settingsTMPs[0]) return;
             foreach (var tmp in settingsTMPs) tmp.text = "";
-            var settingsString = GameOptionsDataPatch.buildAllOptions(hideExtras: true);
+            var settingsString = LegacyGameOptionsPatch.buildAllOptions(hideExtras: true);
             var blocks = settingsString.Split("\n\n", StringSplitOptions.RemoveEmptyEntries); ;
             string curString = "";
             string curBlock;
             int j = 0;
-            for (int i = 0; i < blocks.Length; i++) {
+            for (int i = 0; i < blocks.Length; i++)
+            {
+                if (AmongUs.Data.DataManager.Settings.Language.CurrentLanguage != SupportedLangs.English)
+                    blocks[i] = "<line-height=97%>" + blocks[i] + "</line-height>";
                 curBlock = blocks[i];
-                if (Helpers.lineCount(curBlock) + Helpers.lineCount(curString) < 43) {
+                if (Helpers.lineCount(curBlock) + Helpers.lineCount(curString) < (AmongUs.Data.DataManager.Settings.Language.CurrentLanguage == SupportedLangs.English ? 46 : 42))
+                { // original: 43
                     curString += curBlock + "\n\n";
-                } else {
+                }
+                else
+                {
                     settingsTMPs[j].text = curString;
                     j++;
 
@@ -1375,12 +1326,14 @@ namespace TheOtherRoles {
             }
             if (j < settingsTMPs.Length) settingsTMPs[j].text = curString;
             int blockCount = 0;
-            foreach (var tmp in settingsTMPs) {
+            foreach (var tmp in settingsTMPs)
+            {
                 if (tmp.text != "")
                     blockCount++;
             }
-            for (int i = 0; i < blockCount; i++) {
-                settingsTMPs[i].transform.localPosition = new Vector3(- blockCount * 1.2f + 2.7f * i, 2.2f, -500f);
+            for (int i = 0; i < blockCount; i++)
+            {
+                settingsTMPs[i].transform.localPosition = new Vector3(-blockCount * 1.2f + 2.7f * i, 2.2f, -500f);
             }
         }
 

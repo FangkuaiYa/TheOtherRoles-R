@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/cache@v4
@@ -30,8 +30,8 @@ jobs:
       - name: Build
         run: dotnet build TheOtherRoles/TheOtherRoles.csproj --configuration Release
 
-      - name: Upload TheOtherRoles
+      - name: Upload TheOtherRoles-R
         uses: actions/upload-artifact@v4
         with:
-          name: TheOtherRoles.dll
+          name: TheOtherRoles-R.dll
           path: TheOtherRoles/bin/Release/net6.0/TheOtherRoles.dll

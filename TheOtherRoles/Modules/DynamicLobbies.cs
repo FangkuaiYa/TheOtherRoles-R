@@ -45,7 +45,7 @@ namespace TheOtherRoles.Modules {
         }
         [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HostGame))]
         public static class InnerNetClientHostPatch {
-            public static void Prefix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] GameOptionsData settings) {
+            public static void Prefix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] LegacyGameOptions settings) {
                 int maxPlayers;
                 try {
                     maxPlayers = GameOptionsManager.Instance.currentNormalGameOptions.MaxPlayers;
@@ -57,7 +57,7 @@ namespace TheOtherRoles.Modules {
                 settings.MaxPlayers = 15; // Force 15 Player Lobby on Server
                 DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
-            public static void Postfix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] GameOptionsData settings) {
+            public static void Postfix(InnerNet.InnerNetClient __instance, [HarmonyArgument(0)] LegacyGameOptions settings) {
                 settings.MaxPlayers = DynamicLobbies.LobbyLimit;
             }
         }
@@ -68,6 +68,7 @@ namespace TheOtherRoles.Modules {
             }
         }
         [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
+        [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
         public static class AmongUsClientOnPlayerJoined {
             public static bool Prefix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client) {
                 if (LobbyLimit < __instance.allClients.Count) { // TODO: Fix this canceling start
