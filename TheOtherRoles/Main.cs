@@ -40,7 +40,7 @@ public class TheOtherRolesPlugin : BasePlugin
 {
     public const string Id = "me.eisbison.theotherroles";
     public const string VersionString = "5.0.0";
-    public static bool isBeta = true;
+    public static bool isBeta = false;
 
     public static Version Version = Version.Parse(VersionString);
     internal static ManualLogSource Logger;
@@ -116,8 +116,8 @@ public class TheOtherRolesPlugin : BasePlugin
         ShowChatNotifications = Config.Bind("Custom", "Show Chat Notifications", true);
 
         defaultRegions = ServerManager.DefaultRegions;
-        // Removes vanilla Servers  (Adding AMCI can relax some restrictions, but it is still being tested)
-        // ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
+        // Removes vanilla Servers
+        ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
         UpdateRegions();
 
         // Reactor Credits (future use?)
