@@ -1,63 +1,63 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using TheOtherRoles.Utilities;
 
-namespace TheOtherRoles.Roles.Crewmate
+namespace TheOtherRoles.Roles.Crewmate;
+
+public class Mayor : RoleBase
 {
-    public class Mayor : RoleBase
+    public static Mayor Instance;
+
+    public static Color color = new Color32(32, 77, 66, byte.MaxValue);
+    public static RoleInfo Info = new("Mayor", color, "Your vote counts twice", "Your vote counts twice", RoleId.Mayor);
+
+    public static PlayerControl mayor;
+    public static Minigame emergency;
+    public static Sprite emergencySprite;
+    public static int remoteMeetingsLeft = 1;
+
+    public static bool canSeeVoteColors;
+    public static int tasksNeededToSeeVoteColors;
+    public static bool meetingButton = true;
+    public static int mayorChooseSingleVote;
+
+    public static bool voteTwice = true;
+
+    public Mayor()
     {
-        public static Mayor Instance;
+        Instance = this;
+        RoleName = Info.name;
+        LongDescription = Info.introDescription;
+        ShortDescription = Info.shortDescription;
+        RoleColor = color;
+        Team = RoleTeam.Crewmate;
+    }
 
-        public static Color color = new Color32(32, 77, 66, byte.MaxValue);
-        public static RoleInfo Info = new RoleInfo("Mayor", color, "Your vote counts twice", "Your vote counts twice", RoleId.Mayor);
+    public static Sprite getMeetingSprite()
+    {
+        if (emergencySprite) return emergencySprite;
+        emergencySprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.EmergencyButton.png", 550f);
+        return emergencySprite;
+    }
 
-        public static PlayerControl mayor;
-        public static Minigame emergency = null;
-        public static Sprite emergencySprite = null;
-        public static int remoteMeetingsLeft = 1;
+    public static void clearAndReload()
+    {
+        mayor = null;
+        emergency = null;
+        emergencySprite = null;
+        remoteMeetingsLeft = Mathf.RoundToInt(CustomOptionHolder.mayorMaxRemoteMeetings.getFloat());
+        canSeeVoteColors = CustomOptionHolder.mayorCanSeeVoteColors.getBool();
+        tasksNeededToSeeVoteColors = (int)CustomOptionHolder.mayorTasksNeededToSeeVoteColors.getFloat();
+        meetingButton = CustomOptionHolder.mayorMeetingButton.getBool();
+        mayorChooseSingleVote = CustomOptionHolder.mayorChooseSingleVote.getSelection();
+        voteTwice = true;
+    }
 
-        public static bool canSeeVoteColors = false;
-        public static int tasksNeededToSeeVoteColors;
-        public static bool meetingButton = true;
-        public static int mayorChooseSingleVote;
+    public override void ClearAndReload()
+    {
+        clearAndReload();
+    }
 
-        public static bool voteTwice = true;
-
-        public Mayor() : base()
-        {
-            Instance = this;
-            RoleName = Info.name;
-            LongDescription = Info.introDescription;
-            ShortDescription = Info.shortDescription;
-            RoleColor = color;
-            Team = RoleTeam.Crewmate;
-        }
-
-        public static Sprite getMeetingSprite()
-        {
-            if (emergencySprite) return emergencySprite;
-            emergencySprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.EmergencyButton.png", 550f);
-            return emergencySprite;
-        }
-
-        public static void clearAndReload() {
-            mayor = null;
-            emergency = null;
-            emergencySprite = null;
-            remoteMeetingsLeft = Mathf.RoundToInt(CustomOptionHolder.mayorMaxRemoteMeetings.getFloat());
-            canSeeVoteColors = CustomOptionHolder.mayorCanSeeVoteColors.getBool();
-            tasksNeededToSeeVoteColors = (int)CustomOptionHolder.mayorTasksNeededToSeeVoteColors.getFloat();
-            meetingButton = CustomOptionHolder.mayorMeetingButton.getBool();
-            mayorChooseSingleVote = CustomOptionHolder.mayorChooseSingleVote.getSelection();
-            voteTwice = true;
-        }
-
-        public override void ClearAndReload()
-        {
-            clearAndReload();
-        }
-
-        public override RoleInfo GetRoleInfo() => Info;
+    public override RoleInfo GetRoleInfo()
+    {
+        return Info;
     }
 }

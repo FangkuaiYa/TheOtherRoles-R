@@ -1,97 +1,89 @@
-using System.Linq;
-using HarmonyLib;
 using System;
-using System.Collections.Generic;
-using UnityEngine;
-using TheOtherRoles.Objects;
-
-using TheOtherRoles.Utilities;
+using HarmonyLib;
 using TheOtherRoles.CustomGameModes;
-using static TheOtherRoles.TheOtherRoles;
-using AmongUs.Data;
-using Hazel;
-using Reactor.Utilities.Extensions;
-using TheOtherRoles.Roles;
+using TheOtherRoles.Utilities;
 
-namespace TheOtherRoles
+namespace TheOtherRoles;
+
+[HarmonyPatch]
+public static class TheOtherRoles
 {
-    [HarmonyPatch]
-    public static class TheOtherRoles
+    public static Random rnd = new((int)DateTime.Now.Ticks);
+
+    private static bool rolesRegistered;
+
+    public static void clearAndReloadRoles()
     {
-        public static System.Random rnd = new System.Random((int)DateTime.Now.Ticks);
-
-        private static bool rolesRegistered = false;
-
-        public static void clearAndReloadRoles() {
-            if (!rolesRegistered) {
-                RegisterAllRoles();
-                rolesRegistered = true;
-            }
-
-            Roles.CustomRoleManager.Instance.ClearAndReloadAll();
-
-            HandleGuesser.clearAndReload();
-            HideNSeek.clearAndReload();
-            PropHunt.clearAndReload();
+        if (!rolesRegistered)
+        {
+            RegisterAllRoles();
+            rolesRegistered = true;
         }
 
-        private static void RegisterAllRoles() {
-            new Roles.Crewmate.Sheriff();
-            new Roles.Crewmate.Deputy();
-            new Roles.Crewmate.Lighter();
-            new Roles.Crewmate.Detective();
-            new Roles.Crewmate.TimeMaster();
-            new Roles.Crewmate.Medic();
-            new Roles.Crewmate.Swapper();
-            new Roles.Crewmate.Seer();
-            new Roles.Crewmate.Hacker();
-            new Roles.Crewmate.Tracker();
-            new Roles.Crewmate.Snitch();
-            new Roles.Crewmate.Engineer();
-            new Roles.Crewmate.Mayor();
-            new Roles.Crewmate.Portalmaker();
-            new Roles.Crewmate.SecurityGuard();
-            new Roles.Crewmate.Medium();
-            new Roles.Crewmate.Trapper();
+        CustomRoleManager.Instance.ClearAndReloadAll();
 
-            new Roles.Impostor.Godfather();
-            new Roles.Impostor.Mafioso();
-            new Roles.Impostor.Janitor();
-            new Roles.Impostor.Morphling();
-            new Roles.Impostor.Camouflager();
-            new Roles.Impostor.Vampire();
-            new Roles.Impostor.Eraser();
-            new Roles.Impostor.Trickster();
-            new Roles.Impostor.Cleaner();
-            new Roles.Impostor.Warlock();
-            new Roles.Impostor.Spy();
-            new Roles.Impostor.Witch();
-            new Roles.Impostor.Ninja();
-            new Roles.Impostor.BountyHunter();
-            new Roles.Impostor.Bomber();
-            new Roles.Impostor.Yoyo();
+        HandleGuesser.clearAndReload();
+        HideNSeek.clearAndReload();
+        PropHunt.clearAndReload();
+    }
 
-            new Roles.Neutral.Jester();
-            new Roles.Neutral.Jackal();
-            new Roles.Neutral.Sidekick();
-            new Roles.Neutral.Arsonist();
-            new Roles.Neutral.Vulture();
-            new Roles.Neutral.Lawyer();
-            new Roles.Neutral.Pursuer();
-            new Roles.Neutral.Thief();
+    private static void RegisterAllRoles()
+    {
+        new Sheriff();
+        new Deputy();
+        new Lighter();
+        new Detective();
+        new TimeMaster();
+        new Medic();
+        new Swapper();
+        new Seer();
+        new Hacker();
+        new Tracker();
+        new Snitch();
+        new Engineer();
+        new Mayor();
+        new Portalmaker();
+        new SecurityGuard();
+        new Medium();
+        new Trapper();
 
-            new Roles.Modifier.Bait();
-            new Roles.Modifier.Bloody();
-            new Roles.Modifier.AntiTeleport();
-            new Roles.Modifier.Tiebreaker();
-            new Roles.Modifier.Sunglasses();
-            new Roles.Modifier.Mini();
-            new Roles.Modifier.Vip();
-            new Roles.Modifier.Invert();
-            new Roles.Modifier.Chameleon();
-            new Roles.Modifier.Armored();
-            new Roles.Modifier.Shifter();
-            new Roles.Modifier.Lovers();
-        }
+        new Godfather();
+        new Mafioso();
+        new Janitor();
+        new Morphling();
+        new Camouflager();
+        new Vampire();
+        new Eraser();
+        new Trickster();
+        new Cleaner();
+        new Warlock();
+        new Spy();
+        new Witch();
+        new Ninja();
+        new BountyHunter();
+        new Bomber();
+        new Yoyo();
+
+        new Jester();
+        new Jackal();
+        new Sidekick();
+        new Arsonist();
+        new Vulture();
+        new Lawyer();
+        new Pursuer();
+        new Thief();
+
+        new Bait();
+        new Bloody();
+        new AntiTeleport();
+        new Tiebreaker();
+        new Sunglasses();
+        new Mini();
+        new Vip();
+        new Invert();
+        new Chameleon();
+        new Armored();
+        new Shifter();
+        new Lovers();
     }
 }

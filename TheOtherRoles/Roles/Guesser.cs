@@ -1,52 +1,56 @@
 using UnityEngine;
 
-namespace TheOtherRoles.Roles
+namespace TheOtherRoles.Roles;
+
+public static class Guesser
 {
-    public static class Guesser
+    public static PlayerControl niceGuesser;
+    public static PlayerControl evilGuesser;
+    public static Color color = new Color32(255, 255, 0, byte.MaxValue);
+
+    public static RoleInfo NiceInfo = new("Nice Guesser", color, "Guess and shoot", "Guess and shoot",
+        RoleId.NiceGuesser);
+
+    public static RoleInfo EvilInfo = new("Evil Guesser", Palette.ImpostorRed, "Guess and shoot", "Guess and shoot",
+        RoleId.EvilGuesser);
+
+    public static int remainingShotsEvilGuesser = 2;
+    public static int remainingShotsNiceGuesser = 2;
+
+    public static bool isGuesser(byte playerId)
     {
-        public static PlayerControl niceGuesser;
-        public static PlayerControl evilGuesser;
-        public static Color color = new Color32(255, 255, 0, byte.MaxValue);
+        if ((niceGuesser != null && niceGuesser.PlayerId == playerId) ||
+            (evilGuesser != null && evilGuesser.PlayerId == playerId)) return true;
+        return false;
+    }
 
-        public static RoleInfo NiceInfo = new RoleInfo("Nice Guesser", color, "Guess and shoot", "Guess and shoot", RoleId.NiceGuesser);
-        public static RoleInfo EvilInfo = new RoleInfo("Evil Guesser", Palette.ImpostorRed, "Guess and shoot", "Guess and shoot", RoleId.EvilGuesser);
+    public static void clear(byte playerId)
+    {
+        if (niceGuesser != null && niceGuesser.PlayerId == playerId) niceGuesser = null;
+        else if (evilGuesser != null && evilGuesser.PlayerId == playerId) evilGuesser = null;
+    }
 
-        public static int remainingShotsEvilGuesser = 2;
-        public static int remainingShotsNiceGuesser = 2;
-
-        public static bool isGuesser(byte playerId)
+    public static int remainingShots(byte playerId, bool shoot = false)
+    {
+        var remainingShots = remainingShotsEvilGuesser;
+        if (niceGuesser != null && niceGuesser.PlayerId == playerId)
         {
-            if ((niceGuesser != null && niceGuesser.PlayerId == playerId) || (evilGuesser != null && evilGuesser.PlayerId == playerId)) return true;
-            return false;
+            remainingShots = remainingShotsNiceGuesser;
+            if (shoot) remainingShotsNiceGuesser = Mathf.Max(0, remainingShotsNiceGuesser - 1);
+        }
+        else if (shoot)
+        {
+            remainingShotsEvilGuesser = Mathf.Max(0, remainingShotsEvilGuesser - 1);
         }
 
-        public static void clear(byte playerId)
-        {
-            if (niceGuesser != null && niceGuesser.PlayerId == playerId) niceGuesser = null;
-            else if (evilGuesser != null && evilGuesser.PlayerId == playerId) evilGuesser = null;
-        }
+        return remainingShots;
+    }
 
-        public static int remainingShots(byte playerId, bool shoot = false)
-        {
-            int remainingShots = remainingShotsEvilGuesser;
-            if (niceGuesser != null && niceGuesser.PlayerId == playerId)
-            {
-                remainingShots = remainingShotsNiceGuesser;
-                if (shoot) remainingShotsNiceGuesser = Mathf.Max(0, remainingShotsNiceGuesser - 1);
-            }
-            else if (shoot)
-            {
-                remainingShotsEvilGuesser = Mathf.Max(0, remainingShotsEvilGuesser - 1);
-            }
-            return remainingShots;
-        }
-
-        public static void clearAndReload()
-        {
-            niceGuesser = null;
-            evilGuesser = null;
-            remainingShotsEvilGuesser = Mathf.RoundToInt(CustomOptionHolder.guesserNumberOfShots.getFloat());
-            remainingShotsNiceGuesser = Mathf.RoundToInt(CustomOptionHolder.guesserNumberOfShots.getFloat());
-        }
+    public static void clearAndReload()
+    {
+        niceGuesser = null;
+        evilGuesser = null;
+        remainingShotsEvilGuesser = Mathf.RoundToInt(CustomOptionHolder.guesserNumberOfShots.getFloat());
+        remainingShotsNiceGuesser = Mathf.RoundToInt(CustomOptionHolder.guesserNumberOfShots.getFloat());
     }
 }
