@@ -157,7 +157,7 @@ namespace TheOtherRoles {
         }
 
         public static void refreshRoleDescription(PlayerControl player) {
-            List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(player); 
+            List<RoleInfo> infos = CustomRoleManager.getRoleInfoForPlayer(player); 
             List<string> taskTexts = new(infos.Count); 
 
             foreach (var roleInfo in infos)
@@ -468,7 +468,7 @@ namespace TheOtherRoles {
         }
 
         public static MurderAttemptResult checkMuderAttempt(PlayerControl killer, PlayerControl target, bool blockRewind = false, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false, bool ignoreMedic = false) {
-            var targetRole = RoleInfo.getRoleInfoForPlayer(target, false).FirstOrDefault();
+            var targetRole = CustomRoleManager.getRoleInfoForPlayer(target, false).FirstOrDefault();
             // Modified vanilla checks
             if (AmongUsClient.Instance.IsGameOver) return MurderAttemptResult.SuppressKill;
             if (killer == null || killer.Data == null || (killer.Data.IsDead && !ignoreIfKillerIsDead) || killer.Data.Disconnected) return MurderAttemptResult.SuppressKill; // Allow non Impostor kills compared to vanilla code
@@ -598,7 +598,7 @@ namespace TheOtherRoles {
         }
 
         public static bool isNeutral(PlayerControl player) {
-            RoleInfo roleInfo = RoleInfo.getRoleInfoForPlayer(player, false).FirstOrDefault();
+            RoleInfo roleInfo = CustomRoleManager.getRoleInfoForPlayer(player, false).FirstOrDefault();
             if (roleInfo != null)
                 return roleInfo.isNeutral;
             return false;
@@ -673,6 +673,20 @@ namespace TheOtherRoles {
             if (nativeData.IsCreated)
                 return nativeData.ToArray();
             return null;
+        }
+
+        public static bool isChinese()
+        {
+            try
+            {
+                var name = CultureInfo.CurrentUICulture.Name;
+                if (name.StartsWith("zh")) return true;
+                return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

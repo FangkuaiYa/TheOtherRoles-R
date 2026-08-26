@@ -531,8 +531,8 @@ namespace TheOtherRoles.Patches {
                     }
 
                     var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(p.Data);
-                    string roleNames = RoleInfo.GetRolesString(p, true, false);
-                    string roleText = RoleInfo.GetRolesString(p, true, TORMapOptions.ghostsSeeModifier);
+                    string roleNames = CustomRoleManager.GetRolesString(p, true, false);
+                    string roleText = CustomRoleManager.GetRolesString(p, true, TORMapOptions.ghostsSeeModifier);
                     string taskInfo = tasksTotal > 0 ? $"<color=#FAD934FF>({tasksCompleted}/{tasksTotal})</color>" : "";
 
                     string playerInfoText = "";
@@ -1109,7 +1109,13 @@ namespace TheOtherRoles.Patches {
                 // -- GAME MODE --
                 hunterUpdate();
                 PropHunt.update();
-            } 
+
+                // RoleBase lifecycle: let each role run its own per-frame logic
+                CustomRoleManager.Instance.PlayerFixedUpdate(__instance);
+            }
+
+            // RoleBase lifecycle: Update runs for ALL players (not just local)
+            CustomRoleManager.Instance.PlayerUpdate(__instance);
         }
     }
 
@@ -1314,7 +1320,7 @@ namespace TheOtherRoles.Patches {
                 if (Vip.showColor) {
                     color = Color.white;
                     if (target.Data.Role.IsImpostor) color = Color.red;
-                    else if (RoleInfo.getRoleInfoForPlayer(target, false).FirstOrDefault().isNeutral) color = Color.blue;
+                    else if (CustomRoleManager.getRoleInfoForPlayer(target, false).FirstOrDefault().isNeutral) color = Color.blue;
                 }
                 Helpers.showFlash(color, 1.5f);
             }
@@ -1342,6 +1348,10 @@ namespace TheOtherRoles.Patches {
                     MapBehaviourPatch.herePoints.Remove(a.Key);
                 }
             }
+
+            // RoleBase lifecycle
+            CustomRoleManager.Instance.OnMurderPlayer(__instance, target);
+            CustomRoleManager.Instance.OnPlayerDeath(target);
         }
     }
 
@@ -1441,6 +1451,9 @@ namespace TheOtherRoles.Patches {
                     GameHistory.overrideDeathReasonAndKiller(lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, lawyer);  // TODO: only executed on host?!
                 }
             }
+
+            // RoleBase lifecycle
+            CustomRoleManager.Instance.OnPlayerExiled(__instance);
         }
     }
 

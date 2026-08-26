@@ -352,10 +352,10 @@ namespace TheOtherRoles.Patches {
         }
 
         public static void setupIntroTeam(IntroCutscene __instance, ref  Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
-            List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
+                List<RoleInfo> infos = CustomRoleManager.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
             RoleInfo roleInfo = infos.Where(info => !info.isModifier).FirstOrDefault();
             var neutralColor = new Color32(76, 84, 78, 255);
-            if (roleInfo == null || roleInfo == RoleInfo.crewmate) {
+            if (roleInfo == null || roleInfo == CustomRoleManager.crewmate) {
                 if (RoleDraft.isEnabled && CustomOptionHolder.neutralRolesCountMax.getSelection() > 0) {
                     __instance.TeamTitle.text = "<size=60%>Crewmate" + Helpers.cs(Color.white, " / ") + Helpers.cs(neutralColor, "Neutral") + "</size>";
                 }
@@ -401,12 +401,12 @@ namespace TheOtherRoles.Patches {
             static int seed = 0;
             static public void SetRoleTexts(IntroCutscene __instance) {
                 // Don't override the intro of the vanilla roles
-                List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
+            List<RoleInfo> infos = CustomRoleManager.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
                 RoleInfo roleInfo = infos.Where(info => !info.isModifier).FirstOrDefault();
                 RoleInfo modifierInfo = infos.Where(info => info.isModifier).FirstOrDefault();
 
                 if (EventUtility.isEnabled) {
-                    var roleInfos = RoleInfo.allRoleInfos.Where(x => !x.isModifier).ToList();
+                    var roleInfos = CustomRoleManager.Instance.allRoleInfos.Where(x => !x.isModifier).ToList();
                     if (roleInfo.isNeutral) roleInfos.RemoveAll(x => !x.isNeutral);
                     if (roleInfo.color == Palette.ImpostorRed) roleInfos.RemoveAll(x => x.color != Palette.ImpostorRed);
                     if (!roleInfo.isNeutral && roleInfo.color != Palette.ImpostorRed) roleInfos.RemoveAll(x => x.color == Palette.ImpostorRed || x.isNeutral);

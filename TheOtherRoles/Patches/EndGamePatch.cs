@@ -78,14 +78,14 @@ namespace TheOtherRoles.Patches {
             AdditionalTempData.clear();
 
             foreach(var playerControl in PlayerControl.AllPlayerControls) {
-                var roles = RoleInfo.getRoleInfoForPlayer(playerControl);
+                var roles = CustomRoleManager.getRoleInfoForPlayer(playerControl);
                 var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
                 bool isGuesser = HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(playerControl.PlayerId);
                 int? killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
-                if (killCount == 0 && !(new List<RoleInfo>() { RoleInfo.sheriff, RoleInfo.jackal, RoleInfo.sidekick, RoleInfo.thief }.Contains(RoleInfo.getRoleInfoForPlayer(playerControl, false).FirstOrDefault()) || playerControl.Data.Role.IsImpostor)) {
+                if (killCount == 0 && !(new List<RoleInfo>() { Sheriff.Info, Jackal.Info, Sidekick.Info, Thief.Info }.Contains(CustomRoleManager.getRoleInfoForPlayer(playerControl, false).FirstOrDefault()) || playerControl.Data.Role.IsImpostor)) {
                     killCount = null;
                     }
-                string roleString = RoleInfo.GetRolesString(playerControl, true, true, false);
+                string roleString = CustomRoleManager.GetRolesString(playerControl, true, true, false);
                 AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() { PlayerName = playerControl.Data.PlayerName, Roles = roles, RoleNames = roleString, TasksTotal = tasksTotal, TasksCompleted = tasksCompleted, IsGuesser = isGuesser, Kills = killCount, IsAlive = !playerControl.Data.IsDead });
             }
 

@@ -24,7 +24,7 @@ namespace TheOtherRoles.Patches {
             float num = float.MaxValue;
             PlayerControl @object = pc.Object;
 
-            bool roleCouldUse = @object.roleCanUseVents();
+            bool roleCouldUse = @object.roleCanUseVents() || CustomRoleManager.Instance.CanUseVent(@object, __instance);
 
             if (__instance.name.StartsWith("SealedVent_")) {
                 canUse = couldUse = false;

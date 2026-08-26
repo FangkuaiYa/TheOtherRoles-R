@@ -21,12 +21,9 @@ namespace TheOtherRoles.Objects {
             {
                 try
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    var resourceBundle = assembly.GetManifestResourceStream("TheOtherRoles.Resources.Animation.animation");
-                    if (resourceBundle == null) return null;
-                    var assetBundle = AssetBundle.LoadFromMemory(resourceBundle.ReadFully());
-                    if (assetBundle == null) return null;
-                    boxAnimationSprites[index] = assetBundle.LoadAsset<Sprite>($"Assets/Animation/TricksterAnimation.trickster_box_00{(index + 1):00}.png");
+                    var animBundle = AnimationBundleHelper.GetAnimBundle();
+                    if (animBundle == null) return null;
+                    boxAnimationSprites[index] = animBundle.LoadAsset<Sprite>($"Assets/Animation/TricksterAnimation.trickster_box_00{(index + 1):00}.png");
                 }
                 catch (Exception e)
                 {

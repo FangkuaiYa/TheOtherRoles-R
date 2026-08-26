@@ -38,12 +38,9 @@ namespace TheOtherRoles.Objects {
             {
                 try
                 {
-                    Assembly assembly = Assembly.GetExecutingAssembly();
-                    var resourceBundle = assembly.GetManifestResourceStream("TheOtherRoles.Resources.Animation.animation");
-                    if (resourceBundle == null) return null;
-                    var assetBundle = AssetBundle.LoadFromMemory(resourceBundle.ReadFully());
-                    if (assetBundle == null) return null;
-                    portalFgAnimationSprites[index] = assetBundle.LoadAsset<Sprite>($"Assets/Animation/PortalAnimation.portal_{(index):000}.png");
+                    var animBundle = AnimationBundleHelper.GetAnimBundle();
+                    if (animBundle == null) return null;
+                    portalFgAnimationSprites[index] = animBundle.LoadAsset<Sprite>($"Assets/Animation/PortalAnimation.portal_{(index):000}.png");
                 }
                 catch (Exception e)
                 {
@@ -115,7 +112,7 @@ namespace TheOtherRoles.Objects {
             animationFgRenderer.material = FastDestroyableSingleton<HatManager>.Instance.PlayerMaterial;
 
             // Only render the inactive portals for the Portalmaker
-            bool playerIsPortalmaker = PlayerControl.LocalPlayer == TheOtherRoles.Portalmaker.portalmaker;
+            bool playerIsPortalmaker = PlayerControl.LocalPlayer == Portalmaker.portalmaker;
             portalGameObject.SetActive(playerIsPortalmaker);
             portalFgAnimationGameObject.SetActive(true);
 

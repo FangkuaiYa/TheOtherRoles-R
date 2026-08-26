@@ -164,7 +164,7 @@ namespace TheOtherRoles.Patches {
                 Lawyer.triggerProsecutorWin = true;
 
             // Mini exile lose condition
-            else if (exiled != null && Mini.mini != null && Mini.mini.PlayerId == exiled.PlayerId && !Mini.isGrownUp() && !Mini.mini.Data.Role.IsImpostor && !RoleInfo.getRoleInfoForPlayer(Mini.mini).Any(x => x.isNeutral)) {
+            else if (exiled != null && Mini.mini != null && Mini.mini.PlayerId == exiled.PlayerId && !Mini.isGrownUp() && !Mini.mini.Data.Role.IsImpostor && !CustomRoleManager.getRoleInfoForPlayer(Mini.mini).Any(x => x.isNeutral)) {
                 Mini.triggerMiniLose = true;
             }
             // Jester win condition
@@ -294,7 +294,7 @@ namespace TheOtherRoles.Patches {
                     if (player == null) return;
                     // Exile role text
                     if (id == StringNames.ExileTextPN || id == StringNames.ExileTextSN || id == StringNames.ExileTextPP || id == StringNames.ExileTextSP) {
-                        __result = player.Data.PlayerName + " was The " + String.Join(" ", RoleInfo.getRoleInfoForPlayer(player, false).Select(x => x.name).ToArray());
+                        __result = player.Data.PlayerName + " was The " + String.Join(" ", CustomRoleManager.getRoleInfoForPlayer(player, false).Select(x => x.name).ToArray());
                     }
                     // Hide number of remaining impostors on Jester win
                     if (id == StringNames.ImpostorsRemainP || id == StringNames.ImpostorsRemainS) {

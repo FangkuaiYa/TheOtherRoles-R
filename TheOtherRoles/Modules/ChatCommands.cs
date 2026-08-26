@@ -2,6 +2,7 @@ using System;
 using HarmonyLib;
 using System.Linq;
 using TheOtherRoles.Utilities;
+using TheOtherRoles.Roles;
 using Hazel;
 
 namespace TheOtherRoles.Modules {
@@ -87,9 +88,9 @@ namespace TheOtherRoles.Modules {
                 }
 
                 if (text.ToLower().StartsWith("/role")) {
-                    RoleInfo localRole = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer, false).FirstOrDefault();
-                    if (localRole != RoleInfo.impostor && localRole != RoleInfo.crewmate) {
-                        string info = RoleInfo.GetRoleDescription(localRole);
+                    RoleInfo localRole = CustomRoleManager.getRoleInfoForPlayer(PlayerControl.LocalPlayer, false).FirstOrDefault();
+                    if (localRole != CustomRoleManager.impostor && localRole != CustomRoleManager.crewmate) {
+                        string info = CustomRoleManager.GetRoleDescription(localRole);
                         __instance.AddChat(PlayerControl.LocalPlayer, info);
                         handled = true;
                     }

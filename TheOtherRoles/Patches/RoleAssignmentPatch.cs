@@ -564,7 +564,7 @@ namespace TheOtherRoles.Patches
             byte playerId;
 
             List<PlayerControl> crewPlayer = new List<PlayerControl>(playerList);
-            crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || RoleInfo.getRoleInfoForPlayer(x).Any(r => r.isNeutral));
+            crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || CustomRoleManager.getRoleInfoForPlayer(x).Any(r => r.isNeutral));
             if (modifiers.Contains(RoleId.Shifter)) {
                 var crewPlayerShifter = new List<PlayerControl>(crewPlayer);
                 crewPlayerShifter.RemoveAll(x => x == Spy.spy);

@@ -10,6 +10,7 @@ using TheOtherRoles.Patches;
 using static TheOtherRoles.TheOtherRoles;
 using UnityEngine.UI;
 using Reactor.Utilities.Extensions;
+using TheOtherRoles.Roles;
 
 namespace TheOtherRoles.Modules
 {
@@ -112,7 +113,7 @@ namespace TheOtherRoles.Modules
                         playerText = Helpers.cs(youColor, "You!");
                         // Available Roles:
                         List<RoleInfo> availableRoles = new();
-                        foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
+                        foreach (RoleInfo roleInfo in CustomRoleManager.Instance.allRoleInfos) {
                             int impostorCount = PlayerControl.AllPlayerControls.ToArray().ToList().Where(x => x.Data.Role.IsImpostor).Count();
                             if (roleInfo.isModifier) continue;
                             // Remove Impostor Roles
@@ -215,9 +216,9 @@ namespace TheOtherRoles.Modules
                         // Fallback for if all roles are somehow removed. (This is only the case if there is a bug, hence print a warning
                         if (availableRoles.Count == 0) {
                             if (PlayerControl.LocalPlayer.Data.Role.IsImpostor)
-                                availableRoles.Add(RoleInfo.impostor);
+                                availableRoles.Add(CustomRoleManager.impostor);
                             else
-                                availableRoles.Add(RoleInfo.crewmate);
+                                availableRoles.Add(CustomRoleManager.crewmate);
                             TheOtherRolesPlugin.Logger.LogWarning("Draft Mode: Fallback triggered, because no roles were left. Forced addition of basegame Imp/Crewmate");
                         }
 
@@ -374,7 +375,7 @@ namespace TheOtherRoles.Modules
                 pickOrder.Remove(playerId);
                 timer = 0;
                 picked = true;                
-                RoleInfo roleInfo = RoleInfo.allRoleInfos.First(x => (byte)x.roleId == roleId);
+                RoleInfo roleInfo = CustomRoleManager.Instance.allRoleInfos.First(x => (byte)x.roleId == roleId);
                 string roleString = Helpers.cs(roleInfo.color, roleInfo.name);
                 int roleLength = roleInfo.name.Length;  // Not used for now, but stores the amount of charactes of the roleString.
                 if (!CustomOptionHolder.draftModeShowRoles.getBool() && !(playerId == PlayerControl.LocalPlayer.PlayerId)) {

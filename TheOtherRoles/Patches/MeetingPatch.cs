@@ -246,6 +246,9 @@ namespace TheOtherRoles.Patches {
                 if (Snitch.snitch != null && !Snitch.needsUpdate && Snitch.snitch.Data.IsDead && Snitch.text != null) {
                     UnityEngine.Object.Destroy(Snitch.text);
                 }
+
+                // RoleBase lifecycle
+                CustomRoleManager.Instance.OnMeetingEnd();
             }
         }
 
@@ -412,7 +415,7 @@ namespace TheOtherRoles.Patches {
             List<Transform> buttons = new List<Transform>();
             Transform selectedButton = null;
 
-            foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
+            foreach (RoleInfo roleInfo in CustomRoleManager.Instance.allRoleInfos) {
                 RoleId guesserRole = (Guesser.niceGuesser != null && PlayerControl.LocalPlayer.PlayerId == Guesser.niceGuesser.PlayerId) ? RoleId.NiceGuesser :  RoleId.EvilGuesser;
                 if (roleInfo.isModifier || roleInfo.roleId == guesserRole || (!HandleGuesser.evilGuesserCanGuessSpy && guesserRole == RoleId.EvilGuesser && roleInfo.roleId == RoleId.Spy && !HandleGuesser.isGuesserGm)) continue; // Not guessable roles & modifier
                 if (HandleGuesser.isGuesserGm && (roleInfo.roleId == RoleId.NiceGuesser || roleInfo.roleId == RoleId.EvilGuesser)) continue; // remove Guesser for guesser game mode
@@ -471,7 +474,7 @@ namespace TheOtherRoles.Patches {
                             return;
                         }
 
-                        var mainRoleInfo = RoleInfo.getRoleInfoForPlayer(focusedTarget, false).FirstOrDefault();
+                        var mainRoleInfo = CustomRoleManager.getRoleInfoForPlayer(focusedTarget, false).FirstOrDefault();
                         if (mainRoleInfo == null) return;
 
                         PlayerControl dyingTarget = (mainRoleInfo == roleInfo) ? focusedTarget : PlayerControl.LocalPlayer;
@@ -715,7 +718,7 @@ namespace TheOtherRoles.Patches {
                         trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
                         foreach (byte playerId in trap.trappedPlayer) {
                             PlayerControl p = Helpers.playerById(playerId);
-                            if (Trapper.infoType == 0) message += RoleInfo.GetRolesString(p, false, false, true) + "\n";
+                            if (Trapper.infoType == 0) message += CustomRoleManager.GetRolesString(p, false, false, true) + "\n";
                             else if (Trapper.infoType == 1) {
                                 if (Helpers.isNeutral(p) || p.Data.Role.IsImpostor) message += "Evil Role \n";
                                 else message += "Good Role \n";
@@ -746,7 +749,7 @@ namespace TheOtherRoles.Patches {
                                     if (room != byte.MinValue) {
                                         roomName = DestroyableSingleton<TranslationController>.Instance.GetString((SystemTypes)room);
                                     }
-                                    output += "- " + RoleInfo.GetRolesString(p, false, false, true) + ", was last seen " + roomName + "\n";
+                                    output += "- " + CustomRoleManager.GetRolesString(p, false, false, true) + ", was last seen " + roomName + "\n";
                                 }
                                 FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Snitch.snitch, $"{output}");
                             }
@@ -794,6 +797,8 @@ namespace TheOtherRoles.Patches {
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.StartMeeting))]
         public static void MeetingHudIntroPrefix() {
             EventUtility.meetingStartsUpdate();
+            // RoleBase lifecycle
+            CustomRoleManager.Instance.OnMeetingStart();
         }
 
         [HarmonyPatch]

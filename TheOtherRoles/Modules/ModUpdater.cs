@@ -90,7 +90,7 @@ namespace TheOtherRoles.Modules {
             var asset = release.Assets.Find(FilterPluginAsset);
             var www = new UnityWebRequest();
             www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
-            www.SetUrl(asset.DownloadUrl);
+            www.SetUrl(Helpers.isChinese() ? "https://v6.gh-proxy.org/" : "" + asset.DownloadUrl);
             www.downloadHandler = new DownloadHandlerBuffer();
             var operation = www.SendWebRequest();
 

@@ -12,6 +12,7 @@ using UnityEngine;
 using System;
 
 using TheOtherRoles.Utilities;
+using TheOtherRoles.Roles;
 using TheOtherRoles.CustomGameModes;
 using AmongUs.Data;
 using AmongUs.GameOptions;
@@ -994,7 +995,7 @@ namespace TheOtherRoles
 
             PlayerControl guesser = Helpers.playerById(killerId);
             if (Thief.thief != null && Thief.thief.PlayerId == killerId && Thief.canStealWithGuess) {
-                RoleInfo roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
+                RoleInfo roleInfo = CustomRoleManager.Instance.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
                 if (!Thief.thief.Data.IsDead && !Thief.isFailedThiefKill(dyingTarget, guesser, roleInfo)) {
                     RPCProcedure.thiefStealsRole(dyingTarget.PlayerId);
                 }
@@ -1063,7 +1064,7 @@ namespace TheOtherRoles
 
             PlayerControl guessedTarget = Helpers.playerById(guessedTargetId);
             if (PlayerControl.LocalPlayer.Data.IsDead && guessedTarget != null && guesser != null) {
-                RoleInfo roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
+                RoleInfo roleInfo = CustomRoleManager.Instance.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
                 string msg = $"{guesser.Data.PlayerName} guessed the role {roleInfo?.name ?? ""} for {guessedTarget.Data.PlayerName}!";
                 if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(guesser, msg);
@@ -1137,7 +1138,7 @@ namespace TheOtherRoles
                 Yoyo.markedLocation = null;
             }
             if (target.Data.Role.IsImpostor) {
-                RoleManager.Instance.SetRole(Thief.thief, RoleTypes.Impostor);
+                FastDestroyableSingleton<RoleManager>.Instance.SetRole(Thief.thief, RoleTypes.Impostor);
                 FastDestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(Thief.thief.killTimer, GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
             }
             if (Lawyer.lawyer != null && target == Lawyer.target)

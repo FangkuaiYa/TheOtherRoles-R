@@ -3,6 +3,11 @@ global using Il2CppInterop.Runtime.Attributes;
 global using Il2CppInterop.Runtime.InteropTypes;
 global using Il2CppInterop.Runtime.InteropTypes.Arrays;
 global using Il2CppInterop.Runtime.Injection;
+global using TheOtherRoles.Roles;
+global using TheOtherRoles.Roles.Crewmate;
+global using TheOtherRoles.Roles.Impostor;
+global using TheOtherRoles.Roles.Neutral;
+global using TheOtherRoles.Roles.Modifier;
 
 using BepInEx;
 using BepInEx.Configuration;
@@ -131,8 +136,12 @@ namespace TheOtherRoles
             EventUtility.Load();
             SubmergedCompatibility.Initialize();
             MainMenuPatch.addSceneChangeCallbacks();
-            _ = RoleInfo.loadReadme();
+            _ = CustomRoleManager.loadReadme();
             AddToKillDistanceSetting.addKillDistance();
+
+            // AMCI: Register mod GUID so Among Us tags our lobbies for mod-only matching
+            CurrentModRegistration.ModRegistrationGuidString = "b0d8fc16-1613-4899-bd15-f5036a6468d3";
+
             TheOtherRolesPlugin.Logger.LogInfo("Loading TOR completed!");
         }
     }
