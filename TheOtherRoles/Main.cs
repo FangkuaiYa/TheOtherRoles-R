@@ -1,13 +1,14 @@
 ﻿global using Il2CppInterop.Runtime;
 global using Il2CppInterop.Runtime.Attributes;
+global using Il2CppInterop.Runtime.Injection;
 global using Il2CppInterop.Runtime.InteropTypes;
 global using Il2CppInterop.Runtime.InteropTypes.Arrays;
-global using Il2CppInterop.Runtime.Injection;
 global using TheOtherRoles.Roles;
 global using TheOtherRoles.Roles.Crewmate;
 global using TheOtherRoles.Roles.Impostor;
-global using TheOtherRoles.Roles.Neutral;
 global using TheOtherRoles.Roles.Modifier;
+global using TheOtherRoles.Roles.Neutral;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,8 +23,6 @@ using Hazel;
 using Il2CppSystem.Security.Cryptography;
 using Il2CppSystem.Text;
 using InnerNet;
-using Reactor.Networking;
-using Reactor.Networking.Attributes;
 using TheOtherRoles.Modules;
 using TheOtherRoles.Modules.CustomHats;
 using TheOtherRoles.Patches;
@@ -37,7 +36,6 @@ namespace TheOtherRoles;
 [BepInPlugin(Id, "The Other Roles Reactivated", VersionString)]
 [BepInDependency(SubmergedCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
 [BepInProcess("Among Us.exe")]
-[ReactorModFlags(ModFlags.RequireOnAllClients)]
 public class TheOtherRolesPlugin : BasePlugin
 {
     public const string Id = "me.eisbison.theotherroles";
@@ -67,17 +65,15 @@ public class TheOtherRolesPlugin : BasePlugin
     public static ConfigEntry<bool> EnableHorseMode { get; set; }
     public static ConfigEntry<bool> ShowVentsOnMap { get; set; }
     public static ConfigEntry<bool> ShowChatNotifications { get; set; }
-    public static ConfigEntry<string> Ip { get; set; }
-    public static ConfigEntry<ushort> Port { get; set; }
     public static ConfigEntry<string> ShowPopUpVersion { get; set; }
 
 
     // This is part of the Mini.RegionInstaller, Licensed under GPLv3
     // file="RegionInstallPlugin.cs" company="miniduikboot">
-    /*public static void UpdateRegions() {
+    public static void UpdateRegions() {
         ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
         var regions = new IRegionInfo[] {
-            new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, Ip.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", Ip.Value, Port.Value, false) })).CastFast<IRegionInfo>()
+            new StaticHttpRegionInfo("TheOtherRoles Asia", StringNames.NoTranslation, "imp.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("TheOtherRoles Asia", "https://imp.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>()
         };
 
         IRegionInfo currentRegion = serverManager.CurrentRegion;
@@ -97,7 +93,7 @@ public class TheOtherRolesPlugin : BasePlugin
             Logger.LogDebug("Resetting previous region");
             serverManager.SetRegion(currentRegion);
         }
-    }*/
+    }
 
     public override void Load()
     {
@@ -119,12 +115,10 @@ public class TheOtherRolesPlugin : BasePlugin
         ShowVentsOnMap = Config.Bind("Custom", "Show vent positions on minimap", false);
         ShowChatNotifications = Config.Bind("Custom", "Show Chat Notifications", true);
 
-        Ip = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
-        Port = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
         defaultRegions = ServerManager.DefaultRegions;
-        // Removes vanilla Servers
-        ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
-        // UpdateRegions();
+        // Removes vanilla Servers  (Adding AMCI can relax some restrictions, but it is still being tested)
+        // ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
+        UpdateRegions();
 
         // Reactor Credits (future use?)
         // Reactor.Utilities.ReactorCredits.Register("TheOtherRoles-R", VersionString, isBeta, location => location == Reactor.Utilities.ReactorCredits.Location.PingTracker);
@@ -143,8 +137,8 @@ public class TheOtherRolesPlugin : BasePlugin
         _ = CustomRoleManager.loadReadme();
         AddToKillDistanceSetting.addKillDistance();
 
-        // AMCI: Register mod GUID so Among Us tags our lobbies for mod-only matching
-        CurrentModRegistration.ModRegistrationGuidString = "b0d8fc16-1613-4899-bd15-f5036a6468d3";
+        // AMCI: Register mod GUID for mod-only matchmaking
+        AmciRegistration.Register();
 
         Logger.LogInfo("Loading TOR completed!");
     }
