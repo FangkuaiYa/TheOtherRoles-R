@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
-		<Version>4.8.0</Version>
+		<Version>5.0.0</Version>
 		<Description>TheOtherRoles</Description>
 		<Authors>Eisbison</Authors>
 		<LangVersion>latest</LangVersion>
@@ -20,9 +20,21 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="Resources\**" />
+		<EmbeddedResource Include="Resources\**" Exclude="Resources\SoundEffects\toraudio_Win;Resources\SoundEffects\toraudio_And;Resources\IntroAnimation\intro_Win;Resources\IntroAnimation\intro_And;Resources\Animation\animation_Win;Resources\Animation\animation_And" />
 	</ItemGroup>
 
+	<ItemGroup Condition="'$(Platform)' == 'Windows'">
+		<EmbeddedResource Include="Resources\SoundEffects\toraudio_Win" Link="Resources\SoundEffects\toraudio" />
+		<EmbeddedResource Include="Resources\IntroAnimation\intro_Win" Link="Resources\IntroAnimation\intro" />
+		<EmbeddedResource Include="Resources\Animation\animation_Win" Link="Resources\Animation\animation" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(Platform)' == 'Android'">
+		<EmbeddedResource Include="Resources\SoundEffects\toraudio_And" Link="Resources\SoundEffects\toraudio" />
+		<EmbeddedResource Include="Resources\IntroAnimation\intro_And" Link="Resources\IntroAnimation\intro" />
+		<EmbeddedResource Include="Resources\Animation\animation_And" Link="Resources\Animation\animation" />
+	</ItemGroup>
+	
 	<ItemGroup>
 		<PackageReference Include="AmongUs.GameLibs.Android" Version="2026.8.18" Condition="'$(Platform)' == 'Android'" />
 		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" Condition="'$(Platform)' == 'Windows'" />

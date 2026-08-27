@@ -1,7 +1,8 @@
-using System.Reflection;
+using AmongUs.GameOptions;
 using AmongUs.Matchmaking;
 using HarmonyLib;
 using InnerNet;
+using TheOtherRoles.Patches;
 
 namespace TheOtherRoles.Utilities
 {
@@ -11,7 +12,7 @@ namespace TheOtherRoles.Utilities
 
         public static void Register()
         {
-            ModGuid = Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.ToString();
+            ModGuid = GameStartManagerPatch.ModConstantGuid;
             CurrentModRegistration.ModRegistrationGuidString = ModGuid;
             TheOtherRolesPlugin.Logger.LogInfo($"[AMCI] Register(): GUID={ModGuid}");
         }
@@ -23,19 +24,6 @@ namespace TheOtherRoles.Utilities
             {
                 CurrentModRegistration.ModRegistrationGuidString = ModGuid;
                 ModManager.Instance.ShowModStamp();
-            }
-        }
-
-        [HarmonyPatch(typeof(CurrentModRegistration), nameof(CurrentModRegistration.TryGetModRegistrationGuid))]
-        public static class LocalGamePatch
-        {
-            public static void Postfix(ref bool __result)
-            {
-                if (__result && AmongUsClient.Instance != null
-                    && AmongUsClient.Instance.NetworkMode == NetworkModes.LocalGame)
-                {
-                    __result = false;
-                }
             }
         }
 
@@ -52,6 +40,31 @@ namespace TheOtherRoles.Utilities
                     {
                         filterSet.Filters.RemoveAt(i);
                     }
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HostGame), typeof(IGameOptions), typeof(GameFilterOptions))]
+        public static class LocalGamePatch
+        {
+            private static string _savedGuid;
+
+            public static void Prefix()
+            {
+                if (AmongUsClient.Instance != null
+                    && AmongUsClient.Instance.NetworkMode == NetworkModes.LocalGame)
+                {
+                    _savedGuid = CurrentModRegistration.ModRegistrationGuidString;
+                    CurrentModRegistration.ModRegistrationGuidString = "";
+                }
+            }
+
+            public static void Postfix()
+            {
+                if (_savedGuid != null)
+                {
+                    CurrentModRegistration.ModRegistrationGuidString = _savedGuid;
+                    _savedGuid = null;
                 }
             }
         }

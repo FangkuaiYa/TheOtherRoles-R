@@ -15,9 +15,6 @@ namespace TheOtherRoles.Modules;
 public class MainMenuPatch
 {
     private static bool horseButtonState = TORMapOptions.enableHorseMode;
-
-    //private static Sprite horseModeOffSprite = null;
-    //private static Sprite horseModeOnSprite = null;
     private static AnnouncementPopUp popUp;
 
     private static void Prefix(MainMenuManager __instance)
@@ -25,13 +22,13 @@ public class MainMenuPatch
         // Force Reload of SoundEffectHolder
         SoundEffectsManager.Load();
 
-        var template = GameObject.Find("ExitGameButton");
+        // var template = GameObject.Find("ExitGameButton");
         var template2 = GameObject.Find("CreditsButton");
-        if (template == null || template2 == null) return;
-        template.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
+        if (/*template == null || */template2 == null) return;
+        /*template.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
         template.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.625f, 0.5f);
         template.transform.FindChild("FontPlacer").transform.localScale = new Vector3(1.8f, 0.9f, 0.9f);
-        template.transform.FindChild("FontPlacer").transform.localPosition = new Vector3(-1.1f, 0f, 0f);
+        template.transform.FindChild("FontPlacer").transform.localPosition = new Vector3(-1.1f, 0f, 0f);*/
 
         template2.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
         template2.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.378f, 0.5f);
@@ -39,7 +36,7 @@ public class MainMenuPatch
         template2.transform.FindChild("FontPlacer").transform.localPosition = new Vector3(-1.1f, 0f, 0f);
 
 
-        var buttonDiscord = Object.Instantiate(template, template.transform.parent);
+        /*var buttonDiscord = Object.Instantiate(template, template.transform.parent);
         buttonDiscord.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
         buttonDiscord.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.542f, 0.5f);
 
@@ -48,12 +45,12 @@ public class MainMenuPatch
         var passiveButtonDiscord = buttonDiscord.GetComponent<PassiveButton>();
 
         passiveButtonDiscord.OnClick = new ButtonClickedEvent();
-        passiveButtonDiscord.OnClick.AddListener((Action)(() => Application.OpenURL("https://discord.gg/77RkMJHWsM")));
+        passiveButtonDiscord.OnClick.AddListener((Action)(() => Application.OpenURL("https://discord.gg/77RkMJHWsM")));*/
 
 
         // TOR credits button
-        if (template == null) return;
-        var creditsButton = Object.Instantiate(template, template.transform.parent);
+        if (template2 == null) return;
+        var creditsButton = Object.Instantiate(template2, template2.transform.parent);
 
         creditsButton.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
         creditsButton.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.462f, 0.5f);
@@ -80,9 +77,10 @@ public class MainMenuPatch
 
             popUp.gameObject.SetActive(true);
             var creditsString = @"<align=""center""><b>Team:</b>
-Mallöris    K3ndo    Bavari    Gendelo
+FangkuaiYa
 
 <b>Former Team Members:</b>
+Mallöris    K3ndo    Bavari    Gendelo
 Eisbison (GOAT)    Thunderstorm584    EndOfFile
 
 <b>Additional Devs:</b>
@@ -91,10 +89,6 @@ EnoPM    twix    NesTT
 <b>Github Contributors:</b>
 Alex2911    amsyarasyiq    MaximeGillot
 Psynomit    probablyadnf    JustASysAdmin
-
-<b>[https://discord.gg/77RkMJHWsM]Discord[] Moderators:</b>
-Draco Cordraconis    Streamblox (formerly)
-Thanks to all our discord helpers!
 
 Thanks to miniduikboot & GD for hosting modded servers (and so much more)
 

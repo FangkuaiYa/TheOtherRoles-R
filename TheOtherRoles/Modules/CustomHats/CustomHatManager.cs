@@ -35,12 +35,15 @@ public static class CustomHatManager
         get
         {
             var (owner, repository) = Repository;
-            return $"https://raw.githubusercontent.com/{owner}/{repository}/master";
+            return (Helpers.isChinese() ? "https://v6.gh-proxy.org/" : "") + $"https://raw.githubusercontent.com/{owner}/{repository}/master";
         }
     }
 
-    internal static string CustomSkinsDirectory =>
-        Path.Combine(Path.GetDirectoryName(Application.dataPath)!, ResourcesDirectory);
+#if ANDROID
+    internal static string CustomSkinsDirectory => Path.Combine(Application.persistentDataPath, ResourcesDirectory);
+#else
+    internal static string CustomSkinsDirectory => Path.Combine(Path.GetDirectoryName(Application.dataPath)!, ResourcesDirectory);
+#endif
 
     internal static string HatsDirectory => CustomSkinsDirectory;
 

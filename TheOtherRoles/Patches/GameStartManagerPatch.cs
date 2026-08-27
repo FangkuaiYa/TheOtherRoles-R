@@ -4,17 +4,17 @@ using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using Hazel;
-using InnerNet;
 using Reactor.Utilities.Extensions;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
-using Object = Il2CppSystem.Object;
 
 namespace TheOtherRoles.Patches;
 
 public class GameStartManagerPatch
 {
+    public const string ModConstantGuid = "430447e3-ac88-4aba-9dcd-fffc53ef732f"; // TOMO Changes are required every time it is published
+
     public static Dictionary<int, PlayerVersion> playerVersions = new();
     public static float timer = 600f;
     private static float kickingTimer;
@@ -397,7 +397,7 @@ public class GameStartManagerPatch
 
         public bool GuidMatches()
         {
-            return Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.Equals(guid);
+            return Guid.Parse(ModConstantGuid).Equals(guid);
         }
     }
 }

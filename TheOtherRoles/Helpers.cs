@@ -713,6 +713,7 @@ public static class Helpers
 
     public static void shareGameVersion()
     {
+        var modGuid = Guid.Parse(GameStartManagerPatch.ModConstantGuid);
         var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
             (byte)CustomRPC.VersionHandshake, SendOption.Reliable);
         writer.Write((byte)TheOtherRolesPlugin.Version.Major);
@@ -721,11 +722,11 @@ public static class Helpers
         writer.Write(AmongUsClient.Instance.AmHost ? GameStartManagerPatch.timer : -1f);
         writer.WritePacked(AmongUsClient.Instance.ClientId);
         writer.Write((byte)(TheOtherRolesPlugin.Version.Revision < 0 ? 0xFF : TheOtherRolesPlugin.Version.Revision));
-        writer.Write(Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId.ToByteArray());
+        writer.Write(modGuid.ToByteArray());
         AmongUsClient.Instance.FinishRpcImmediately(writer);
         RPCProcedure.versionHandshake(TheOtherRolesPlugin.Version.Major, TheOtherRolesPlugin.Version.Minor,
             TheOtherRolesPlugin.Version.Build, TheOtherRolesPlugin.Version.Revision,
-            Assembly.GetExecutingAssembly().ManifestModule.ModuleVersionId, AmongUsClient.Instance.ClientId);
+            modGuid, AmongUsClient.Instance.ClientId);
     }
 
     public static List<PlayerControl> getKillerTeamMembers(PlayerControl player)

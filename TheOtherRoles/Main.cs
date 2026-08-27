@@ -116,8 +116,8 @@ public class TheOtherRolesPlugin : BasePlugin
         ShowChatNotifications = Config.Bind("Custom", "Show Chat Notifications", true);
 
         defaultRegions = ServerManager.DefaultRegions;
-        // Removes vanilla Servers
-        ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
+        // Removes vanilla Servers   More extensive testing is needed because I removed the Reactor, so after testing, TOR can temporarily run on the Innerslot server
+        // ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
         UpdateRegions();
 
         // Reactor Credits (future use?)
