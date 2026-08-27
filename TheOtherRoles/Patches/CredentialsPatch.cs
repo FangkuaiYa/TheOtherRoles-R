@@ -9,6 +9,7 @@ using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace TheOtherRoles.Patches;
 
@@ -204,11 +205,19 @@ Design by <color=#FCCE03FF>Bavari</color>";
 
         public static async Task loadMOTDs()
         {
-            var client = new HttpClient();
-            var response = await client.GetAsync("https://api.amongusclub.cn/TheOtherRoles-R/motd.txt");
-            response.EnsureSuccessStatusCode();
-            var motds = await response.Content.ReadAsStringAsync();
-            foreach (var line in motds.Split("\n", StringSplitOptions.RemoveEmptyEntries)) MOTD.motds.Add(line);
+            var request = UnityWebRequest.Get("https://api.amongusclub.cn/TheOtherRoles-R/motd.txt");
+            request.SendWebRequest();
+            // Wait for the request to complete
+            while (!request.isDone) { }
+
+            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            {
+                TheOtherRolesPlugin.Logger.LogError($"Couldn't fetch mod news from Server: {request.error}");
+                return;
+            }
+            string motdsText = request.downloadHandler.text;
+            foreach (string line in motdsText.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                MOTD.motds.Add(line.Trim());
         }
     }
 }

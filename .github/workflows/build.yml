@@ -85,9 +85,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            ${{ runner.temp }}/TheOtherRoles_Steam.zip
-            ${{ runner.temp }}/TheOtherRoles_MSStore_Epic.zip
             ${{ runner.temp }}/windows/TheOtherRoles.dll
             ${{ runner.temp }}/TheOtherRoles_Android.dll
+            ${{ runner.temp }}/TheOtherRoles_Steam.zip
+            ${{ runner.temp }}/TheOtherRoles_MSStore_Epic.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
