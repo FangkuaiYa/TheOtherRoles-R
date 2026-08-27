@@ -17,7 +17,12 @@ using Random = System.Random;
 
 namespace TheOtherRoles.Patches;
 
+#if ANDROID
+[HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartSFX))]
+[HarmonyPatch(typeof(FungleShipStatus), nameof(FungleShipStatus.StartSFX))]
+#else
 [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
+#endif
 internal class IntroCutsceneOnDestroyPatch
 {
     public static PoolablePlayer playerPrefab;
@@ -455,8 +460,12 @@ internal class IntroPatch
         }
     }
 
+#if ANDROID
+    [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__40), "MoveNext")]
+#else
+    [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__41), "MoveNext")]
+#endif
 
-    [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__41), nameof(IntroCutscene._ShowRole_d__41.MoveNext))]
     private class SetUpRoleTextPatch
     {
         private static int seed;
@@ -514,6 +523,15 @@ internal class IntroPatch
             }
         }
 
+#if ANDROID
+        public static bool Prefix(IntroCutscene._ShowRole_d__40 __instance)
+        {
+            seed = rnd.Next(5000);
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(1f,
+                new Action<float>(p => { SetRoleTexts(__instance.__4__this); })));
+            return true;
+        }
+#else
         public static bool Prefix(IntroCutscene._ShowRole_d__41 __instance)
         {
             seed = rnd.Next(5000);
@@ -521,6 +539,7 @@ internal class IntroPatch
                 new Action<float>(p => { SetRoleTexts(__instance.__4__this); })));
             return true;
         }
+#endif
     }
 
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.BeginCrewmate))]

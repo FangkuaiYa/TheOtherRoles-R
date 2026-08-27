@@ -1685,7 +1685,7 @@ internal class PlayerControlSetCoolDownPatch
     }
 }
 
-[HarmonyPatch(typeof(KillAnimation._CoPerformKill_d__2), nameof(KillAnimation._CoPerformKill_d__2.MoveNext))]
+[HarmonyPatch(typeof(KillAnimation._CoPerformKill_d__2), "MoveNext")]
 internal class KillAnimationCoPerformKillPatch
 {
     public static bool hideNextAnimation;

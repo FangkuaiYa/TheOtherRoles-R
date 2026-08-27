@@ -1171,7 +1171,7 @@ public class RpcSyncSettingsPatch
     }
 }
 
-[HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), nameof(PlayerPhysics._CoSpawnPlayer_d__42.MoveNext))]
+[HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), "MoveNext")]
 public class PlayerPhysicsCoSpawnPlayerPatch
 {
     public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance)

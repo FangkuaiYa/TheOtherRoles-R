@@ -501,7 +501,12 @@ internal class PropHunt
             __instance.body.velocity *= speedboostRatio;
     }
 
+#if ANDROID
+    [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.StartSFX))]
+    [HarmonyPatch(typeof(FungleShipStatus), nameof(FungleShipStatus.StartSFX))]
+#else
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.OnDestroy))]
+#endif
     [HarmonyPostfix]
     public static void IntroCutsceneDestroyPatch(IntroCutscene __instance)
     {

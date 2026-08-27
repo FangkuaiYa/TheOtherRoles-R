@@ -1,6 +1,7 @@
 using System.Reflection;
 using AmongUs.Matchmaking;
 using HarmonyLib;
+using InnerNet;
 
 namespace TheOtherRoles.Utilities
 {
@@ -22,6 +23,19 @@ namespace TheOtherRoles.Utilities
             {
                 CurrentModRegistration.ModRegistrationGuidString = ModGuid;
                 ModManager.Instance.ShowModStamp();
+            }
+        }
+
+        [HarmonyPatch(typeof(CurrentModRegistration), nameof(CurrentModRegistration.TryGetModRegistrationGuid))]
+        public static class LocalGamePatch
+        {
+            public static void Postfix(ref bool __result)
+            {
+                if (__result && AmongUsClient.Instance != null
+                    && AmongUsClient.Instance.NetworkMode == NetworkModes.LocalGame)
+                {
+                    __result = false;
+                }
             }
         }
 

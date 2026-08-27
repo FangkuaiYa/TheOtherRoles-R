@@ -19,9 +19,8 @@ public class GameStartManagerPatch
     public static float timer = 600f;
     private static float kickingTimer;
     private static bool versionSent;
-    private static string lobbyCodeText = "";
 
-    [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), nameof(PlayerPhysics._CoSpawnPlayer_d__42.MoveNext))]
+    [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), "MoveNext")]
     public class PlayerPhysicsCoSpawnPlayerPatch
     {
         public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance)
@@ -42,12 +41,6 @@ public class GameStartManagerPatch
             timer = 600f;
             // Reset kicking timer
             kickingTimer = 0f;
-            // Copy lobby code
-            var code = GameCode.IntToGameName(AmongUsClient.Instance.GameId);
-            GUIUtility.systemCopyBuffer = code;
-            lobbyCodeText =
-                FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoomCode,
-                    new Il2CppReferenceArray<Object>(0)) + "\r\n" + code;
         }
     }
 

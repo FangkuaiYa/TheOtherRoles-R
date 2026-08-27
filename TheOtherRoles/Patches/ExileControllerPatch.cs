@@ -335,8 +335,7 @@ internal class ExileControllerWrapUpPatch
         }
     }
 
-    [HarmonyPatch(typeof(AirshipExileController._WrapUpAndSpawn_d__11),
-        nameof(AirshipExileController._WrapUpAndSpawn_d__11.MoveNext))]
+    [HarmonyPatch(typeof(AirshipExileController._WrapUpAndSpawn_d__11), "MoveNext")]
     private class AirshipExileControllerPatch
     {
         public static void Postfix(AirshipExileController._WrapUpAndSpawn_d__11 __instance)

@@ -1,39 +1,45 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-    <PropertyGroup>
-        <TargetFramework>net6.0</TargetFramework>
-        <Version>4.8.0</Version>
-        <Description>TheOtherRoles</Description>
-        <Authors>Eisbison</Authors>
-        <LangVersion>latest</LangVersion>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <Platforms>AnyCPU</Platforms>
-    </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net6.0</TargetFramework>
+		<Version>4.8.0</Version>
+		<Description>TheOtherRoles</Description>
+		<Authors>Eisbison</Authors>
+		<LangVersion>latest</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+		<PlatformTarget>AnyCPU</PlatformTarget>
+		<Platforms>Windows;Android</Platforms>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <EmbeddedResource Include="Resources\**" />
-    </ItemGroup>
+	<PropertyGroup Condition="'$(Platform)' == 'Windows'">
+		<DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" />
-        <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" />
-        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" />
-    </ItemGroup>
+	<PropertyGroup Condition="'$(Platform)' == 'Android'">
+		<DefineConstants>$(DefineConstants);ANDROID</DefineConstants>
+	</PropertyGroup>
 
-    <ItemGroup>
-        <Folder Include="Players\" />
-    </ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\**" />
+	</ItemGroup>
 
-    <Target Name="Date" BeforeTargets="BeforeBuild">  <!--Will make the compile time available s.t. we can let betas expire-->
-        <WriteLinesToFile File="$(IntermediateOutputPath)gen.cs" Lines="static partial class Builtin { public static long CompileTime = $([System.DateTime]::UtcNow.Ticks) %3B }" Overwrite="true" />
-        <ItemGroup>
-            <Compile Include="$(IntermediateOutputPath)gen.cs" />
-        </ItemGroup>
-    </Target>
+	<ItemGroup>
+		<PackageReference Include="AmongUs.GameLibs.Android" Version="2026.8.18" Condition="'$(Platform)' == 'Android'" />
+		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" Condition="'$(Platform)' == 'Windows'" />
+		<PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" />
+		<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" />
+	</ItemGroup>
 
-    <Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="Exists('$(AmongUsLatest)/BepInEx/plugins/')">
-        <Message Text="Second occurrence" />
-        <Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheOtherRoles.dll" DestinationFolder="$(AmongUsLatest)/BepInEx/plugins/" />
-    </Target>
+	<Target Name="Date" BeforeTargets="BeforeBuild">
+		<!--Will make the compile time available s.t. we can let betas expire-->
+		<WriteLinesToFile File="$(IntermediateOutputPath)gen.cs" Lines="static partial class Builtin { public static long CompileTime = $([System.DateTime]::UtcNow.Ticks) %3B }" Overwrite="true" />
+		<ItemGroup>
+			<Compile Include="$(IntermediateOutputPath)gen.cs" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="Exists('$(AmongUsLatest)/BepInEx/plugins/')">
+		<Message Text="Second occurrence" />
+		<Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheOtherRoles.dll" DestinationFolder="$(AmongUsLatest)/BepInEx/plugins/" />
+	</Target>
 </Project>

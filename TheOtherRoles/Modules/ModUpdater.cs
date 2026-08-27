@@ -168,6 +168,7 @@ public class ModUpdater : MonoBehaviour
         if (latestRelease == null || latestRelease.Version <= TheOtherRolesPlugin.Version)
             return;
 
+#if WINDOWS
         var template = GameObject.Find("ExitGameButton");
         if (!template) return;
 
@@ -189,6 +190,7 @@ public class ModUpdater : MonoBehaviour
         StartCoroutine(Effects.Lerp(0.1f, (Action<float>)(p => text.SetText(t))));
         passiveButton.OnMouseOut.AddListener((Action)(() => text.color = Color.red));
         passiveButton.OnMouseOver.AddListener((Action)(() => text.color = Color.white));
+#endif
         var announcement =
             $"<size=150%>A new THE OTHER ROLES update to {latestRelease.Tag} is available</size>\n{latestRelease.Description}";
         var mgr = FindObjectOfType<MainMenuManager>(true);
