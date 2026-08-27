@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Threading.Tasks;
 using AmongUs.GameOptions;
 using HarmonyLib;
@@ -38,34 +37,12 @@ Design by <color=#FCCE03FF>Bavari</color>";
     {
         private static void Postfix(PingTracker __instance)
         {
-            var position = __instance.GetComponent<AspectPosition>();
-            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
+            var gameModeText = "";
+            if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
             {
-                var gameModeText = "";
-                if (HideNSeek.isHideNSeekGM) gameModeText = "Hide 'N Seek";
-                else if (HandleGuesser.isGuesserGm) gameModeText = "Guesser";
-                else if (PropHunt.isPropHuntGM) gameModeText = "Prop Hunt";
-                if (gameModeText != "")
-                    gameModeText = Helpers.cs(Color.yellow, gameModeText) + (MeetingHud.Instance ? " " : "\n");
-                __instance.text.text =
-                    $"<size=130%><color=#ff351f>TheOtherRoles</color></size> v{TheOtherRolesPlugin.Version + (TheOtherRolesPlugin.isBeta ? "-BETA" : "")}\n{gameModeText}" +
-                    __instance.text.text;
-                __instance.text.alignment = TextAlignmentOptions.Top;
-                position.Alignment = AspectPosition.EdgeAlignments.Top;
-                position.DistanceFromEdge = new Vector3(1.4f, 0.11f, 0);
-            }
-            else
-            {
-                var gameModeText = "";
                 if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek) gameModeText = "Hide 'N Seek";
                 else if (TORMapOptions.gameMode == CustomGamemodes.Guesser) gameModeText = "Guesser";
                 else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt) gameModeText = "Prop Hunt";
-                if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText);
-
-                __instance.text.text = $"{fullCredentialsVersion}\n{fullCredentials}\n {__instance.text.text}";
-                position.Alignment = AspectPosition.EdgeAlignments.LeftTop;
-                __instance.text.alignment = TextAlignmentOptions.TopLeft;
-                position.DistanceFromEdge = new Vector3(0.5f, 0.11f);
 
                 try
                 {
@@ -82,8 +59,23 @@ Design by <color=#FCCE03FF>Bavari</color>";
                 {
                 }
             }
+            else
+            {
+                if (HideNSeek.isHideNSeekGM) gameModeText = "Hide 'N Seek";
+                else if (HandleGuesser.isGuesserGm) gameModeText = "Guesser";
+                else if (PropHunt.isPropHuntGM) gameModeText = "Prop Hunt";
+            }
 
-            position.AdjustPosition();
+            if (gameModeText != "")
+                gameModeText = "- " + Helpers.cs(Color.yellow, gameModeText);
+
+            var myText =
+                $"<align=center><size=60%><space=3em><color=#ff351f>TheOtherRoles</color>v{TheOtherRolesPlugin.Version + (TheOtherRolesPlugin.isBeta ? "-BETA" : "")} {gameModeText}</size></align>";
+
+            if (!__instance.text.text.EndsWith("\n"))
+                __instance.text.text += "\n";
+
+            __instance.text.text += myText;
         }
     }
 
@@ -106,13 +98,10 @@ Design by <color=#FCCE03FF>Bavari</color>";
             torLogo.transform.localPosition = new Vector3(-0.4f, 1f, 5f);
 
             renderer = torLogo.AddComponent<SpriteRenderer>();
-            loadSprites();
-            renderer.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Banner.png", 300f);
-
             instance = __instance;
-            loadSprites();
-            // renderer.sprite = TORMapOptions.enableHorseMode ? horseBannerSprite : bannerSprite;
-            renderer.sprite = EventUtility.isEnabled ? banner2Sprite : bannerSprite;
+            renderer.sprite = EventUtility.isEnabled
+                ? Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Banner2.png", 300f)
+                : Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Banner.png", 300f);
             var credentialObject = new GameObject("credentialsTOR");
             var credentials = credentialObject.AddComponent<TextMeshPro>();
             credentials.SetText(
@@ -138,36 +127,6 @@ Design by <color=#FCCE03FF>Bavari</color>";
             mat.shaderKeywords = new[] { "OUTLINE_ON" };
             motdText.SetOutlineColor(Color.white);
             motdText.SetOutlineThickness(0.025f);
-        }
-
-        public static void loadSprites()
-        {
-            if (bannerSprite == null)
-                bannerSprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Banner.png", 300f);
-            if (banner2Sprite == null)
-                banner2Sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Banner2.png", 300f);
-            if (horseBannerSprite == null)
-                horseBannerSprite =
-                    Helpers.loadSpriteFromResources("TheOtherRoles.Resources.bannerTheHorseRoles.png", 300f);
-        }
-
-        public static void updateSprite()
-        {
-            loadSprites();
-            if (renderer != null)
-            {
-                var fadeDuration = 1f;
-                instance.StartCoroutine(Effects.Lerp(fadeDuration, new Action<float>(p =>
-                {
-                    renderer.color = new Color(1, 1, 1, 1 - p);
-                    if (p == 1)
-                    {
-                        renderer.sprite = TORMapOptions.enableHorseMode ? horseBannerSprite : bannerSprite;
-                        instance.StartCoroutine(Effects.Lerp(fadeDuration,
-                            new Action<float>(p => { renderer.color = new Color(1, 1, 1, p); })));
-                    }
-                })));
-            }
         }
     }
 
@@ -208,16 +167,20 @@ Design by <color=#FCCE03FF>Bavari</color>";
             var request = UnityWebRequest.Get("https://api.amongusclub.cn/TheOtherRoles-R/motd.txt");
             request.SendWebRequest();
             // Wait for the request to complete
-            while (!request.isDone) { }
+            while (!request.isDone)
+            {
+            }
 
-            if (request.result == UnityWebRequest.Result.ConnectionError || request.result == UnityWebRequest.Result.ProtocolError)
+            if (request.result == UnityWebRequest.Result.ConnectionError ||
+                request.result == UnityWebRequest.Result.ProtocolError)
             {
                 TheOtherRolesPlugin.Logger.LogError($"Couldn't fetch mod news from Server: {request.error}");
                 return;
             }
-            string motdsText = request.downloadHandler.text;
-            foreach (string line in motdsText.Split('\n', StringSplitOptions.RemoveEmptyEntries))
-                MOTD.motds.Add(line.Trim());
+
+            var motdsText = request.downloadHandler.text;
+            foreach (var line in motdsText.Split('\n', StringSplitOptions.RemoveEmptyEntries))
+                motds.Add(line.Trim());
         }
     }
 }

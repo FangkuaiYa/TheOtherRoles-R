@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
+using TheOtherRoles.Utilities;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -35,14 +36,16 @@ public static class CustomHatManager
         get
         {
             var (owner, repository) = Repository;
-            return (Helpers.isChinese() ? "https://v6.gh-proxy.org/" : "") + $"https://raw.githubusercontent.com/{owner}/{repository}/master";
+            return (Helpers.isChinese() ? "https://v6.gh-proxy.org/" : "") +
+                   $"https://raw.githubusercontent.com/{owner}/{repository}/master";
         }
     }
 
 #if ANDROID
     internal static string CustomSkinsDirectory => Path.Combine(Application.persistentDataPath, ResourcesDirectory);
 #else
-    internal static string CustomSkinsDirectory => Path.Combine(Path.GetDirectoryName(Application.dataPath)!, ResourcesDirectory);
+    internal static string CustomSkinsDirectory =>
+        Path.Combine(Path.GetDirectoryName(Application.dataPath)!, ResourcesDirectory);
 #endif
 
     internal static string HatsDirectory => CustomSkinsDirectory;
@@ -135,7 +138,14 @@ public static class CustomHatManager
     {
         var texture = Helpers.loadTextureFromDisk(Path.Combine(HatsDirectory, path));
         if (texture == null)
-            texture = Helpers.loadTextureFromResources(path);
+        {
+            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
+            if (stream == null) return null;
+            var data = stream.ReadFully();
+            texture = new Texture2D(0, 0, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+            texture.LoadImage(data, false);
+        }
+
         if (texture == null) return null;
         var sprite = Sprite.Create(texture,
             new Rect(0, 0, texture.width, texture.height),

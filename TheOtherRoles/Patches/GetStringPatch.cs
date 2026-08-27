@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using HarmonyLib;
 using Il2CppSystem;
+using TheOtherRoles.Modules;
 
 namespace TheOtherRoles.Patches;
 

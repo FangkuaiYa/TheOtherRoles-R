@@ -8,10 +8,11 @@ global using TheOtherRoles.Roles.Crewmate;
 global using TheOtherRoles.Roles.Impostor;
 global using TheOtherRoles.Roles.Modifier;
 global using TheOtherRoles.Roles.Neutral;
-
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using AmongUs.Data;
 using AmongUs.Data.Player;
 using BepInEx;
@@ -27,6 +28,8 @@ using TheOtherRoles.Modules;
 using TheOtherRoles.Modules.CustomHats;
 using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
+using TheOtherRoles.Voice;
+using TheOtherRoles.Voice.Game;
 using UnityEngine;
 using Object = UnityEngine.Object;
 using Random = System.Random;
@@ -40,7 +43,9 @@ public class TheOtherRolesPlugin : BasePlugin
 {
     public const string Id = "me.eisbison.theotherroles";
     public const string VersionString = "5.0.0";
-    public static bool isBeta = false;
+
+    private const string VoiceResPrefix = "Lib.";
+    public static bool isBeta = true;
 
     public static Version Version = Version.Parse(VersionString);
     internal static ManualLogSource Logger;
@@ -49,6 +54,14 @@ public class TheOtherRolesPlugin : BasePlugin
     public static int optionsPage = 2;
 
     public static Sprite ModStamp;
+
+    private static readonly Dictionary<string, Assembly> _voiceAsmCache
+        = new(StringComparer.OrdinalIgnoreCase);
+
+    static TheOtherRolesPlugin()
+    {
+        AppDomain.CurrentDomain.AssemblyResolve += ResolveEmbeddedVoiceAssembly;
+    }
 
     public Harmony Harmony { get; } = new(Id);
 
@@ -65,29 +78,54 @@ public class TheOtherRolesPlugin : BasePlugin
     public static ConfigEntry<bool> ShowChatNotifications { get; set; }
     public static ConfigEntry<string> ShowPopUpVersion { get; set; }
 
+    private static Assembly ResolveEmbeddedVoiceAssembly(object sender, ResolveEventArgs args)
+    {
+        var shortName = new AssemblyName(args.Name).Name;
+        if (shortName == null) return null;
+        if (_voiceAsmCache.TryGetValue(shortName, out var cached)) return cached;
+
+        var resourceName = VoiceResPrefix + shortName + ".dll";
+        var asm = Assembly.GetExecutingAssembly();
+        using var stream = asm.GetManifestResourceStream(resourceName);
+        if (stream == null) return null;
+
+        using var ms = new MemoryStream();
+        stream.CopyTo(ms);
+        var loaded = Assembly.Load(ms.ToArray());
+        _voiceAsmCache[shortName] = loaded;
+        return loaded;
+    }
+
 
     // This is part of the Mini.RegionInstaller, Licensed under GPLv3
     // file="RegionInstallPlugin.cs" company="miniduikboot">
-    public static void UpdateRegions() {
-        ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
-        var regions = new IRegionInfo[] {
-            new StaticHttpRegionInfo("TheOtherRoles Asia", StringNames.NoTranslation, "imp.amongusclub.cn", new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("TheOtherRoles Asia", "https://imp.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>()
+    public static void UpdateRegions()
+    {
+        var serverManager = FastDestroyableSingleton<ServerManager>.Instance;
+        var regions = new[]
+        {
+            new StaticHttpRegionInfo("TheOtherRoles Asia", StringNames.NoTranslation, "imp.amongusclub.cn",
+                new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1]
+                    { new("TheOtherRoles Asia", "https://imp.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>()
         };
 
-        IRegionInfo currentRegion = serverManager.CurrentRegion;
+        var currentRegion = serverManager.CurrentRegion;
         Logger.LogInfo($"Adding {regions.Length} regions");
-        foreach (IRegionInfo region in regions) {
+        foreach (var region in regions)
             if (region == null)
+            {
                 Logger.LogError("Could not add region");
-            else {
+            }
+            else
+            {
                 if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase))
                     currentRegion = region;
                 serverManager.AddOrUpdateRegion(region);
             }
-        }
 
         // AU remembers the previous region that was set, so we need to restore it
-        if (currentRegion != null) {
+        if (currentRegion != null)
+        {
             Logger.LogDebug("Resetting previous region");
             serverManager.SetRegion(currentRegion);
         }
@@ -137,6 +175,13 @@ public class TheOtherRolesPlugin : BasePlugin
         // AMCI: Register mod GUID for mod-only matchmaking
         AmciRegistration.Register();
 
+        // Initialize voice chat system
+        VoiceConfig.Init(Config);
+        ClassInjector.RegisterTypeInIl2Cpp<VoiceSettingsWindow>();
+        ClassInjector.RegisterTypeInIl2Cpp<PublicLobbyWindow>();
+        ClassInjector.RegisterTypeInIl2Cpp<PlayerVolumeWindow>();
+        VCManager.RegisterSceneHook();
+        TorVoiceHudState.Init();
         Logger.LogInfo("Loading TOR completed!");
     }
 }

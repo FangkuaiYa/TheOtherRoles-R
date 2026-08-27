@@ -3,13 +3,15 @@ using AmongUs.Data;
 using Assets.InnerNet;
 using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
+using TheOtherRoles.Voice;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.SceneManagement;
 using static UnityEngine.UI.Button;
 using Object = UnityEngine.Object;
 
-namespace TheOtherRoles.Modules;
+namespace TheOtherRoles.Patches;
 
 [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
 public class MainMenuPatch
@@ -24,7 +26,7 @@ public class MainMenuPatch
 
         // var template = GameObject.Find("ExitGameButton");
         var template2 = GameObject.Find("CreditsButton");
-        if (/*template == null || */template2 == null) return;
+        if ( /*template == null || */template2 == null) return;
         /*template.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
         template.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.625f, 0.5f);
         template.transform.FindChild("FontPlacer").transform.localScale = new Vector3(1.8f, 0.9f, 0.9f);
@@ -203,5 +205,52 @@ License: TheOtherRoles is licensed under the [https://github.com/TheOtherRolesAU
                 PropHuntButtonText.SetText("TOR Prop Hunt");
             })));
         }));
+    }
+}
+
+[HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Awake))]
+public static class MainMenuCoffeeButtonPatch
+{
+    private static Sprite _coffeeSprite;
+
+    public static void Postfix(MainMenuManager __instance)
+    {
+        if (_coffeeSprite == null)
+            _coffeeSprite =
+                TorVoiceHudState.LoadSpriteFromResources("TheOtherRoles.Voice.Resources.CoffeeButton.png", 100f);
+        if (_coffeeSprite == null) return;
+
+        var go = new GameObject("CoffeeButton");
+        go.transform.SetParent(__instance.transform, false);
+        go.transform.localPosition = Vector3.zero;
+        go.layer = LayerMask.NameToLayer("UI");
+
+        var sr = go.AddComponent<SpriteRenderer>();
+        sr.sprite = _coffeeSprite;
+        sr.sortingOrder = 32767;
+
+        var aspect = go.AddComponent<AspectPosition>();
+        aspect.Alignment = AspectPosition.EdgeAlignments.RightBottom;
+        aspect.parentCam = HudManager.InstanceExists ? HudManager.Instance.UICamera : Camera.main;
+        aspect.DistanceFromEdge = new Vector3(0.34f, 1.6f, -6f);
+        aspect.AdjustPosition();
+
+        var button = go.AddComponent<PassiveButton>();
+        button.OnClick = new ButtonClickedEvent();
+        button.OnClick.AddListener((Action)(() =>
+        {
+            var url = Helpers.isChinese()
+                ? "https://amongusclub.cn/archives/co-fi"
+                : "https://ko-fi.com/fangkuaiya";
+            Constants.OpenURL(url);
+        }));
+        button.OnMouseOver = new UnityEvent();
+        button.OnMouseOver.AddListener((Action)(() => sr.color = Color.green));
+        button.OnMouseOut = new UnityEvent();
+        button.OnMouseOut.AddListener((Action)(() => sr.color = Color.white));
+
+        // Collider for click detection
+        var col = go.AddComponent<CircleCollider2D>();
+        col.radius = 0.25f;
     }
 }

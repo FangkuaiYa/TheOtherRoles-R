@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Reactor.Utilities.Extensions;
 using TheOtherRoles.Objects;
+using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;

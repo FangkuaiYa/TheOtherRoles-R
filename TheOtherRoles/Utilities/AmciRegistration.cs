@@ -4,68 +4,65 @@ using HarmonyLib;
 using InnerNet;
 using TheOtherRoles.Patches;
 
-namespace TheOtherRoles.Utilities
+namespace TheOtherRoles.Utilities;
+
+public static class AmciRegistration
 {
-    public static class AmciRegistration
+    public static string ModGuid { get; private set; } = "";
+
+    public static void Register()
     {
-        public static string ModGuid { get; private set; } = "";
+        ModGuid = GameStartManagerPatch.ModConstantGuid;
+        CurrentModRegistration.ModRegistrationGuidString = ModGuid;
+        TheOtherRolesPlugin.Logger.LogInfo($"[AMCI] Register(): GUID={ModGuid}");
+    }
 
-        public static void Register()
+    [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
+    public static class StampPatch
+    {
+        public static void Postfix()
         {
-            ModGuid = GameStartManagerPatch.ModConstantGuid;
             CurrentModRegistration.ModRegistrationGuidString = ModGuid;
-            TheOtherRolesPlugin.Logger.LogInfo($"[AMCI] Register(): GUID={ModGuid}");
+            ModManager.Instance.ShowModStamp();
         }
+    }
 
-        [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
-        public static class StampPatch
+    [HarmonyPatch(typeof(CurrentModRegistration),
+        nameof(CurrentModRegistration.UpdateFilterSetWithModRegistrationSettings))]
+    public static class EnsureGuidPatch
+    {
+        public static void Prefix(GameFilterSet filterSet)
         {
-            public static void Postfix()
+            CurrentModRegistration.ModRegistrationGuidString = ModGuid;
+
+            for (var i = filterSet.Filters.Count - 1; i >= 0; i--)
+                if (filterSet.Filters[i].Key == "mod")
+                    filterSet.Filters.RemoveAt(i);
+        }
+    }
+
+    [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HostGame), typeof(IGameOptions),
+        typeof(GameFilterOptions))]
+    public static class LocalGamePatch
+    {
+        private static string _savedGuid;
+
+        public static void Prefix()
+        {
+            if (AmongUsClient.Instance != null
+                && AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame)
             {
-                CurrentModRegistration.ModRegistrationGuidString = ModGuid;
-                ModManager.Instance.ShowModStamp();
+                _savedGuid = CurrentModRegistration.ModRegistrationGuidString;
+                CurrentModRegistration.ModRegistrationGuidString = "";
             }
         }
 
-        [HarmonyPatch(typeof(CurrentModRegistration), nameof(CurrentModRegistration.UpdateFilterSetWithModRegistrationSettings))]
-        public static class EnsureGuidPatch
+        public static void Postfix()
         {
-            public static void Prefix(GameFilterSet filterSet)
+            if (_savedGuid != null)
             {
-                CurrentModRegistration.ModRegistrationGuidString = ModGuid;
-
-                for (int i = filterSet.Filters.Count - 1; i >= 0; i--)
-                {
-                    if (filterSet.Filters[i].Key == "mod")
-                    {
-                        filterSet.Filters.RemoveAt(i);
-                    }
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(InnerNetClient), nameof(InnerNetClient.HostGame), typeof(IGameOptions), typeof(GameFilterOptions))]
-        public static class LocalGamePatch
-        {
-            private static string _savedGuid;
-
-            public static void Prefix()
-            {
-                if (AmongUsClient.Instance != null
-                    && AmongUsClient.Instance.NetworkMode == NetworkModes.LocalGame)
-                {
-                    _savedGuid = CurrentModRegistration.ModRegistrationGuidString;
-                    CurrentModRegistration.ModRegistrationGuidString = "";
-                }
-            }
-
-            public static void Postfix()
-            {
-                if (_savedGuid != null)
-                {
-                    CurrentModRegistration.ModRegistrationGuidString = _savedGuid;
-                    _savedGuid = null;
-                }
+                CurrentModRegistration.ModRegistrationGuidString = _savedGuid;
+                _savedGuid = null;
             }
         }
     }

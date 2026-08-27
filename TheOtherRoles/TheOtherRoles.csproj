@@ -1,52 +1,71 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<Version>5.0.0</Version>
-		<Description>TheOtherRoles</Description>
-		<Authors>Eisbison</Authors>
-		<LangVersion>latest</LangVersion>
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
-		<PlatformTarget>AnyCPU</PlatformTarget>
-		<Platforms>Windows;Android</Platforms>
-	</PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Version>5.0.0</Version>
+        <Description>TheOtherRoles</Description>
+        <Authors>Eisbison</Authors>
+        <LangVersion>latest</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+        <PlatformTarget>AnyCPU</PlatformTarget>
+        <Platforms>Windows;Android</Platforms>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Platform)' == 'Windows'">
-		<DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(Platform)' == 'Windows'">
+        <DefineConstants>$(DefineConstants);WINDOWS</DefineConstants>
+    </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Platform)' == 'Android'">
-		<DefineConstants>$(DefineConstants);ANDROID</DefineConstants>
-	</PropertyGroup>
+    <PropertyGroup Condition="'$(Platform)' == 'Android'">
+        <DefineConstants>$(DefineConstants);ANDROID</DefineConstants>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\**" Exclude="Resources\SoundEffects\toraudio_Win;Resources\SoundEffects\toraudio_And;Resources\IntroAnimation\intro_Win;Resources\IntroAnimation\intro_And;Resources\Animation\animation_Win;Resources\Animation\animation_And" />
-	</ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="Resources\**" Exclude="Resources\SoundEffects\toraudio_Win;Resources\SoundEffects\toraudio_And;Resources\IntroAnimation\intro_Win;Resources\IntroAnimation\intro_And;Resources\Animation\animation_Win;Resources\Animation\animation_And"/>
+    </ItemGroup>
 
-	<ItemGroup Condition="'$(Platform)' == 'Windows'">
-		<EmbeddedResource Include="Resources\SoundEffects\toraudio_Win" Link="Resources\SoundEffects\toraudio" />
-		<EmbeddedResource Include="Resources\IntroAnimation\intro_Win" Link="Resources\IntroAnimation\intro" />
-		<EmbeddedResource Include="Resources\Animation\animation_Win" Link="Resources\Animation\animation" />
-	</ItemGroup>
+    <ItemGroup Condition="'$(Platform)' == 'Windows'">
+        <EmbeddedResource Include="Resources\SoundEffects\toraudio_Win" Link="Resources\SoundEffects\toraudio"/>
+        <EmbeddedResource Include="Resources\IntroAnimation\intro_Win" Link="Resources\IntroAnimation\intro"/>
+        <EmbeddedResource Include="Resources\Animation\animation_Win" Link="Resources\Animation\animation"/>
+    </ItemGroup>
 
-	<ItemGroup Condition="'$(Platform)' == 'Android'">
-		<EmbeddedResource Include="Resources\SoundEffects\toraudio_And" Link="Resources\SoundEffects\toraudio" />
-		<EmbeddedResource Include="Resources\IntroAnimation\intro_And" Link="Resources\IntroAnimation\intro" />
-		<EmbeddedResource Include="Resources\Animation\animation_And" Link="Resources\Animation\animation" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<PackageReference Include="AmongUs.GameLibs.Android" Version="2026.8.18" Condition="'$(Platform)' == 'Android'" />
-		<PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" Condition="'$(Platform)' == 'Windows'" />
-		<PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" />
-		<PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" />
-	</ItemGroup>
+    <ItemGroup Condition="'$(Platform)' == 'Android'">
+        <EmbeddedResource Include="Resources\SoundEffects\toraudio_And" Link="Resources\SoundEffects\toraudio"/>
+        <EmbeddedResource Include="Resources\IntroAnimation\intro_And" Link="Resources\IntroAnimation\intro"/>
+        <EmbeddedResource Include="Resources\Animation\animation_And" Link="Resources\Animation\animation"/>
+    </ItemGroup>
 
-	<Target Name="Date" BeforeTargets="BeforeBuild">
-		<!--Will make the compile time available s.t. we can let betas expire-->
-		<WriteLinesToFile File="$(IntermediateOutputPath)gen.cs" Lines="static partial class Builtin { public static long CompileTime = $([System.DateTime]::UtcNow.Ticks) %3B }" Overwrite="true" />
-		<ItemGroup>
-			<Compile Include="$(IntermediateOutputPath)gen.cs" />
-		</ItemGroup>
-	</Target>
+    <ItemGroup>
+        <PackageReference Include="AmongUs.GameLibs.Android" Version="2026.8.18" Condition="'$(Platform)' == 'Android'"/>
+        <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" Condition="'$(Platform)' == 'Windows'"/>
+        <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1"/>
+        <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735"/>
+        <PackageReference Include="NAudio" Version="2.2.1"/>
+        <PackageReference Include="Concentus" Version="2.2.2"/>
+    </ItemGroup>
+
+    <!-- Voice chat embedded resources (sprites, config) -->
+    <ItemGroup>
+        <EmbeddedResource Include="Voice\Resources\*.png" LogicalName="TheOtherRoles.Voice.Resources.%(Filename)%(Extension)"/>
+        <EmbeddedResource Include="Voice\Resources\*.json" LogicalName="TheOtherRoles.Voice.Resources.%(Filename)%(Extension)"/>
+        <EmbeddedResource Include="Voice\Resources\*.jpg" LogicalName="TheOtherRoles.Voice.Resources.%(Filename)%(Extension)"/>
+    </ItemGroup>
+
+    <!-- Embed NAudio + Concentus DLLs so they ship inside the TOR assembly -->
+    <ItemGroup>
+        <EmbeddedResource Include="Voice\Lib\NAudio.dll" LogicalName="Lib.NAudio.dll"/>
+        <EmbeddedResource Include="Voice\Lib\NAudio.Core.dll" LogicalName="Lib.NAudio.Core.dll"/>
+        <EmbeddedResource Include="Voice\Lib\NAudio.Wasapi.dll" LogicalName="Lib.NAudio.Wasapi.dll"/>
+        <EmbeddedResource Include="Voice\Lib\NAudio.WinMM.dll" LogicalName="Lib.NAudio.WinMM.dll"/>
+        <EmbeddedResource Include="Voice\Lib\NAudio.Asio.dll" LogicalName="Lib.NAudio.Asio.dll"/>
+        <EmbeddedResource Include="Voice\Lib\Concentus.dll" LogicalName="Lib.Concentus.dll"/>
+    </ItemGroup>
+
+    <Target Name="Date" BeforeTargets="BeforeBuild">
+        <!--Will make the compile time available s.t. we can let betas expire-->
+        <WriteLinesToFile File="$(IntermediateOutputPath)gen.cs" Lines="static partial class Builtin { public static long CompileTime = $([System.DateTime]::UtcNow.Ticks) %3B }" Overwrite="true"/>
+        <ItemGroup>
+            <Compile Include="$(IntermediateOutputPath)gen.cs"/>
+        </ItemGroup>
+    </Target>
 </Project>

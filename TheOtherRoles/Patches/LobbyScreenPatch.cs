@@ -1,9 +1,10 @@
 using AmongUs.Data;
 using HarmonyLib;
 using InnerNet;
-using Reactor.Utilities.Extensions;
+using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
+
 namespace TheOtherRoles.Patches;
 
 [HarmonyPatch]
@@ -61,10 +62,7 @@ public static class LobbyJoin
     [HarmonyPostfix]
     public static void Update()
     {
-        if (GameId == 0 || !LobbyText || !LobbyText.active)
-        {
-            return;
-        }
+        if (GameId == 0 || !LobbyText || !LobbyText.active) return;
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && !JoiningAttempted)
         {
@@ -75,10 +73,7 @@ public static class LobbyJoin
         if (LobbyText && Text)
         {
             var code = GameCode.IntToGameName(GameId);
-            if (DataManager.Settings.Gameplay.StreamerMode)
-            {
-                code = "******";
-            }
+            if (DataManager.Settings.Gameplay.StreamerMode) code = "******";
 
             Text.text = $"<size=110%>Prev Lobby:</size>"
                         + $"\n<size=4.6f>({code})</size>"

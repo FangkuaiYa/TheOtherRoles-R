@@ -7,7 +7,6 @@ using AmongUs.Data;
 using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
-using Reactor.Utilities.Extensions;
 using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
 using TMPro;

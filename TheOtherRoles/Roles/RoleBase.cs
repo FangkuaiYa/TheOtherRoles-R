@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace TheOtherRoles
+namespace TheOtherRoles.Roles
 {
     public class RoleInfo
     {

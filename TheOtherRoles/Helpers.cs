@@ -8,7 +8,6 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
-using Reactor.Utilities.Extensions;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
@@ -46,7 +45,11 @@ public static class Helpers
         try
         {
             if (cache && CachedSprites.TryGetValue(path + pixelsPerUnit, out var sprite)) return sprite;
-            var texture = loadTextureFromResources(path);
+            var assembly = Assembly.GetExecutingAssembly();
+            var stream = assembly.GetManifestResourceStream(path);
+            var data = stream.ReadFully();
+            var texture = new Texture2D(0, 0, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
+            texture.LoadImage(data, false);
             sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f),
                 pixelsPerUnit);
             if (cache) sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
@@ -56,28 +59,6 @@ public static class Helpers
         catch
         {
             System.Console.WriteLine("Error loading sprite from path: " + path);
-        }
-
-        return null;
-    }
-
-    public static unsafe Texture2D loadTextureFromResources(string path)
-    {
-        try
-        {
-            var texture = new Texture2D(2, 2, TextureFormat.ARGB32, true);
-            var assembly = Assembly.GetExecutingAssembly();
-            var stream = assembly.GetManifestResourceStream(path);
-            var length = stream.Length;
-            var byteTexture = new Il2CppStructArray<byte>(length);
-            stream.Read(new Span<byte>(IntPtr.Add(byteTexture.Pointer, IntPtr.Size * 4).ToPointer(), (int)length));
-            if (path.Contains("HorseHats")) byteTexture = new Il2CppStructArray<byte>(byteTexture.Reverse().ToArray());
-            texture.LoadImage(byteTexture, false);
-            return texture;
-        }
-        catch
-        {
-            System.Console.WriteLine("Error loading texture from resources: " + path);
         }
 
         return null;
@@ -103,38 +84,6 @@ public static class Helpers
         return null;
     }
 
-    /* This function has been removed from TOR because we switched to assetbundles for compressed audio. leaving it here for reference - Gendelo
-    public static AudioClip loadAudioClipFromResources(string path, string clipName = "UNNAMED_TOR_AUDIO_CLIP") {
-
-        // must be "raw (headerless) 2-channel signed 32 bit pcm (le) 48kHz" (can e.g. use Audacity® to export )
-        try {
-            Assembly assembly = Assembly.GetExecutingAssembly();
-            Stream stream = assembly.GetManifestResourceStream(path);
-            var byteAudio = new byte[stream.Length];
-            _ = stream.Read(byteAudio, 0, (int)stream.Length);
-            float[] samples = new float[byteAudio.Length / 4]; // 4 bytes per sample
-            int offset;
-            for (int i = 0; i < samples.Length; i++) {
-                offset = i * 4;
-                samples[i] = (float)BitConverter.ToInt32(byteAudio, offset) / Int32.MaxValue;
-            }
-            int channels = 2;
-            int sampleRate = 48000;
-            AudioClip audioClip = AudioClip.Create(clipName, samples.Length / 2, channels, sampleRate, false);
-            audioClip.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
-            audioClip.SetData(samples, 0);
-            return audioClip;
-        } catch {
-            System.Console.WriteLine("Error loading AudioClip from resources: " + path);
-        }
-        return null;
-
-        // Usage example:
-        //AudioClip exampleClip = Helpers.loadAudioClipFromResources("TheOtherRoles.Resources.exampleClip.raw");
-        //if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(exampleClip, false, 0.8f);
-
-    }*/
-
     public static string readTextFromResources(string path)
     {
         var assembly = Assembly.GetExecutingAssembly();
@@ -156,14 +105,6 @@ public static class Helpers
             if (player.PlayerId == id)
                 return player;
         return null;
-    }
-
-    public static Dictionary<byte, PlayerControl> allPlayersById()
-    {
-        var res = new Dictionary<byte, PlayerControl>();
-        foreach (var player in PlayerControl.AllPlayerControls)
-            res.Add(player.PlayerId, player);
-        return res;
     }
 
     public static void handleVampireBiteOnBodyReport()
@@ -218,13 +159,13 @@ public static class Helpers
 
     internal static string getRoleString(RoleInfo roleInfo)
     {
-        if (roleInfo.name == "Jackal")
+        if (roleInfo == Jackal.Info)
         {
             var getSidekickText = Jackal.canCreateSidekick ? " and recruit a Sidekick" : "";
             return cs(roleInfo.color, $"{roleInfo.name}: Kill everyone{getSidekickText}");
         }
 
-        if (roleInfo.name == "Invert")
+        if (roleInfo == Invert.Info)
             return cs(roleInfo.color, $"{roleInfo.name}: {roleInfo.shortDescription} ({Invert.meetings})");
 
         return cs(roleInfo.color, $"{roleInfo.name}: {roleInfo.shortDescription}");

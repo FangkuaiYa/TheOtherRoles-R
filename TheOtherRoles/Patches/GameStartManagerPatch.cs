@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using HarmonyLib;
 using Hazel;
-using Reactor.Utilities.Extensions;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
@@ -13,7 +11,9 @@ namespace TheOtherRoles.Patches;
 
 public class GameStartManagerPatch
 {
-    public const string ModConstantGuid = "430447e3-ac88-4aba-9dcd-fffc53ef732f"; // TOMO Changes are required every time it is published
+    public const string
+        ModConstantGuid =
+            "430447e3-ac88-4aba-9dcd-fffc53ef732f"; // TOMO Changes are required every time it is published
 
     public static Dictionary<int, PlayerVersion> playerVersions = new();
     public static float timer = 600f;

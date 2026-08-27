@@ -10,15 +10,14 @@ using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
 using Hazel;
 using InnerNet;
-using Reactor.Utilities.Extensions;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static TheOtherRoles.CustomOption;
+using static TheOtherRoles.Modules.CustomOption;
 using Object = UnityEngine.Object;
 
-namespace TheOtherRoles;
+namespace TheOtherRoles.Modules;
 
 public class CustomOption
 {
@@ -38,6 +37,7 @@ public class CustomOption
     public static List<CustomOption> options = new();
     public static int preset;
     public static ConfigEntry<string> vanillaSettings;
+    public static int number = 1;
 
     public int defaultSelection;
     public ConfigEntry<int> entry;
@@ -80,29 +80,32 @@ public class CustomOption
         options.Add(this);
     }
 
-    public static CustomOption Create(int id, CustomOptionType type, string name, string[] selections,
+    public static CustomOption Create(CustomOptionType type, string name, string[] selections,
         CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "",
         bool invertedParent = false)
     {
-        return new CustomOption(id, type, name, selections, "", parent, isHeader, onChange, heading, invertedParent);
+        return new CustomOption(number++, type, name, selections, "", parent, isHeader, onChange, heading,
+            invertedParent);
     }
 
-    public static CustomOption Create(int id, CustomOptionType type, string name, float defaultValue, float min,
+    public static CustomOption Create(CustomOptionType type, string name, float defaultValue, float min,
         float max, float step, CustomOption parent = null, bool isHeader = false, Action onChange = null,
         string heading = "", bool invertedParent = false)
     {
         List<object> selections = new();
         for (var s = min; s <= max; s += step)
             selections.Add(s);
-        return new CustomOption(id, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange, heading,
+        return new CustomOption(number++, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange,
+            heading,
             invertedParent);
     }
 
-    public static CustomOption Create(int id, CustomOptionType type, string name, bool defaultValue,
+    public static CustomOption Create(CustomOptionType type, string name, bool defaultValue,
         CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "",
         bool invertedParent = false)
     {
-        return new CustomOption(id, type, name, new[] { "Off", "On" }, defaultValue ? "On" : "Off", parent, isHeader,
+        return new CustomOption(number++, type, name, new[] { "Off", "On" }, defaultValue ? "On" : "Off", parent,
+            isHeader,
             onChange, heading, invertedParent);
     }
 
@@ -592,12 +595,12 @@ internal class LobbyViewSettingsPatch
             foreach (var option in options)
                 if (option.parent != null && !isOptionHiddenByAncestor(option))
                 {
-                    if (option.id == 103) //Deputy
+                    if (option == CustomOptionHolder.deputySpawnRate) //Deputy
                         relevantOptions.Insert(relevantOptions.IndexOf(CustomOptionHolder.sheriffSpawnRate) + 1,
                             option);
-                    else if (option.id == 224) //Sidekick
+                    else if (option == CustomOptionHolder.jackalCanCreateSidekick) //Sidekick
                         relevantOptions.Insert(relevantOptions.IndexOf(CustomOptionHolder.jackalSpawnRate) + 1, option);
-                    else if (option.id == 358) //Prosecutor
+                    else if (option == CustomOptionHolder.lawyerIsProsecutorChance) //Prosecutor
                         relevantOptions.Insert(relevantOptions.IndexOf(CustomOptionHolder.lawyerSpawnRate) + 1, option);
                 }
         }
@@ -619,7 +622,8 @@ internal class LobbyViewSettingsPatch
 
         foreach (var option in relevantOptions)
         {
-            if ((option.isHeader && (int)optionType != 99) || ((int)optionType == 99 && curType != option.type))
+            if ((option.isHeader && (int)optionType != 99 && !isOptionHiddenByAncestor(option)) ||
+                ((int)optionType == 99 && curType != option.type))
             {
                 curType = option.type;
                 if (i != 0)
@@ -908,7 +912,7 @@ internal class GameOptionsMenuStartPatch
         var num = 1.5f;
         foreach (var option in options)
         {
-            if (option.isHeader)
+            if (option.isHeader && !isOptionHiddenByAncestor(option))
             {
                 var categoryHeaderMasked = Object.Instantiate(menu.categoryHeaderOrigin, Vector3.zero,
                     Quaternion.identity, menu.settingsContainer);
@@ -1146,7 +1150,7 @@ public class StringOptionFixedUpdate
 {
     public static void Postfix(StringOption __instance)
     {
-        if (!IL2CPPChainloader.Instance.Plugins.TryGetValue("com.DigiWorm.LevelImposter", out var _)) return;
+        if (!IL2CPPChainloader.Instance.Plugins.TryGetValue("com.DigiWorm.LevelImposter", out _)) return;
         var option = options.FirstOrDefault(option => option.optionBehaviour == __instance);
         if (option == null || !CustomOptionHolder.isMapSelectionOption(option)) return;
         if (GameOptionsManager.Instance.CurrentGameOptions.MapId == 6)
@@ -1245,13 +1249,13 @@ internal class LegacyGameOptionsPatch
             }
             else if (option.parent.getSelection() > 0 || (option.invertedParent && option.parent.getSelection() == 0))
             {
-                if (option.id == 103) //Deputy
+                if (option == CustomOptionHolder.deputySpawnRate) //Deputy
                     sb.AppendLine(
                         $"- {Helpers.cs(Deputy.color, "Deputy")}: {option.selections[option.selection].ToString()}");
-                else if (option.id == 224) //Sidekick
+                else if (option == CustomOptionHolder.jackalCanCreateSidekick) //Sidekick
                     sb.AppendLine(
                         $"- {Helpers.cs(Sidekick.color, "Sidekick")}: {option.selections[option.selection].ToString()}");
-                else if (option.id == 358) //Prosecutor
+                else if (option == CustomOptionHolder.lawyerIsProsecutorChance) //Prosecutor
                     sb.AppendLine(
                         $"- {Helpers.cs(Lawyer.color, "Prosecutor")}: {option.selections[option.selection].ToString()}");
             }
