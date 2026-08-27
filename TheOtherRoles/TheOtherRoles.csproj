@@ -49,9 +49,4 @@
 			<Compile Include="$(IntermediateOutputPath)gen.cs" />
 		</ItemGroup>
 	</Target>
-
-	<Target Name="CopyCustomContent" AfterTargets="AfterBuild" Condition="Exists('$(AmongUsLatest)/BepInEx/plugins/')">
-		<Message Text="Second occurrence" />
-		<Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\TheOtherRoles.dll" DestinationFolder="$(AmongUsLatest)/BepInEx/plugins/" />
-	</Target>
 </Project>

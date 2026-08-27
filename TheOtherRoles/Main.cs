@@ -50,8 +50,6 @@ public class TheOtherRolesPlugin : BasePlugin
 
     public static Sprite ModStamp;
 
-    public static IRegionInfo[] defaultRegions;
-
     public Harmony Harmony { get; } = new(Id);
 
     public static ConfigEntry<string> DebugMode { get; private set; }
@@ -115,7 +113,6 @@ public class TheOtherRolesPlugin : BasePlugin
         ShowVentsOnMap = Config.Bind("Custom", "Show vent positions on minimap", false);
         ShowChatNotifications = Config.Bind("Custom", "Show Chat Notifications", true);
 
-        defaultRegions = ServerManager.DefaultRegions;
         // Removes vanilla Servers   More extensive testing is needed because I removed the Reactor, so after testing, TOR can temporarily run on the Innerslot server
         // ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
         UpdateRegions();
