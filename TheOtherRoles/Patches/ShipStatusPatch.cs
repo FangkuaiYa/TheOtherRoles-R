@@ -140,8 +140,6 @@ public class ShipStatusPatch
     [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Begin))]
     public static bool Prefix(ShipStatus __instance)
     {
-        FastDestroyableSingleton<HudManager>.Instance.MatchInfoButton.gameObject.SetActive(false);
-
         originalNumCommonTasksOption = GameOptionsManager.Instance.currentNormalGameOptions.NumCommonTasks;
         originalNumShortTasksOption = GameOptionsManager.Instance.currentNormalGameOptions.NumShortTasks;
         originalNumLongTasksOption = GameOptionsManager.Instance.currentNormalGameOptions.NumLongTasks;

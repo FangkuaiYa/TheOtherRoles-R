@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using Hazel;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
@@ -8,8 +11,7 @@ public class Sidekick : RoleBase
 
     public static Color color = new Color32(0, 180, 235, byte.MaxValue);
 
-    public static RoleInfo Info = new("Sidekick", color, "Help your Jackal to kill everyone",
-        "Help your Jackal to kill everyone", RoleId.Sidekick, true);
+    public static RoleInfo Info = new(color, RoleId.Sidekick, isNeutral: true);
 
     public static PlayerControl sidekick;
 
@@ -57,5 +59,26 @@ public class Sidekick : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Sidekick.sidekick == null || Sidekick.sidekick != player) return;
+        var untargetablePlayers = new List<PlayerControl>();
+        if (Jackal.jackal != null) untargetablePlayers.Add(Jackal.jackal);
+        if (Mini.mini != null && !Mini.isGrownUp())
+            untargetablePlayers.Add(Mini.mini);
+        Sidekick.currentTarget = PlayerControlFixedUpdatePatch.setTarget(untargetablePlayers: untargetablePlayers);
+        if (Sidekick.canKill) PlayerControlFixedUpdatePatch.setPlayerOutline(Sidekick.currentTarget, Palette.ImpostorRed);
+
+        // sidekickCheckPromotion
+        if (Sidekick.sidekick.Data.IsDead || !Sidekick.promotesToJackal) return;
+        if (Jackal.jackal == null || Jackal.jackal?.Data?.Disconnected == true)
+        {
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.SidekickPromotes, SendOption.Reliable);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            RPCProcedure.sidekickPromotes();
+        }
     }
 }

@@ -9,8 +9,7 @@ public class Vip : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("VIP", color, "You are the VIP", "Everyone is notified when you die", RoleId.Vip,
-        false, true);
+    public static RoleInfo Info = new(color, RoleId.Vip, isModifier: true);
 
     public static List<PlayerControl> vip = new();
     public static bool showColor = true;

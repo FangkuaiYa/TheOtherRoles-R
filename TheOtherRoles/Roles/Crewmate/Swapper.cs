@@ -1,3 +1,5 @@
+using TheOtherRoles;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;
@@ -8,8 +10,7 @@ public class Swapper : RoleBase
 
     public static Color color = new Color32(134, 55, 86, byte.MaxValue);
 
-    public static RoleInfo Info = new("Swapper", color, "Swap votes to exile the <color=#FF1919FF>Impostors</color>",
-        "Swap votes", RoleId.Swapper);
+    public static RoleInfo Info = new(color, RoleId.Swapper);
 
     public static PlayerControl swapper;
     private static Sprite spriteCheck;
@@ -59,5 +60,17 @@ public class Swapper : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Swapper.swapper == null || player != Swapper.swapper || player.Data.IsDead) return;
+        var taskInfo = TasksHandler.taskInfo(player.Data);
+        int playerCompleted = taskInfo.Item1;
+        if (playerCompleted == Swapper.rechargedTasks)
+        {
+            Swapper.rechargedTasks += Swapper.rechargeTasksNumber;
+            Swapper.charges++;
+        }
     }
 }

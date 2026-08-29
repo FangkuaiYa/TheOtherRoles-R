@@ -1,3 +1,5 @@
+using TheOtherRoles;
+using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
 using UnityEngine;
 
@@ -9,8 +11,7 @@ public class Hacker : RoleBase
 
     public static Color color = new Color32(117, 250, 76, byte.MaxValue);
 
-    public static RoleInfo Info = new("Hacker", color, "Hack systems to find the <color=#FF1919FF>Impostors</color>",
-        "Hack to find the Impostors", RoleId.Hacker);
+    public static RoleInfo Info = new(color, RoleId.Hacker);
 
     public static PlayerControl hacker;
     public static Minigame vitals;
@@ -110,5 +111,19 @@ public class Hacker : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        Hacker.hackerTimer -= Time.deltaTime;
+        if (Hacker.hacker == null || player != Hacker.hacker || Hacker.hacker.Data.IsDead) return;
+        var taskInfo = TasksHandler.taskInfo(Hacker.hacker.Data);
+        int playerCompleted = taskInfo.Item1;
+        if (playerCompleted == Hacker.rechargedTasks)
+        {
+            Hacker.rechargedTasks += Hacker.rechargeTasksNumber;
+            if (Hacker.toolsNumber > Hacker.chargesVitals) Hacker.chargesVitals++;
+            if (Hacker.toolsNumber > Hacker.chargesAdminTable) Hacker.chargesAdminTable++;
+        }
     }
 }

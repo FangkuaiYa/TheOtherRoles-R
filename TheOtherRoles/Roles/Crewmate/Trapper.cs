@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using TheOtherRoles;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;
@@ -9,8 +11,7 @@ public class Trapper : RoleBase
 
     public static Color color = new Color32(110, 57, 105, byte.MaxValue);
 
-    public static RoleInfo Info = new("Trapper", color, "Place traps to find the Impostors", "Place traps",
-        RoleId.Trapper);
+    public static RoleInfo Info = new(color, RoleId.Trapper);
 
     public static PlayerControl trapper;
 
@@ -67,5 +68,17 @@ public class Trapper : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Trapper.trapper == null || player != Trapper.trapper || Trapper.trapper.Data.IsDead) return;
+        var taskInfo = TasksHandler.taskInfo(Trapper.trapper.Data);
+        int playerCompleted = taskInfo.Item1;
+        if (playerCompleted == Trapper.rechargedTasks)
+        {
+            Trapper.rechargedTasks += Trapper.rechargeTasksNumber;
+            if (Trapper.maxCharges > Trapper.charges) Trapper.charges++;
+        }
     }
 }

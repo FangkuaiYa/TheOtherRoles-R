@@ -285,22 +285,22 @@ internal class EmergencyMinigameUpdatePatch
         if (Swapper.swapper != null && Swapper.swapper == PlayerControl.LocalPlayer && !Swapper.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            statusText = "The Swapper can't start an emergency meeting";
+            statusText = ModTranslation.GetString("Swapper-Text", 4);
         }
 
         // Potentially deactivate emergency button for Jester
         if (Jester.jester != null && Jester.jester == PlayerControl.LocalPlayer && !Jester.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            statusText = "The Jester can't start an emergency meeting";
+            statusText = ModTranslation.GetString("Game-Jester", 1);
         }
 
         // Potentially deactivate emergency button for Lawyer/Prosecutor
         if (Lawyer.lawyer != null && Lawyer.lawyer == PlayerControl.LocalPlayer && !Lawyer.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            statusText = "The Lawyer can't start an emergency meeting";
-            if (Lawyer.isProsecutor) statusText = "The Prosecutor can't start an emergency meeting";
+            statusText = ModTranslation.GetString("Game-Lawyer", 1);
+            if (Lawyer.isProsecutor) statusText = ModTranslation.GetString("Game-Lawyer", 2);
         }
 
         if (!roleCanCallEmergency)
@@ -320,7 +320,7 @@ internal class EmergencyMinigameUpdatePatch
             var teamRemaining = Mathf.Max(0, maxNumberOfMeetings - meetingsCount);
             var remaining = Mathf.Min(localRemaining,
                 Mayor.mayor != null && Mayor.mayor == PlayerControl.LocalPlayer ? 1 : teamRemaining);
-            __instance.NumberText.text = $"{localRemaining.ToString()} and the ship has {teamRemaining.ToString()}";
+            __instance.NumberText.text = string.Format(ModTranslation.GetString("Game-Useable", 1), localRemaining.ToString(), teamRemaining.ToString());
             __instance.ButtonActive = remaining > 0;
             __instance.ClosedLid.gameObject.SetActive(!__instance.ButtonActive);
             __instance.OpenLid.gameObject.SetActive(__instance.ButtonActive);

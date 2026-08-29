@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
@@ -8,7 +9,7 @@ public class Pursuer : RoleBase
     public static Pursuer Instance;
 
     public static Color color = Lawyer.color;
-    public static RoleInfo Info = new("Pursuer", color, "Blank the Impostors", "Blank the Impostors", RoleId.Pursuer);
+    public static RoleInfo Info = new(color, RoleId.Pursuer, isNeutral: true);
 
     public static PlayerControl pursuer;
     public static PlayerControl target;
@@ -57,5 +58,12 @@ public class Pursuer : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Pursuer.pursuer == null || Pursuer.pursuer != player) return;
+        Pursuer.target = PlayerControlFixedUpdatePatch.setTarget();
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Pursuer.target, Pursuer.color);
     }
 }

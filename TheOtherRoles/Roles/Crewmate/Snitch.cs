@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using TheOtherRoles.Patches;
+using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 
@@ -23,8 +25,7 @@ public class Snitch : RoleBase
 
     public static Color color = new Color32(184, 251, 79, byte.MaxValue);
 
-    public static RoleInfo Info = new("Snitch", color,
-        "Finish your tasks to find the <color=#FF1919FF>Impostors</color>", "Finish your tasks", RoleId.Snitch);
+    public static RoleInfo Info = new(color, RoleId.Snitch);
 
     public static PlayerControl snitch;
 
@@ -68,5 +69,45 @@ public class Snitch : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Snitch.snitch == null) return;
+        if (!Snitch.needsUpdate) return;
+        var snitchIsDead = Snitch.snitch.Data.IsDead;
+        var taskInfo = TasksHandler.taskInfo(Snitch.snitch.Data);
+        int playerCompleted = taskInfo.Item1;
+        int playerTotal = taskInfo.Item2;
+        if (playerTotal == 0) return;
+        var numberOfTasks = playerTotal - playerCompleted;
+        if (Snitch.isRevealed && ((Snitch.targets == Snitch.Targets.EvilPlayers && Helpers.isEvil(player)) ||
+                                  (Snitch.targets == Snitch.Targets.Killers && Helpers.isKiller(player))))
+        {
+            if (Snitch.text == null)
+            {
+                Snitch.text = GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText,
+                    FastDestroyableSingleton<HudManager>.Instance.transform);
+                Snitch.text.enableWordWrapping = false;
+                Snitch.text.transform.localScale = Vector3.one * 0.75f;
+                Snitch.text.transform.localPosition += new Vector3(0f, 1.8f, -69f);
+                Snitch.text.gameObject.SetActive(true);
+            }
+            else
+            {
+                Snitch.text.text = string.Format(ModTranslation.GetString("Snitch-Text", 3), playerCompleted, playerTotal);
+                if (snitchIsDead) Snitch.text.text = ModTranslation.GetString("Snitch-Text", 4);
+            }
+        }
+        else if (Snitch.text != null)
+        {
+            Object.Destroy(Snitch.text);
+        }
+        if (snitchIsDead)
+        {
+            if (MeetingHud.Instance == null) Snitch.needsUpdate = false;
+            return;
+        }
+        if (numberOfTasks <= Snitch.taskCountForReveal) Snitch.isRevealed = true;
     }
 }

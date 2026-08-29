@@ -1,3 +1,4 @@
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;
@@ -8,8 +9,7 @@ public class Sheriff : RoleBase
 
     public static Color color = new Color32(248, 205, 70, byte.MaxValue);
 
-    public static RoleInfo Info = new("Sheriff", color, "Shoot the <color=#FF1919FF>Impostors</color>",
-        "Shoot the Impostors", RoleId.Sheriff);
+    public static RoleInfo Info = new(color, RoleId.Sheriff);
 
     public static PlayerControl sheriff;
     public static float cooldown = 30f;
@@ -52,5 +52,12 @@ public class Sheriff : RoleBase
     public override void ClearAndReload()
     {
         clearAndReload();
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Sheriff.sheriff == null || Sheriff.sheriff != player) return;
+        Sheriff.currentTarget = PlayerControlFixedUpdatePatch.setTarget();
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Sheriff.currentTarget, Sheriff.color);
     }
 }

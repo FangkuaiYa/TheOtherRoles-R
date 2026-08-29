@@ -769,7 +769,7 @@ internal class PropHunt
 
 
     // Disable a lot of stuff
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
     [HarmonyPatch(typeof(Vent), nameof(Vent.SetOutline))]
     [HarmonyPrefix]
     public static bool DisableFunctions()

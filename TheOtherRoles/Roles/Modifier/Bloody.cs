@@ -1,4 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
+using TheOtherRoles.Objects;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Modifier;
@@ -9,8 +12,7 @@ public class Bloody : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Bloody", color, "Your killer leaves a bloody trail",
-        "Your killer leaves a bloody trail", RoleId.Bloody, false, true);
+    public static RoleInfo Info = new(color, RoleId.Bloody, isModifier: true);
 
     public static List<PlayerControl> bloody = new();
     public static Dictionary<byte, float> active = new();
@@ -45,5 +47,22 @@ public class Bloody : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (!Bloody.active.Any()) return;
+        foreach (var entry in new Dictionary<byte, float>(Bloody.active))
+        {
+            var p = Helpers.playerById(entry.Key);
+            var bloodyPlayer = Helpers.playerById(Bloody.bloodyKillerMap[p.PlayerId]);
+            Bloody.active[entry.Key] = entry.Value - Time.fixedDeltaTime;
+            if (entry.Value <= 0 || p.Data.IsDead)
+            {
+                Bloody.active.Remove(entry.Key);
+                continue;
+            }
+            new Bloodytrail(p, bloodyPlayer);
+        }
     }
 }

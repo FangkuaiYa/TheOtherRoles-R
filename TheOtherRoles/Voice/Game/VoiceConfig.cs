@@ -245,19 +245,7 @@ public static class VoiceConfig
         }
     }
 
-    public static bool HostImpostorPrivateRadio
-    {
-        get
-        {
-            if (CustomOptionHolder.vcImpostorPrivateRadio != null)
-                return CustomOptionHolder.vcImpostorPrivateRadio.getBool();
-            return _hostImpRadio != null ? _hostImpRadio.Value : false;
-        }
-        set
-        {
-            if (_hostImpRadio != null) _hostImpRadio.Value = value;
-        }
-    }
+    // ImpostorPrivateRadio is now tied to vcChannelImpostor in ApplyLocalHostSettingsToSynced()
 
     public static bool HostOnlyMeetingOrLobby
     {
@@ -545,11 +533,6 @@ public static class VoiceConfig
         HostCameraCanHear = v;
     }
 
-    public static void SetHostImpostorPrivateRadio(bool v)
-    {
-        HostImpostorPrivateRadio = v;
-    }
-
     public static void SetHostOnlyMeetingOrLobby(bool v)
     {
         HostOnlyMeetingOrLobby = v;
@@ -591,7 +574,7 @@ public static class VoiceConfig
             s.VentPrivateChat = HostVentPrivateChat;
             s.CommsSabDisables = HostCommsSabDisables;
             s.CameraCanHear = HostCameraCanHear;
-            s.ImpostorPrivateRadio = HostImpostorPrivateRadio;
+            s.ImpostorPrivateRadio = CustomOptionHolder.vcChannelImpostor?.getBool() ?? true;
             s.OnlyMeetingOrLobby = HostOnlyMeetingOrLobby;
         }
     }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Impostor;
@@ -9,8 +10,7 @@ public class Eraser : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Eraser", color, "Kill the Crewmates and erase their roles",
-        "Erase the roles of your enemies", RoleId.Eraser);
+    public static RoleInfo Info = new(color, RoleId.Eraser);
 
     public static PlayerControl eraser;
     public static List<byte> alreadyErased = new();
@@ -56,5 +56,17 @@ public class Eraser : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Eraser.eraser == null || Eraser.eraser != player) return;
+        var untargetables = new List<PlayerControl>();
+        if (Spy.spy != null) untargetables.Add(Spy.spy);
+        if (Sidekick.wasTeamRed) untargetables.Add(Sidekick.sidekick);
+        if (Jackal.wasTeamRed) untargetables.Add(Jackal.jackal);
+        Eraser.currentTarget = PlayerControlFixedUpdatePatch.setTarget(!Eraser.canEraseAnyone,
+            untargetablePlayers: Eraser.canEraseAnyone ? new List<PlayerControl>() : untargetables);
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Eraser.currentTarget, Eraser.color);
     }
 }

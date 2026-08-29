@@ -7,7 +7,7 @@ public class Mayor : RoleBase
     public static Mayor Instance;
 
     public static Color color = new Color32(32, 77, 66, byte.MaxValue);
-    public static RoleInfo Info = new("Mayor", color, "Your vote counts twice", "Your vote counts twice", RoleId.Mayor);
+    public static RoleInfo Info = new(color, RoleId.Mayor);
 
     public static PlayerControl mayor;
     public static Minigame emergency;

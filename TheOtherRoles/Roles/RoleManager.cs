@@ -14,19 +14,15 @@ public class CustomRoleManager
     private static CustomRoleManager _instance;
 
     // Special RoleInfos (no corresponding role class)
-    public static RoleInfo impostor = new("Impostor", Palette.ImpostorRed,
-        Helpers.cs(Palette.ImpostorRed, "Sabotage and kill everyone"), "Sabotage and kill everyone", RoleId.Impostor);
+    public static RoleInfo impostor = new(Palette.ImpostorRed, RoleId.Impostor);
 
-    public static RoleInfo crewmate = new("Crewmate", Color.white, "Find the Impostors", "Find the Impostors",
-        RoleId.Crewmate);
+    public static RoleInfo crewmate = new(Color.white, RoleId.Crewmate);
 
-    public static RoleInfo hunter = new("Hunter", Palette.ImpostorRed,
-        Helpers.cs(Palette.ImpostorRed, "Seek and kill everyone"), "Seek and kill everyone", RoleId.Impostor);
+    public static RoleInfo hunter = new(Palette.ImpostorRed, RoleId.Impostor);
 
-    public static RoleInfo hunted = new("Hunted", Color.white, "Hide", "Hide", RoleId.Crewmate);
+    public static RoleInfo hunted = new(Color.white, RoleId.Crewmate);
 
-    public static RoleInfo prop = new("Prop", Color.white, "Disguise As An Object and Survive", "Disguise As An Object",
-        RoleId.Crewmate);
+    public static RoleInfo prop = new(Color.white, RoleId.Crewmate);
 
     private static string ReadmePage = "";
 

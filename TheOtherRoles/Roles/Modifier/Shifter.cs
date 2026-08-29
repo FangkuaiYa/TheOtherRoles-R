@@ -1,3 +1,4 @@
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Modifier;
@@ -8,8 +9,7 @@ public class Shifter : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Shifter", color, "Shift your role", "Shift your role", RoleId.Shifter, false,
-        true);
+    public static RoleInfo Info = new(color, RoleId.Shifter, isModifier: true);
 
     public static PlayerControl shifter;
 
@@ -161,5 +161,12 @@ public class Shifter : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Shifter.shifter == null || Shifter.shifter != player) return;
+        Shifter.currentTarget = PlayerControlFixedUpdatePatch.setTarget();
+        if (Shifter.futureShift == null) PlayerControlFixedUpdatePatch.setPlayerOutline(Shifter.currentTarget, Color.yellow);
     }
 }

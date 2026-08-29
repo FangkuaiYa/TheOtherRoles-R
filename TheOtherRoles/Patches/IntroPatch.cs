@@ -205,6 +205,9 @@ internal class IntroPatch
 {
     public static IEnumerator CoBegin(IntroCutscene __instance)
     {
+        if (DestroyableSingleton<HudManager>.Instance.MatchInfoButton != null)
+            DestroyableSingleton<HudManager>.Instance.MatchInfoButton.gameObject.SetActive(false);
+
         SoundManager.Instance.PlaySound(__instance.IntroStinger, false);
         if (GameManager.Instance.IsNormal())
         {
@@ -418,15 +421,15 @@ internal class IntroPatch
         if (roleInfo == null || roleInfo == CustomRoleManager.crewmate)
         {
             if (RoleDraft.isEnabled && CustomOptionHolder.neutralRolesCountMax.getSelection() > 0)
-                __instance.TeamTitle.text = "<size=60%>Crewmate" + Helpers.cs(Color.white, " / ") +
-                                            Helpers.cs(neutralColor, "Neutral") + "</size>";
+                __instance.TeamTitle.text = $"<size=60%>{RoleInfo.roleInfoById[RoleId.Crewmate].name}" + Helpers.cs(Color.white, " / ") +
+                                            Helpers.cs(neutralColor, ModTranslation.GetString("Intro-Text", 1)) + "</size>";
             return;
         }
 
         if (roleInfo.isNeutral)
         {
             __instance.BackgroundBar.material.color = neutralColor;
-            __instance.TeamTitle.text = "Neutral";
+            __instance.TeamTitle.text = ModTranslation.GetString("Intro-Text", 1);
             __instance.TeamTitle.color = neutralColor;
         }
     }
@@ -508,7 +511,7 @@ internal class IntroPatch
                 {
                     var otherLover = PlayerControl.LocalPlayer == Lovers.lover1 ? Lovers.lover2 : Lovers.lover1;
                     __instance.RoleBlurbText.text += Helpers.cs(Lovers.color,
-                        $"\n♥ You are in love with {otherLover?.Data?.PlayerName ?? ""} ♥");
+                        string.Format("\n" + ModTranslation.GetString("Intro-Text", 2), otherLover?.Data?.PlayerName ?? ""));
                 }
             }
 
@@ -516,10 +519,10 @@ internal class IntroPatch
             {
                 if (infos.Any(info => info.roleId == RoleId.Sheriff))
                     __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color,
-                        $"\nYour Deputy is {Deputy.deputy?.Data?.PlayerName ?? ""}");
+                        $"\n" + string.Format(ModTranslation.GetString("Intro-Text", 3), Deputy.deputy?.Data?.PlayerName ?? ""));
                 else if (infos.Any(info => info.roleId == RoleId.Deputy))
                     __instance.RoleBlurbText.text += Helpers.cs(Sheriff.color,
-                        $"\nYour Sheriff is {Sheriff.sheriff?.Data?.PlayerName ?? ""}");
+                        $"\n" + string.Format(ModTranslation.GetString("Intro-Text", 4), Sheriff.sheriff?.Data?.PlayerName ?? ""));
             }
         }
 

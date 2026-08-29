@@ -8,7 +8,7 @@ public class Bomber : RoleBase
     public static Bomber Instance;
 
     public static Color color = Palette.ImpostorRed;
-    public static RoleInfo Info = new("Bomber", color, "Bomb all Crewmates", "Bomb all Crewmates", RoleId.Bomber);
+    public static RoleInfo Info = new(color, RoleId.Bomber);
 
     public static PlayerControl bomber;
     public static Bomb bomb;

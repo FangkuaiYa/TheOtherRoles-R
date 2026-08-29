@@ -1,3 +1,4 @@
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Impostor;
@@ -8,8 +9,7 @@ public class Morphling : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Morphling", color, "Change your look to not get caught", "Change your look",
-        RoleId.Morphling);
+    public static RoleInfo Info = new(color, RoleId.Morphling);
 
     public static PlayerControl morphling;
     private static Sprite sampleSprite;
@@ -75,5 +75,12 @@ public class Morphling : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Morphling.morphling == null || Morphling.morphling != player) return;
+        Morphling.currentTarget = PlayerControlFixedUpdatePatch.setTarget();
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Morphling.currentTarget, Morphling.color);
     }
 }

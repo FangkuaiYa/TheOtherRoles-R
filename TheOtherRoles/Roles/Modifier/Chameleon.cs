@@ -10,8 +10,7 @@ public class Chameleon : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Chameleon", color, "You're hard to see when not moving",
-        "You're hard to see when not moving", RoleId.Chameleon, false, true);
+    public static RoleInfo Info = new(color, RoleId.Chameleon, isModifier: true);
 
     public static List<PlayerControl> chameleon = new();
     public static float minVisibility = 0.2f;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
@@ -9,7 +10,7 @@ public class Arsonist : RoleBase
     public static Arsonist Instance;
 
     public static Color color = new Color32(238, 112, 46, byte.MaxValue);
-    public static RoleInfo Info = new("Arsonist", color, "Let them burn", "Let them burn", RoleId.Arsonist, true);
+    public static RoleInfo Info = new(color, RoleId.Arsonist, isNeutral: true);
 
     public static PlayerControl arsonist;
 
@@ -79,5 +80,24 @@ public class Arsonist : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Arsonist.arsonist == null || Arsonist.arsonist != player) return;
+        List<PlayerControl> untargetables;
+        if (Arsonist.douseTarget != null)
+        {
+            untargetables = new List<PlayerControl>();
+            foreach (var p in PlayerControl.AllPlayerControls)
+                if (p.PlayerId != Arsonist.douseTarget.PlayerId)
+                    untargetables.Add(p);
+        }
+        else
+        {
+            untargetables = Arsonist.dousedPlayers;
+        }
+        Arsonist.currentTarget = PlayerControlFixedUpdatePatch.setTarget(untargetablePlayers: untargetables);
+        if (Arsonist.currentTarget != null) PlayerControlFixedUpdatePatch.setPlayerOutline(Arsonist.currentTarget, Arsonist.color);
     }
 }

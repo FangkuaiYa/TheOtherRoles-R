@@ -9,8 +9,7 @@ public class Portalmaker : RoleBase
 
     public static Color color = new Color32(69, 69, 169, byte.MaxValue);
 
-    public static RoleInfo Info = new("Portalmaker", color, "You can create portals", "You can create portals",
-        RoleId.Portalmaker);
+    public static RoleInfo Info = new(color, RoleId.Portalmaker);
 
     public static PlayerControl portalmaker;
 

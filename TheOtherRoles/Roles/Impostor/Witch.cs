@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Impostor;
@@ -9,8 +11,7 @@ public class Witch : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Witch", color, "Cast a spell upon your foes", "Cast a spell upon your foes",
-        RoleId.Witch);
+    public static RoleInfo Info = new(color, RoleId.Witch);
 
     public static PlayerControl witch;
     public static List<PlayerControl> futureSpelled = new();
@@ -74,5 +75,26 @@ public class Witch : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Witch.witch == null || Witch.witch != player) return;
+        List<PlayerControl> untargetables;
+        if (Witch.spellCastingTarget != null)
+        {
+            untargetables = PlayerControl.AllPlayerControls.ToArray()
+                .Where(x => x.PlayerId != Witch.spellCastingTarget.PlayerId)
+                .ToList();
+        }
+        else
+        {
+            untargetables = new List<PlayerControl>();
+            if (Spy.spy != null && !Witch.canSpellAnyone) untargetables.Add(Spy.spy);
+            if (Sidekick.wasTeamRed && !Witch.canSpellAnyone) untargetables.Add(Sidekick.sidekick);
+            if (Jackal.wasTeamRed && !Witch.canSpellAnyone) untargetables.Add(Jackal.jackal);
+        }
+        Witch.currentTarget = PlayerControlFixedUpdatePatch.setTarget(!Witch.canSpellAnyone, untargetablePlayers: untargetables);
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Witch.currentTarget, Witch.color);
     }
 }

@@ -38,10 +38,10 @@ public static class PlayerNameSpeakingIconPatch
         // Load sprites
         if (_speakingSprite == null)
             _speakingSprite = TorVoiceHudState.LoadSpriteFromResources(
-                "TheOtherRoles.Voice.Resources.Speaking.png", 100f);
+                "TheOtherRoles.Resources.Voice.Speaking.png", 100f);
         if (_noConnectSprite == null)
             _noConnectSprite = TorVoiceHudState.LoadSpriteFromResources(
-                "TheOtherRoles.Voice.Resources.NoConnect.png", 100f);
+                "TheOtherRoles.Resources.Voice.NoConnect.png", 100f);
 
         // Build set of voice-connected player clientIds (from BCL server)
         var connectedIds = new HashSet<int>();

@@ -1,3 +1,7 @@
+using System;
+using System.Linq;
+using TheOtherRoles.Patches;
+using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;
@@ -8,8 +12,7 @@ public class TimeMaster : RoleBase
 
     public static Color color = new Color32(112, 142, 239, byte.MaxValue);
 
-    public static RoleInfo Info = new("Time Master", color, "Save yourself with your time shield",
-        "Use your time shield", RoleId.TimeMaster);
+    public static RoleInfo Info = new(color, RoleId.TimeMaster);
 
     public static PlayerControl timeMaster;
 
@@ -58,5 +61,52 @@ public class TimeMaster : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (TimeMaster.isRewinding)
+        {
+            if (GameHistory.localPlayerPositions.Count > 0)
+            {
+                var next = GameHistory.localPlayerPositions[0];
+                if (next.Item2)
+                {
+                    if (player.inVent)
+                        foreach (var vent in MapUtilities.CachedShipStatus.AllVents)
+                        {
+                            bool canUse;
+                            bool couldUse;
+                            vent.CanUse(player.Data, out canUse, out couldUse);
+                            if (canUse)
+                            {
+                                player.MyPhysics.RpcExitVent(vent.Id);
+                                vent.SetButtons(false);
+                            }
+                        }
+                    player.transform.position = next.Item1;
+                }
+                else if (GameHistory.localPlayerPositions.Any(x => x.Item2))
+                {
+                    player.transform.position = next.Item1;
+                }
+                if (SubmergedCompatibility.IsSubmerged) SubmergedCompatibility.ChangeFloor(next.Item1.y > -7);
+                GameHistory.localPlayerPositions.RemoveAt(0);
+                if (GameHistory.localPlayerPositions.Count > 1)
+                    GameHistory.localPlayerPositions.RemoveAt(0);
+            }
+            else
+            {
+                TimeMaster.isRewinding = false;
+                player.moveable = true;
+            }
+        }
+        else
+        {
+            while (GameHistory.localPlayerPositions.Count >= Mathf.Round(TimeMaster.rewindTime / Time.fixedDeltaTime))
+                GameHistory.localPlayerPositions.RemoveAt(GameHistory.localPlayerPositions.Count - 1);
+            GameHistory.localPlayerPositions.Insert(0,
+                new Tuple<Vector3, bool>(player.transform.position, player.CanMove));
+        }
     }
 }

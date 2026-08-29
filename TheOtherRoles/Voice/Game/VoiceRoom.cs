@@ -125,7 +125,7 @@ public class VoiceRoom
             // Kick off mic permission request + AudioRecord startup early
             // so the pipeline is warm by the time WebSocket/RTC connects.
             _androidMic?.Warmup();
-            _androidSpeaker.Warmup();
+            _androidSpeaker?.Warmup();
         }
         else
         {
@@ -304,7 +304,7 @@ public class VoiceRoom
     {
         try
         {
-            _androidSpeaker.Dispose();
+            _androidSpeaker?.Dispose();
             _androidSpeaker = null;
 
             _androidSpeaker = new AndroidSpeaker();
@@ -318,7 +318,7 @@ public class VoiceRoom
             TheOtherRolesPlugin.Logger.LogError($"[VC] Android speaker init failed: {ex.Message}");
             try
             {
-                _androidSpeaker.Dispose();
+                _androidSpeaker?.Dispose();
             }
             catch
             {

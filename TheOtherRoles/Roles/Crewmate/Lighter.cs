@@ -8,8 +8,7 @@ public class Lighter : RoleBase
 
     public static Color color = new Color32(238, 229, 190, byte.MaxValue);
 
-    public static RoleInfo Info = new("Lighter", color, "Your light never goes out", "Your light never goes out",
-        RoleId.Lighter);
+    public static RoleInfo Info = new(color, RoleId.Lighter);
 
     public static PlayerControl lighter;
 

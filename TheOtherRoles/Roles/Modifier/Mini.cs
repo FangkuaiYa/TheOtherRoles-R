@@ -11,8 +11,7 @@ public class Mini : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Mini", color, "No one will harm you until you grow up", "No one will harm you",
-        RoleId.Mini, false, true);
+    public static RoleInfo Info = new(color, RoleId.Mini, isModifier: true);
 
     public static PlayerControl mini;
 

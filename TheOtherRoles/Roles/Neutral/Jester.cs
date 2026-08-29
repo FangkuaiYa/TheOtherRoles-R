@@ -7,7 +7,7 @@ public class Jester : RoleBase
     public static Jester Instance;
 
     public static Color color = new Color32(236, 98, 165, byte.MaxValue);
-    public static RoleInfo Info = new("Jester", color, "Get voted out", "Get voted out", RoleId.Jester, true);
+    public static RoleInfo Info = new(color, RoleId.Jester, isNeutral: true);
 
     public static PlayerControl jester;
 

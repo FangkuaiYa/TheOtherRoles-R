@@ -8,8 +8,7 @@ public class Cleaner : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Cleaner", color, "Kill everyone and leave no traces", "Clean up dead bodies",
-        RoleId.Cleaner);
+    public static RoleInfo Info = new(color, RoleId.Cleaner);
 
     public static PlayerControl cleaner;
     public static float cooldown = 30f;

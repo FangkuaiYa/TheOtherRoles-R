@@ -8,8 +8,7 @@ public class Spy : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Spy", color, "Confuse the <color=#FF1919FF>Impostors</color>",
-        "Confuse the Impostors", RoleId.Spy);
+    public static RoleInfo Info = new(color, RoleId.Spy);
 
     public static PlayerControl spy;
     public static bool impostorsCanKillAnyone = true;

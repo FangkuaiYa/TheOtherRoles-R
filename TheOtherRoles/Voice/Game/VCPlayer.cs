@@ -260,6 +260,13 @@ public class VCPlayer
                 MuteAll();
                 return;
             }
+
+            // Private channels bypass distance/wall/vent restrictions
+            _imager.Pan = pan;
+            _normalVolume.Volume = 1f;
+            _ghostVolume.Volume = 0f;
+            _radioVolume.Volume = 0f;
+            return;
         }
 
         if (localImp && targetDead && s.ImpostorHearGhosts)

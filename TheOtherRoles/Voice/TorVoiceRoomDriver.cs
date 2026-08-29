@@ -1,6 +1,7 @@
 ﻿using System;
 using InnerNet;
 using TheOtherRoles.Voice.Game;
+using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace TheOtherRoles.Voice;
@@ -10,6 +11,7 @@ internal static class TorVoiceRoomDriver
     private static bool _wasInIntro;
     private static bool _wasInEndGame;
     private static bool _lastVcEnabled;
+    private static float _retryCooldown;
 
     private static bool IsLocalServer()
     {
@@ -54,9 +56,24 @@ internal static class TorVoiceRoomDriver
         // Player accepted — join voice room
         if (VoiceRoom.Current == null)
         {
+            if (_retryCooldown > 0f)
+            {
+                _retryCooldown -= Time.deltaTime;
+                return;
+            }
+
             var region = AmongUsClient.Instance!.networkAddress;
             var roomId = AmongUsClient.Instance.GameId.ToString();
-            VoiceRoom.Start(region, roomId);
+            try
+            {
+                VoiceRoom.Start(region, roomId);
+            }
+            catch (Exception ex)
+            {
+                TheOtherRolesPlugin.Logger.LogError($"[VC] Room start failed: {ex.Message}");
+                _retryCooldown = 5f;
+                return;
+            }
             TorVoiceHudState.ApplyMicState();
             TorVoiceHudState.ApplySpeakerState();
 

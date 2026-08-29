@@ -62,12 +62,11 @@ internal class CreateGameOptionsPatch
 
             modeButtonGS = Object.Instantiate(__instance.modeButtons[0], __instance.modeButtons[0].transform);
             modeButtonGS.name = "TORGUESSER";
-            changeButtonText(modeButtonGS, "TOR Guesser");
+            changeButtonText(modeButtonGS, ModTranslation.GetString("GameOptions-Text", 1));
             modeButtonGS.transform.SetLocalX(5.86f);
             modeButtonGS.OnClick.RemoveAllListeners();
             modeButtonGS.OnMouseOver.AddListener((Action)(() =>
-                __instance.tooltip.SetText(
-                    "An extension to the Classic-Gamemode and gives you a multitude of new options for Guessers.")));
+                __instance.tooltip.SetText(ModTranslation.GetString("GameOptions-Text", 2))));
             modeButtonGS.OnClick.AddListener((Action)(() =>
                     {
                         TORMapOptions.gameMode = CustomGamemodes.Guesser;
@@ -81,13 +80,12 @@ internal class CreateGameOptionsPatch
 
             modeButtonHK = Object.Instantiate(modeButtonGS, __instance.modeButtons[0].transform);
             modeButtonHK.name = "TORHIDENSEEK";
-            changeButtonText(modeButtonHK, "TOR Hide N Seek");
+            changeButtonText(modeButtonHK, ModTranslation.GetString("GameOptions-Text", 3));
             modeButtonHK.transform.SetLocalX(0);
             modeButtonHK.transform.SetLocalY(-0.9f);
             modeButtonHK.OnClick.RemoveAllListeners();
             modeButtonHK.OnMouseOver.AddListener((Action)(() =>
-                __instance.tooltip.SetText(
-                    "A standalone Gamemode where Hunter have to catch their prey (\"Hunted\" players).")));
+                __instance.tooltip.SetText(ModTranslation.GetString("GameOptions-Text", 4))));
             modeButtonHK.OnClick.AddListener((Action)(() =>
                     {
                         TORMapOptions.gameMode = CustomGamemodes.HideNSeek;
@@ -101,12 +99,11 @@ internal class CreateGameOptionsPatch
 
             modeButtonPH = Object.Instantiate(modeButtonHK, __instance.modeButtons[0].transform);
             modeButtonPH.name = "TORPROPHUNT";
-            changeButtonText(modeButtonPH, "TOR Prop Hunt");
+            changeButtonText(modeButtonPH, ModTranslation.GetString("GameOptions-Text", 5));
             modeButtonPH.transform.SetLocalX(2.91f);
             modeButtonPH.OnClick.RemoveAllListeners();
             modeButtonPH.OnMouseOver.AddListener((Action)(() =>
-                __instance.tooltip.SetText(
-                    "A standalone Gamemode where Hunters have to find the disguised players (\"Props\").")));
+                __instance.tooltip.SetText(ModTranslation.GetString("GameOptions-Text", 6))));
             modeButtonPH.OnClick.AddListener((Action)(() =>
                     {
                         TORMapOptions.gameMode = CustomGamemodes.PropHunt;
@@ -180,11 +177,11 @@ internal class CreateGameOptionsPatch
                 case CustomGamemodes.Classic:
                     return DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameTypeClassic);
                 case CustomGamemodes.Guesser:
-                    return "TOR Guesser";
+                    return ModTranslation.GetString("GameOptions-Text", 1);
                 case CustomGamemodes.HideNSeek:
-                    return "TOR Hide N Seek";
+                    return ModTranslation.GetString("GameOptions-Text", 3);
                 case CustomGamemodes.PropHunt:
-                    return "TOR Prop Hunt";
+                    return ModTranslation.GetString("GameOptions-Text", 5);
                 default:
                     return DestroyableSingleton<TranslationController>.Instance.GetString(StringNames
                         .GameTypeHideAndSeek);

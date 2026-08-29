@@ -1,3 +1,5 @@
+using TheOtherRoles.Objects;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;
@@ -8,8 +10,7 @@ public class Detective : RoleBase
 
     public static Color color = new Color32(45, 106, 165, byte.MaxValue);
 
-    public static RoleInfo Info = new("Detective", color,
-        "Find the <color=#FF1919FF>Impostors</color> by examining footprints", "Examine footprints", RoleId.Detective);
+    public static RoleInfo Info = new(color, RoleId.Detective);
 
     public static PlayerControl detective;
 
@@ -49,5 +50,18 @@ public class Detective : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Detective.detective == null || Detective.detective != player) return;
+        Detective.timer -= Time.fixedDeltaTime;
+        if (Detective.timer <= 0f)
+        {
+            Detective.timer = Detective.footprintIntervall;
+            foreach (var p in PlayerControl.AllPlayerControls)
+                if (p != null && p != player && !p.Data.IsDead && !p.inVent)
+                    FootprintHolder.Instance.MakeFootprint(p);
+        }
     }
 }

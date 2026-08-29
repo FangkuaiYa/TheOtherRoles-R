@@ -8,8 +8,7 @@ public class Yoyo : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Yo-Yo", color, "Blink to a marked location and Back", "Blink to a location",
-        RoleId.Yoyo);
+    public static RoleInfo Info = new(color, RoleId.Yoyo);
 
     public static PlayerControl yoyo = null;
     public static float blinkDuration;

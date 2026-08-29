@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using TheOtherRoles.Objects;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
@@ -9,7 +10,7 @@ public class Vulture : RoleBase
     public static Vulture Instance;
 
     public static Color color = new Color32(139, 69, 19, byte.MaxValue);
-    public static RoleInfo Info = new("Vulture", color, "Eat corpses to win", "Eat dead bodies", RoleId.Vulture, true);
+    public static RoleInfo Info = new(color, RoleId.Vulture, isNeutral: true);
 
     public static PlayerControl vulture;
     public static List<Arrow> localArrows = new();
@@ -63,5 +64,34 @@ public class Vulture : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Vulture.vulture == null || player != Vulture.vulture || Vulture.localArrows == null || !Vulture.showArrows) return;
+        if (Vulture.vulture.Data.IsDead)
+        {
+            foreach (var arrow in Vulture.localArrows) Object.Destroy(arrow.arrow);
+            Vulture.localArrows = new List<Arrow>();
+            return;
+        }
+        DeadBody[] deadBodies = Object.FindObjectsOfType<DeadBody>();
+        var arrowUpdate = Vulture.localArrows.Count != deadBodies.Length;
+        var index = 0;
+        if (arrowUpdate)
+        {
+            foreach (var arrow in Vulture.localArrows) Object.Destroy(arrow.arrow);
+            Vulture.localArrows = new List<Arrow>();
+        }
+        foreach (var db in deadBodies)
+        {
+            if (arrowUpdate)
+            {
+                Vulture.localArrows.Add(new Arrow(Color.blue));
+                Vulture.localArrows[index].arrow.SetActive(true);
+            }
+            if (Vulture.localArrows[index] != null) Vulture.localArrows[index].Update(db.transform.position);
+            index++;
+        }
     }
 }

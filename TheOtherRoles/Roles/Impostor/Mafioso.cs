@@ -8,8 +8,7 @@ public class Mafioso : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Mafioso", color,
-        "Work with the <color=#FF1919FF>Mafia</color> to kill the Crewmates", "Kill all Crewmates", RoleId.Mafioso);
+    public static RoleInfo Info = new(color, RoleId.Mafioso);
 
     public static PlayerControl mafioso;
 

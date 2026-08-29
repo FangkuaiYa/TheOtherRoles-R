@@ -18,7 +18,7 @@ internal class GetStringPatch
         // For now only do this in custom options.
         var idInt = (int)id - 6000;
         var opt = CustomOption.options.FirstOrDefault(x => x.id == idInt);
-        ourString = opt?.name;
+        ourString = opt?.getName();
 
         __result = ourString;
 

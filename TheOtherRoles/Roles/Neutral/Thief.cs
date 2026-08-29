@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
@@ -9,8 +10,7 @@ public class Thief : RoleBase
 
     public static Color color = new Color32(71, 99, 45, byte.MaxValue);
 
-    public static RoleInfo Info = new("Thief", color, "Steal a killers role by killing them", "Steal a killers role",
-        RoleId.Thief, true);
+    public static RoleInfo Info = new(color, RoleId.Thief, isNeutral: true);
 
     public static PlayerControl thief;
     public static PlayerControl currentTarget;
@@ -62,5 +62,14 @@ public class Thief : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Thief.thief == null || Thief.thief != player) return;
+        var untargetables = new List<PlayerControl>();
+        if (Mini.mini != null && !Mini.isGrownUp()) untargetables.Add(Mini.mini);
+        Thief.currentTarget = PlayerControlFixedUpdatePatch.setTarget(untargetablePlayers: untargetables);
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Thief.currentTarget, Thief.color);
     }
 }

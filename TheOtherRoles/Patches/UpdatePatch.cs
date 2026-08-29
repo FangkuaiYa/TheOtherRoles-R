@@ -171,19 +171,19 @@ internal class HudManagerUpdatePatch
         {
             foreach (var player in PlayerControl.AllPlayerControls)
                 if (Godfather.godfather != null && Godfather.godfather == player)
-                    player.cosmetics.nameText.text = player.Data.PlayerName + " (G)";
+                    player.cosmetics.nameText.text = player.Data.PlayerName + " " + ModTranslation.GetString("Game-Mafia", 1);
                 else if (Mafioso.mafioso != null && Mafioso.mafioso == player)
-                    player.cosmetics.nameText.text = player.Data.PlayerName + " (M)";
+                    player.cosmetics.nameText.text = player.Data.PlayerName + " " + ModTranslation.GetString("Game-Mafia", 2);
                 else if (Janitor.janitor != null && Janitor.janitor == player)
-                    player.cosmetics.nameText.text = player.Data.PlayerName + " (J)";
+                    player.cosmetics.nameText.text = player.Data.PlayerName + " " + ModTranslation.GetString("Game-Mafia", 3);
             if (MeetingHud.Instance != null)
                 foreach (var player in MeetingHud.Instance.playerStates)
                     if (Godfather.godfather != null && Godfather.godfather.PlayerId == player.PlayerId)
-                        player.NameText.text = Godfather.godfather.Data.PlayerName + " (G)";
+                        player.NameText.text = Godfather.godfather.Data.PlayerName + " " + ModTranslation.GetString("Game-Mafia", 1);
                     else if (Mafioso.mafioso != null && Mafioso.mafioso.PlayerId == player.PlayerId)
-                        player.NameText.text = Mafioso.mafioso.Data.PlayerName + " (M)";
+                        player.NameText.text = Mafioso.mafioso.Data.PlayerName + " " + ModTranslation.GetString("Game-Mafia", 2);
                     else if (Janitor.janitor != null && Janitor.janitor.PlayerId == player.PlayerId)
-                        player.NameText.text = Janitor.janitor.Data.PlayerName + " (J)";
+                        player.NameText.text = Janitor.janitor.Data.PlayerName + " " + ModTranslation.GetString("Game-Mafia", 3);
         }
 
         // Lovers
@@ -231,7 +231,7 @@ internal class HudManagerUpdatePatch
             foreach (var player in MeetingHud.Instance.playerStates)
             {
                 var target = Helpers.playerById(player.PlayerId);
-                if (target != null) player.NameText.text += $" ({(Helpers.isLighterColor(target) ? "L" : "D")})";
+                if (target != null) player.NameText.text += $" ({(Helpers.isLighterColor(target) ? ModTranslation.GetString("Role-Portalmaker", 2) : ModTranslation.GetString("Role-Portalmaker", 3))})";
             }
 
         // Add medic shield info:
@@ -254,14 +254,7 @@ internal class HudManagerUpdatePatch
 
     private static void timerUpdate()
     {
-        var dt = Time.deltaTime;
-        Hacker.hackerTimer -= dt;
-        Trickster.lightsOutTimer -= dt;
-        Tracker.corpsesTrackingTimer -= dt;
-        Ninja.invisibleTimer -= dt;
-        HideNSeek.timer -= dt;
-        foreach (var key in Deputy.handcuffedKnows.Keys)
-            Deputy.handcuffedKnows[key] -= dt;
+        HideNSeek.timer -= Time.deltaTime;
     }
 
     public static void miniUpdate()

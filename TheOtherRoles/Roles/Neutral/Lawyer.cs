@@ -1,3 +1,5 @@
+using Hazel;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
@@ -7,10 +9,9 @@ public class Lawyer : RoleBase
     public static Lawyer Instance;
 
     public static Color color = new Color32(134, 153, 25, byte.MaxValue);
-    public static RoleInfo Info = new("Lawyer", color, "Defend your client", "Defend your client", RoleId.Lawyer, true);
+    public static RoleInfo Info = new(color, RoleId.Lawyer, isNeutral: true);
 
-    public static RoleInfo ProsecutorInfo = new("Prosecutor", color, "Vote out your target", "Vote out your target",
-        RoleId.Prosecutor, true);
+    public static RoleInfo ProsecutorInfo = new(color, RoleId.Prosecutor, isNeutral: true);
 
     public static PlayerControl lawyer;
     public static PlayerControl target;
@@ -66,5 +67,17 @@ public class Lawyer : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Lawyer.lawyer == null || Lawyer.lawyer != player) return;
+        if (Lawyer.target != null && Lawyer.target.Data.Disconnected && !Lawyer.lawyer.Data.IsDead)
+        {
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.LawyerPromotesToPursuer, SendOption.Reliable);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            RPCProcedure.lawyerPromotesToPursuer();
+        }
     }
 }

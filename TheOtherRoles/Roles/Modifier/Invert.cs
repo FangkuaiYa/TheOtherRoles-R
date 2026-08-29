@@ -9,8 +9,7 @@ public class Invert : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Invert", color, "Your movement is inverted", "Your movement is inverted",
-        RoleId.Invert, false, true);
+    public static RoleInfo Info = new(color, RoleId.Invert, isModifier: true);
 
     public static List<PlayerControl> invert = new();
     public static int meetings = 3;

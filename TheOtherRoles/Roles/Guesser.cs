@@ -8,11 +8,9 @@ public static class Guesser
     public static PlayerControl evilGuesser;
     public static Color color = new Color32(255, 255, 0, byte.MaxValue);
 
-    public static RoleInfo NiceInfo = new("Nice Guesser", color, "Guess and shoot", "Guess and shoot",
-        RoleId.NiceGuesser);
+    public static RoleInfo NiceInfo = new(color, RoleId.NiceGuesser);
 
-    public static RoleInfo EvilInfo = new("Evil Guesser", Palette.ImpostorRed, "Guess and shoot", "Guess and shoot",
-        RoleId.EvilGuesser);
+    public static RoleInfo EvilInfo = new(Palette.ImpostorRed, RoleId.EvilGuesser);
 
     public static int remainingShotsEvilGuesser = 2;
     public static int remainingShotsNiceGuesser = 2;

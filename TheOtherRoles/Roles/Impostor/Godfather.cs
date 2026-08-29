@@ -7,7 +7,7 @@ public class Godfather : RoleBase
     public static Godfather Instance;
 
     public static Color color = Palette.ImpostorRed;
-    public static RoleInfo Info = new("Godfather", color, "Kill all Crewmates", "Kill all Crewmates", RoleId.Godfather);
+    public static RoleInfo Info = new(color, RoleId.Godfather);
 
     public static PlayerControl godfather;
 

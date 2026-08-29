@@ -15,23 +15,6 @@ namespace TheOtherRoles.Patches;
 [HarmonyPatch]
 public static class CredentialsPatch
 {
-    public static string fullCredentialsVersion =
-        $@"<size=130%><color=#ff351f>TheOtherRoles</color></size> v{TheOtherRolesPlugin.Version + (TheOtherRolesPlugin.isBeta ? "-BETA" : "")}";
-
-    public static string fullCredentials =
-        @"<size=60%>Modded by <color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>EndOfFile</color>
-<color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>Mallöris</color>
-<color=#FCCE03FF>Gendelo</color>, <color=#00ffff>FangkuaiYa</color>
-Design by <color=#FCCE03FF>Bavari</color></size>";
-
-    public static string mainMenuCredentials =
-        @"Modded by <color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>EndOfFile</color>
-<color=#FCCE03FF>Mallöris</color>, <color=#FCCE03FF>Gendelo</color> & <color=#00ffff>FangkuaiYa</color>
-Design by <color=#FCCE03FF>Bavari</color>";
-
-    public static string contributorsCredentials =
-        @"<size=60%> <color=#FCCE03FF>Special thanks to Smeggy</color></size>";
-
     [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
     internal static class PingTrackerPatch
     {
@@ -105,7 +88,7 @@ Design by <color=#FCCE03FF>Bavari</color>";
             var credentialObject = new GameObject("credentialsTOR");
             var credentials = credentialObject.AddComponent<TextMeshPro>();
             credentials.SetText(
-                $"v{TheOtherRolesPlugin.Version + (TheOtherRolesPlugin.isBeta ? "-BETA" : "")}\n<size=30f%>\n</size>{mainMenuCredentials}\n<size=30%>\n</size>{contributorsCredentials}");
+                $"v{TheOtherRolesPlugin.Version + (TheOtherRolesPlugin.isBeta ? "-BETA" : "")}\n<size=30f%>\n</size>{ModTranslation.GetString("Credentials-Text", 1)}\n<size=30%>\n</size>{ModTranslation.GetString("Credentials-Text", 2)}");
             credentials.alignment = TextAlignmentOptions.Center;
             credentials.fontSize *= 0.05f;
 

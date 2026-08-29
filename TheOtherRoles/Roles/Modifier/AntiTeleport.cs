@@ -9,8 +9,7 @@ public class AntiTeleport : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Anti tp", color, "You will not get teleported", "You will not get teleported",
-        RoleId.AntiTeleport, false, true);
+    public static RoleInfo Info = new(color, RoleId.AntiTeleport, isModifier: true);
 
     public static List<PlayerControl> antiTeleport = new();
     public static Vector3 position;

@@ -7,7 +7,7 @@ public class Lovers : RoleBase
     public static Lovers Instance;
 
     public static Color color = new Color32(232, 57, 185, byte.MaxValue);
-    public static RoleInfo Info = new("Lover", color, "You are in love", "You are in love", RoleId.Lover, false, true);
+    public static RoleInfo Info = new(color, RoleId.Lover, isModifier: true);
 
     public static PlayerControl lover1;
     public static PlayerControl lover2;

@@ -8,8 +8,7 @@ public class Janitor : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Janitor", color,
-        "Work with the <color=#FF1919FF>Mafia</color> by hiding dead bodies", "Hide dead bodies", RoleId.Janitor);
+    public static RoleInfo Info = new(color, RoleId.Janitor);
 
     public static PlayerControl janitor;
     public static float cooldown = 30f;

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Hazel;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;
@@ -10,8 +11,7 @@ public class Deputy : RoleBase
 
     public static Color color = Sheriff.color;
 
-    public static RoleInfo Info = new("Deputy", color, "Handcuff the <color=#FF1919FF>Impostors</color>",
-        "Handcuff the Impostors", RoleId.Deputy);
+    public static RoleInfo Info = new(color, RoleId.Deputy);
 
     public static PlayerControl deputy;
 
@@ -102,5 +102,41 @@ public class Deputy : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        var keys = new List<byte>(Deputy.handcuffedKnows.Keys);
+        foreach (var key in keys)
+            Deputy.handcuffedKnows[key] -= Time.deltaTime;
+        // deputySetTarget
+        if (Deputy.deputy == null || Deputy.deputy != player) return;
+        Deputy.currentTarget = PlayerControlFixedUpdatePatch.setTarget();
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Deputy.currentTarget, Deputy.color);
+
+        // deputyUpdate
+        if (PlayerControl.LocalPlayer == null ||
+            !Deputy.handcuffedKnows.ContainsKey(PlayerControl.LocalPlayer.PlayerId)) return;
+        if (Deputy.handcuffedKnows[PlayerControl.LocalPlayer.PlayerId] <= 0)
+        {
+            Deputy.handcuffedKnows.Remove(PlayerControl.LocalPlayer.PlayerId);
+            Deputy.setHandcuffedKnows(false);
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable);
+            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+            writer.Write((byte)RPCProcedure.GhostInfoTypes.HandcuffOver);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+        }
+
+        // deputyCheckPromotion
+        if (Deputy.promotesToSheriff == 0 || Deputy.deputy.Data.IsDead ||
+            (Deputy.promotesToSheriff == 2 && false)) return; // isMeeting always false in FixedUpdate
+        if (Sheriff.sheriff == null || Sheriff.sheriff?.Data?.Disconnected == true || Sheriff.sheriff.Data.IsDead)
+        {
+            var writer2 = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.DeputyPromotes, SendOption.Reliable);
+            AmongUsClient.Instance.FinishRpcImmediately(writer2);
+            RPCProcedure.deputyPromotes();
+        }
     }
 }

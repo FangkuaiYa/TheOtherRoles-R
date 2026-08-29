@@ -53,7 +53,7 @@ public class Portal
         var lastRoom = FastDestroyableSingleton<HudManager>.Instance?.roomTracker?.LastRoom?.RoomId;
         room = lastRoom != null
             ? DestroyableSingleton<TranslationController>.Instance.GetString((SystemTypes)lastRoom)
-            : "Open Field";
+            : ModTranslation.GetString("Role-Portalmaker", 1);
     }
 
     public static Sprite getFgAnimationSprite(int index)
@@ -90,14 +90,14 @@ public class Portal
         if (Morphling.morphling != null && Morphling.morphTimer > 0)
             playerControl = Morphling.morphTarget; // Will output info of morph-target instead
         var playerNameDisplay = Portalmaker.logOnlyHasColors
-            ? "A player (" + (Helpers.isLighterColor(playerControl) ? "L" : "D") + ")"
+            ? string.Format(ModTranslation.GetString("Role-Portalmaker", 4), (Helpers.isLighterColor(playerControl) ? ModTranslation.GetString("Role-Portalmaker", 2) : ModTranslation.GetString("Role-Portalmaker", 3)))
             : playerControl.Data.PlayerName;
 
         var colorId = playerControl.Data.DefaultOutfit.ColorId;
 
         if (Camouflager.camouflageTimer > 0 || Helpers.MushroomSabotageActive())
         {
-            playerNameDisplay = "A camouflaged player";
+            playerNameDisplay = ModTranslation.GetString("Role-Portalmaker", 5);
             colorId = 6;
         }
 

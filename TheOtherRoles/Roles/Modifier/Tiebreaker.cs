@@ -8,8 +8,7 @@ public class Tiebreaker : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Tiebreaker", color, "Your vote breaks the tie", "Break the tie",
-        RoleId.Tiebreaker, false, true);
+    public static RoleInfo Info = new(color, RoleId.Tiebreaker, isModifier: true);
 
     public static PlayerControl tiebreaker;
 

@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using TheOtherRoles.Objects;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Impostor;
@@ -8,8 +11,7 @@ public class Vampire : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Vampire", color, "Kill the Crewmates with your bites", "Bite your enemies",
-        RoleId.Vampire);
+    public static RoleInfo Info = new(color, RoleId.Vampire);
 
     public static PlayerControl vampire;
     public static float delay = 10f;
@@ -71,5 +73,37 @@ public class Vampire : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Vampire.vampire == null || Vampire.vampire != player) return;
+        PlayerControl target = null;
+        if (Spy.spy != null || Sidekick.wasSpy || Jackal.wasSpy)
+        {
+            if (Spy.impostorsCanKillAnyone)
+                target = PlayerControlFixedUpdatePatch.setTarget(false, true);
+            else
+                target = PlayerControlFixedUpdatePatch.setTarget(true, true,
+                    new List<PlayerControl>
+                    {
+                        Spy.spy, Sidekick.wasTeamRed ? Sidekick.sidekick : null,
+                        Jackal.wasTeamRed ? Jackal.jackal : null
+                    });
+        }
+        else
+        {
+            target = PlayerControlFixedUpdatePatch.setTarget(true, true,
+                new List<PlayerControl>
+                    { Sidekick.wasImpostor ? Sidekick.sidekick : null, Jackal.wasImpostor ? Jackal.jackal : null });
+        }
+        var targetNearGarlic = false;
+        if (target != null)
+            foreach (var garlic in Garlic.garlics)
+                if (Vector2.Distance(garlic.garlic.transform.position, target.transform.position) <= 1.91f)
+                    targetNearGarlic = true;
+        Vampire.targetNearGarlic = targetNearGarlic;
+        Vampire.currentTarget = target;
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Vampire.currentTarget, Vampire.color);
     }
 }

@@ -372,13 +372,13 @@ internal class ExileControllerMessagePatch
                 // Exile role text
                 if (id == StringNames.ExileTextPN || id == StringNames.ExileTextSN || id == StringNames.ExileTextPP ||
                     id == StringNames.ExileTextSP)
-                    __result = player.Data.PlayerName + " was The " + string.Join(" ",
-                        CustomRoleManager.getRoleInfoForPlayer(player, false).Select(x => x.name).ToArray());
+                    __result =  string.Format(ModTranslation.GetString("Exile-Text", 1), player.Data.PlayerName, string.Join(" ",
+                        CustomRoleManager.getRoleInfoForPlayer(player, false).Select(x => x.name).ToArray()));
                 // Hide number of remaining impostors on Jester win
                 if (id == StringNames.ImpostorsRemainP || id == StringNames.ImpostorsRemainS)
                     if (Jester.jester != null && player.PlayerId == Jester.jester.PlayerId)
                         __result = "";
-                if (Tiebreaker.isTiebreak) __result += " (Tiebreaker)";
+                if (Tiebreaker.isTiebreak) __result += " " + ModTranslation.GetString("Exile-Text", 2);
                 Tiebreaker.isTiebreak = false;
             }
         }

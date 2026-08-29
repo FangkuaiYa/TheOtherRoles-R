@@ -80,7 +80,7 @@ public class GameStartManagerPatch
                 {
                     versionMismatch = true;
                     message +=
-                        $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a different or no version of The Other Roles\n</color>";
+                        string.Format(ModTranslation.GetString("GameStart-Text", 1), $"<color=#FF0000FF>{client.Character.Data.PlayerName}") + "\n</color>";
                 }
                 else
                 {
@@ -89,20 +89,20 @@ public class GameStartManagerPatch
                     if (diff > 0)
                     {
                         message +=
-                            $"<color=#FF0000FF>{client.Character.Data.PlayerName} has an older version of The Other Roles (v{playerVersions[client.Id].version.ToString()})\n</color>";
+                            string.Format(ModTranslation.GetString("GameStart-Text", 2), $"<color=#FF0000FF>{client.Character.Data.PlayerName}", playerVersions[client.Id].version.ToString()) + "\n</color>";
                         versionMismatch = true;
                     }
                     else if (diff < 0)
                     {
                         message +=
-                            $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a newer version of The Other Roles (v{playerVersions[client.Id].version.ToString()})\n</color>";
+                            string.Format(ModTranslation.GetString("GameStart-Text", 3), $"<color=#FF0000FF>{client.Character.Data.PlayerName}", playerVersions[client.Id].version.ToString()) + "\n</color>";
                         versionMismatch = true;
                     }
                     else if (!PV.GuidMatches())
                     {
                         // version presumably matches, check if Guid matches
                         message +=
-                            $"<color=#FF0000FF>{client.Character.Data.PlayerName} has a modified version of TOR v{playerVersions[client.Id].version.ToString()} <size=30%>({PV.guid.ToString()})</size>\n</color>";
+                            string.Format(ModTranslation.GetString("GameStart-Text", 4), $"<color=#FF0000FF>{client.Character.Data.PlayerName}", playerVersions[client.Id].version.ToString(), PV.guid.ToString()) + "\n</color>";
                         versionMismatch = true;
                     }
                 }
@@ -186,7 +186,7 @@ public class GameStartManagerPatch
                     }
 
                     __instance.GameStartText.text =
-                        $"<color=#FF0000FF>The host has no or a different version of The Other Roles\nYou will be kicked in {Math.Round(10 - kickingTimer)}s</color>";
+                        string.Format("<color=#FF0000FF>"  + ModTranslation.GetString("GameStart-Text", 5) + "</color>", Math.Round(10 - kickingTimer));
                     __instance.GameStartText.transform.localPosition =
                         __instance.StartButton.transform.localPosition + Vector3.up * 5;
                     __instance.GameStartText.transform.localScale = new Vector3(2f, 2f, 1f);
@@ -195,7 +195,7 @@ public class GameStartManagerPatch
                 else if (versionMismatch)
                 {
                     __instance.GameStartText.text =
-                        "<color=#FF0000FF>Players With Different Versions:\n</color>" + message;
+                        $"<color=#FF0000FF>{ModTranslation.GetString("GameStart-Text", 6)}\n</color>" + message;
                     __instance.GameStartText.transform.localPosition =
                         __instance.StartButton.transform.localPosition + Vector3.up * 5;
                     __instance.GameStartText.transform.localScale = new Vector3(2f, 2f, 1f);
@@ -333,7 +333,8 @@ public class GameStartManagerPatch
                     // 2 = Polus
                     // 3 = Dleks - deactivated
                     // 4 = Airship
-                    // 5 = Submerged
+                    // 5 = Fungle
+                    // 6 = Submerged
                     byte chosenMapId = 0;
                     List<float> probabilities =
                     [

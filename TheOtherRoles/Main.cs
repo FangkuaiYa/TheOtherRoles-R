@@ -136,6 +136,8 @@ public class TheOtherRolesPlugin : BasePlugin
         Logger = Log;
         Instance = this;
 
+        ModTranslation.Load();
+
         _ = CredentialsPatch.MOTD.loadMOTDs();
 
         DebugMode = Config.Bind("Custom", "Enable Debug Mode", "false");
@@ -182,6 +184,7 @@ public class TheOtherRolesPlugin : BasePlugin
         ClassInjector.RegisterTypeInIl2Cpp<PlayerVolumeWindow>();
         VCManager.RegisterSceneHook();
         TorVoiceHudState.Init();
+
         Logger.LogInfo("Loading TOR completed!");
     }
 }

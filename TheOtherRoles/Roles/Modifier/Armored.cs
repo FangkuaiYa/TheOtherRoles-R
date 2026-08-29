@@ -8,8 +8,7 @@ public class Armored : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Armored", color, "You are protected from one murder attempt",
-        "You are protected from one murder attempt", RoleId.Armored, false, true);
+    public static RoleInfo Info = new(color, RoleId.Armored, isModifier: true);
 
     public static PlayerControl armored;
 

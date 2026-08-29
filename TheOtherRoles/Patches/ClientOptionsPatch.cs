@@ -15,48 +15,51 @@ public static class ClientOptionsPatch
 {
     private static readonly SelectionBehaviour[] AllOptions =
     {
-        new("Ghosts See Tasks & Other Info",
+        new(1,
             () => TORMapOptions.ghostsSeeInformation = TheOtherRolesPlugin.GhostsSeeInformation.Value =
                 !TheOtherRolesPlugin.GhostsSeeInformation.Value, TheOtherRolesPlugin.GhostsSeeInformation.Value),
-        new("Ghosts Can See Votes",
+        new(2,
             () => TORMapOptions.ghostsSeeVotes =
                 TheOtherRolesPlugin.GhostsSeeVotes.Value = !TheOtherRolesPlugin.GhostsSeeVotes.Value,
             TheOtherRolesPlugin.GhostsSeeVotes.Value),
-        new("Ghosts Can See Roles",
+        new(3,
             () => TORMapOptions.ghostsSeeRoles =
                 TheOtherRolesPlugin.GhostsSeeRoles.Value = !TheOtherRolesPlugin.GhostsSeeRoles.Value,
             TheOtherRolesPlugin.GhostsSeeRoles.Value),
-        new("Ghosts Can Additionally See Modifier",
+        new(4,
             () => TORMapOptions.ghostsSeeModifier = TheOtherRolesPlugin.GhostsSeeModifier.Value =
                 !TheOtherRolesPlugin.GhostsSeeModifier.Value, TheOtherRolesPlugin.GhostsSeeModifier.Value),
-        new("Show Role Summary",
+        new(5,
             () => TORMapOptions.showRoleSummary =
                 TheOtherRolesPlugin.ShowRoleSummary.Value = !TheOtherRolesPlugin.ShowRoleSummary.Value,
             TheOtherRolesPlugin.ShowRoleSummary.Value),
-        new("Show Lighter / Darker",
+        new(6,
             () => TORMapOptions.showLighterDarker = TheOtherRolesPlugin.ShowLighterDarker.Value =
                 !TheOtherRolesPlugin.ShowLighterDarker.Value, TheOtherRolesPlugin.ShowLighterDarker.Value),
-        new("Enable Sound Effects", () =>
+        new(7, () =>
         {
             TORMapOptions.enableSoundEffects = TheOtherRolesPlugin.EnableSoundEffects.Value =
                 !TheOtherRolesPlugin.EnableSoundEffects.Value;
             if (!TORMapOptions.enableSoundEffects) SoundEffectsManager.stopAll();
             return TORMapOptions.enableSoundEffects;
         }, TheOtherRolesPlugin.EnableSoundEffects.Value),
-        new("Show Vents On Map",
+        new(8,
             () => TORMapOptions.ShowVentsOnMap =
                 TheOtherRolesPlugin.ShowVentsOnMap.Value = !TheOtherRolesPlugin.ShowVentsOnMap.Value,
             TheOtherRolesPlugin.ShowVentsOnMap.Value),
-        new("Show Chat Notifications",
+        new(9,
             () => TORMapOptions.ShowChatNotifications = TheOtherRolesPlugin.ShowChatNotifications.Value =
                 !TheOtherRolesPlugin.ShowChatNotifications.Value, TheOtherRolesPlugin.ShowChatNotifications.Value)
     };
 
     private static GameObject popUp;
     private static TextMeshPro titleText;
-
     private static ToggleButtonBehaviour buttonPrefab;
     private static Vector3? _origin;
+
+    private static TextMeshPro titleTextInstance;
+    private static ToggleButtonBehaviour moreOptionsButton;
+    private static readonly List<ToggleButtonBehaviour> optionButtons = new List<ToggleButtonBehaviour>();
 
     [HarmonyPostfix]
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
@@ -126,7 +129,7 @@ public static class ClientOptionsPatch
         moreOptions.transform.localScale = new Vector3(0.66f, 1, 1);
 
         moreOptions.gameObject.SetActive(true);
-        moreOptions.Text.text = "Mod Options...";
+        moreOptions.Text.text = ModTranslation.GetString("ClientOptions-Button-Text", 1);
         moreOptions.Text.transform.localScale = new Vector3(1 / 0.66f, 1, 1);
         var moreOptionsButton = moreOptions.GetComponent<PassiveButton>();
         moreOptionsButton.OnClick = new ButtonClickedEvent();
@@ -153,6 +156,7 @@ public static class ClientOptionsPatch
             if (closeUnderlying)
                 __instance.Close();
         }));
+        ClientOptionsPatch.moreOptionsButton = moreOptions;
     }
 
     private static void RefreshOpen()
@@ -169,13 +173,16 @@ public static class ClientOptionsPatch
         var title = Object.Instantiate(titleText, popUp.transform);
         title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.3f;
         title.gameObject.SetActive(true);
-        title.text = "More Options...";
+        title.text = ModTranslation.GetString("ClientOptions-Button-Text", 2);
         title.name = "TitleText";
+        titleTextInstance = title;
     }
 
     private static void SetUpOptions()
     {
         if (popUp.transform.GetComponentInChildren<ToggleButtonBehaviour>()) return;
+
+        optionButtons.Clear();
 
         for (var i = 0; i < AllOptions.Length; i++)
         {
@@ -190,12 +197,12 @@ public static class ClientOptionsPatch
             button.onState = info.DefaultValue;
             button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
 
-            button.Text.text = info.Title;
+            button.Text.text = info.Title.GetString();
             button.Text.fontSizeMin = button.Text.fontSizeMax = 1.8f;
             button.Text.font = Object.Instantiate(titleText.font);
             button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);
 
-            button.name = info.Title.Replace(" ", "") + "Toggle";
+            button.name = info.Title.GetString().Replace(" ", "") + "Toggle";
             button.gameObject.SetActive(true);
 
             var passiveButton = button.GetComponent<PassiveButton>();
@@ -222,6 +229,26 @@ public static class ClientOptionsPatch
 
             foreach (var spr in button.gameObject.GetComponentsInChildren<SpriteRenderer>())
                 spr.size = new Vector2(2.2f, .7f);
+
+            optionButtons.Add(button);
+        }
+    }
+
+    public static void UpdateTranslations()
+    {
+        if (titleTextInstance != null)
+        {
+            titleTextInstance.text = ModTranslation.GetString("ClientOptions-Button-Text", 2);
+        }
+
+        if (moreOptionsButton != null)
+        {
+            moreOptionsButton.Text.text = ModTranslation.GetString("ClientOptions-Button-Text", 1);
+        }
+
+        for (int i = 0; i < optionButtons.Count && i < AllOptions.Length; i++)
+        {
+            optionButtons[i].Text.text = AllOptions[i].Title.GetString();
         }
     }
 
@@ -234,11 +261,11 @@ public static class ClientOptionsPatch
     {
         public bool DefaultValue;
         public Func<bool> OnClick;
-        public string Title;
+        public TranslationInfo Title;
 
-        public SelectionBehaviour(string title, Func<bool> onClick, bool defaultValue)
+        public SelectionBehaviour(int id, Func<bool> onClick, bool defaultValue)
         {
-            Title = title;
+            Title = new TranslationInfo("ClientOptions-Text", id);
             OnClick = onClick;
             DefaultValue = defaultValue;
         }

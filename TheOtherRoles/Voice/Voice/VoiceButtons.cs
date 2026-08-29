@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using HarmonyLib;
 using Hazel;
+using TheOtherRoles.Utilities;
 using TheOtherRoles.Voice.Game;
+using TMPro;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -121,7 +121,7 @@ public static class VoiceButtons
         {
             voiceBgObject = new GameObject("VC_BtnBG");
             voiceBgRenderer = voiceBgObject.AddComponent<SpriteRenderer>();
-            voiceBgRenderer.sprite = LoadSprite("TheOtherRoles.Voice.Resources.VoiceButtonsBG.png", 175f);
+            voiceBgRenderer.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Voice.VoiceButtonsBG.png", 175f);
             voiceBgObject.transform.SetParent(VoiceModButtons.transform, false);
             voiceBgObject.layer = __instance.MapButton.gameObject.layer;
         }
@@ -138,8 +138,8 @@ public static class VoiceButtons
 
             micInactive = toggleMicButtonObject.transform.Find("Inactive").GetComponent<SpriteRenderer>();
             micActive = toggleMicButtonObject.transform.Find("Active").GetComponent<SpriteRenderer>();
-            micInactive.sprite = LoadSprite("TheOtherRoles.Voice.Resources.MicOn.png", 100f);
-            micActive.sprite = LoadSprite("TheOtherRoles.Voice.Resources.MicOnOver.png", 100f);
+            micInactive.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Voice.MicOn.png", 100f);
+            micActive.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Voice.MicOnOver.png", 100f);
 
             toggleMicButton = toggleMicButtonObject.GetComponent<PassiveButton>();
             toggleMicButton.OnClick.RemoveAllListeners();
@@ -158,8 +158,8 @@ public static class VoiceButtons
 
             spkInactive = toggleSpkButtonObject.transform.Find("Inactive").GetComponent<SpriteRenderer>();
             spkActive = toggleSpkButtonObject.transform.Find("Active").GetComponent<SpriteRenderer>();
-            spkInactive.sprite = LoadSprite("TheOtherRoles.Voice.Resources.SpeakerOn.png", 100f);
-            spkActive.sprite = LoadSprite("TheOtherRoles.Voice.Resources.SpeakerOnOver.png", 100f);
+            spkInactive.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Voice.SpeakerOn.png", 100f);
+            spkActive.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Voice.SpeakerOnOver.png", 100f);
 
             toggleSpkButton = toggleSpkButtonObject.GetComponent<PassiveButton>();
             toggleSpkButton.OnClick.RemoveAllListeners();
@@ -178,8 +178,8 @@ public static class VoiceButtons
 
             setInactive = toggleSetButtonObject.transform.Find("Inactive").GetComponent<SpriteRenderer>();
             setActive = toggleSetButtonObject.transform.Find("Active").GetComponent<SpriteRenderer>();
-            setInactive.sprite = LoadSprite("TheOtherRoles.Voice.Resources.Settings_Button.png", 100f);
-            setActive.sprite = LoadSprite("TheOtherRoles.Voice.Resources.Settings_ButtonActive.png", 100f);
+            setInactive.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Voice.Settings_Button.png", 100f);
+            setActive.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.Voice.Settings_ButtonActive.png", 100f);
 
             toggleSetButton = toggleSetButtonObject.GetComponent<PassiveButton>();
             toggleSetButton.OnClick.RemoveAllListeners();
@@ -212,12 +212,34 @@ public static class VoiceButtons
         var available =
             VoiceChannelHelper.GetAvailableChannels(isImpostor, isLover, isJackal, isSidekick, isSheriff, isDeputy);
 
-        var idx = available.IndexOf(CurrentChannel);
-        if (idx < 0) idx = 0;
-
-        var next = (idx + 1) % available.Count;
-        CurrentChannel = available[next];
-        _micMuted = false;
+        // Cycle: Muted → All → Ch1 → Ch2 → ... → Muted
+        if (_micMuted)
+        {
+            // First press: unmute, go to All
+            _micMuted = false;
+            CurrentChannel = VoiceChannel.All;
+        }
+        else if (CurrentChannel == VoiceChannel.All)
+        {
+            // Second press: switch to first available channel (if any)
+            if (available.Count > 1)
+                CurrentChannel = available[1]; // index 0 is All, index 1 is first role channel
+            else
+                _micMuted = true; // no channels, mute
+        }
+        else
+        {
+            // In a role channel: cycle to next or mute
+            var idx = available.IndexOf(CurrentChannel);
+            if (idx >= 0 && idx < available.Count - 1)
+                CurrentChannel = available[idx + 1];
+            else
+            {
+                // Last channel or not found: mute
+                _micMuted = true;
+                CurrentChannel = VoiceChannel.All;
+            }
+        }
 
         ApplyMicState();
         RefreshVisuals();
@@ -298,77 +320,82 @@ public static class VoiceButtons
     {
         var micOff = _micMuted;
         var inChannel = CurrentChannel != VoiceChannel.All;
-        var useRedState = inChannel && !micOff;
-        var micColor = useRedState ? GetChannelColor(CurrentChannel) : Color.white;
-        var spkColor = Color.white;
+        var channelColor = GetChannelColor(CurrentChannel);
+
+        // Mic button: white when muted or in All, channel color when in private channel
+        Color micColor;
+        if (micOff)
+            micColor = new Color(0.5f, 0.5f, 0.5f, 1f); // gray when muted
+        else if (inChannel)
+            micColor = channelColor;
+        else
+            micColor = Color.white;
 
         if (micInactive != null && micActive != null)
         {
-            micInactive.sprite = LoadMicSprite(useRedState, false);
-            micActive.sprite = LoadMicSprite(useRedState, true);
+            micInactive.sprite = Helpers.loadSpriteFromResources(
+                micOff ? "TheOtherRoles.Resources.Voice.MicOff.png" : "TheOtherRoles.Resources.Voice.MicOn.png", 100f);
+            micActive.sprite = Helpers.loadSpriteFromResources(
+                micOff ? "TheOtherRoles.Resources.Voice.MicOffOver.png" : "TheOtherRoles.Resources.Voice.MicOnOver.png", 100f);
             micInactive.color = micColor;
-            micActive.color = micColor;
+            // Hover: slightly darker
+            micActive.color = new Color(micColor.r * 0.75f, micColor.g * 0.75f, micColor.b * 0.75f, micColor.a);
         }
 
         if (spkInactive != null && spkActive != null)
         {
             spkInactive.sprite =
-                LoadSprite(
+                Helpers.loadSpriteFromResources(
                     IsSpeakerMuted
-                        ? "TheOtherRoles.Voice.Resources.SpeakerOff.png"
-                        : "TheOtherRoles.Voice.Resources.SpeakerOn.png", 100f);
+                        ? "TheOtherRoles.Resources.Voice.SpeakerOff.png"
+                        : "TheOtherRoles.Resources.Voice.SpeakerOn.png", 100f);
             spkActive.sprite =
-                LoadSprite(
+                Helpers.loadSpriteFromResources(
                     IsSpeakerMuted
-                        ? "TheOtherRoles.Voice.Resources.SpeakerOffOver.png"
-                        : "TheOtherRoles.Voice.Resources.SpeakerOnOver.png", 100f);
-            spkInactive.color = spkColor;
-            spkActive.color = spkColor;
+                        ? "TheOtherRoles.Resources.Voice.SpeakerOffOver.png"
+                        : "TheOtherRoles.Resources.Voice.SpeakerOnOver.png", 100f);
+            spkInactive.color = Color.white;
+            spkActive.color = new Color(0.75f, 0.75f, 0.75f, 1f);
         }
+
+        // Channel indicator text
+        RefreshChannelIndicator();
     }
 
-    private static Sprite LoadMicSprite(bool useRedState, bool active)
+    private static TextMeshPro _channelIndicatorTmp;
+
+    private static void RefreshChannelIndicator()
     {
-        var normalPath =
-            active ? "TheOtherRoles.Voice.Resources.MicOnOver.png" : "TheOtherRoles.Voice.Resources.MicOn.png";
-        var mutedPath = active
-            ? "TheOtherRoles.Voice.Resources.MicOffOver.png"
-            : "TheOtherRoles.Voice.Resources.MicOff.png";
-
-        if (_micMuted)
-            return LoadSprite(mutedPath, 100f);
-
-        var redPath = active
-            ? "TheOtherRoles.Voice.Resources.MicOnRedOver.png"
-            : "TheOtherRoles.Voice.Resources.MicOnRed.png";
-        if (useRedState)
+        if (CurrentChannel == VoiceChannel.All || _micMuted)
         {
-            var redSprite = LoadSprite(redPath, 100f);
-            if (redSprite != null) return redSprite;
+            if (_channelIndicatorTmp != null)
+                _channelIndicatorTmp.gameObject.SetActive(false);
+            return;
         }
 
-        return LoadSprite(normalPath, 100f);
-    }
+        if (_channelIndicatorTmp == null)
+        {
+            _channelIndicatorTmp =
+                GameObject.Instantiate(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText,
+                    FastDestroyableSingleton<HudManager>.Instance.transform);
+            _channelIndicatorTmp.enableWordWrapping = false;
+            _channelIndicatorTmp.transform.localScale = Vector3.one * 0.55f;
+            _channelIndicatorTmp.transform.localPosition += new Vector3(0f, 1.45f, -69f);
+            _channelIndicatorTmp.gameObject.SetActive(true);
+        }
 
-    private static Sprite LoadSprite(string path, float ppu)
-    {
-        if (_spriteCache.TryGetValue(path, out var c)) return c;
-        try
+        _channelIndicatorTmp.gameObject.SetActive(true);
+
+        string channelName = CurrentChannel switch
         {
-            var s = Assembly.GetExecutingAssembly().GetManifestResourceStream(path);
-            if (s == null) return null;
-            var t = new Texture2D(0, 0, TextureFormat.RGBA32, false) { wrapMode = TextureWrapMode.Clamp };
-            using var m = new MemoryStream();
-            s.CopyTo(m);
-            t.LoadImage(m.ToArray(), false);
-            var sp = Sprite.Create(t, new Rect(0, 0, t.width, t.height), new Vector2(0.5f, 0.5f), ppu);
-            sp.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
-            _spriteCache[path] = sp;
-            return sp;
-        }
-        catch
-        {
-            return null;
-        }
+            VoiceChannel.Impostor => ModTranslation.GetRoleName(RoleId.Impostor, Palette.ImpostorRed).GetString(),
+            VoiceChannel.Lovers => ModTranslation.GetRoleName(RoleId.Lover, Lovers.color).GetString(),
+            VoiceChannel.Jackal => ModTranslation.GetRoleName(RoleId.Jackal, Jackal.color).GetString(),
+            VoiceChannel.Sheriff => ModTranslation.GetRoleName(RoleId.Sheriff, Sheriff.color).GetString(),
+            _ => ModTranslation.GetString("VoiceChat-Text", 1)
+        };
+        Color color = GetChannelColor(CurrentChannel);
+
+        _channelIndicatorTmp.text = string.Format(ModTranslation.GetString("VoiceChat-Text", 2), channelName);
     }
 }

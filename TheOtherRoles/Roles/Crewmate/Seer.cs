@@ -9,8 +9,7 @@ public class Seer : RoleBase
 
     public static Color color = new Color32(97, 178, 108, byte.MaxValue);
 
-    public static RoleInfo Info = new("Seer", color, "You will see players die", "You will see players die",
-        RoleId.Seer);
+    public static RoleInfo Info = new(color, RoleId.Seer);
 
     public static PlayerControl seer;
     public static List<Vector3> deadBodyPositions = new();

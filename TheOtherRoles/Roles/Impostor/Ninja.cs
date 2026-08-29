@@ -1,4 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
+using Hazel;
 using TheOtherRoles.Objects;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Impostor;
@@ -9,8 +13,7 @@ public class Ninja : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Ninja", color, "Surprise and assassinate your foes",
-        "Surprise and assassinate your foes", RoleId.Ninja);
+    public static RoleInfo Info = new(color, RoleId.Ninja);
 
     public static PlayerControl ninja;
     public static PlayerControl ninjaMarked;
@@ -73,5 +76,56 @@ public class Ninja : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        Ninja.invisibleTimer -= Time.deltaTime;
+        // ninjaSetTarget
+        if (Ninja.ninja == null || Ninja.ninja != player) return;
+        var untargetables = new List<PlayerControl>();
+        if (Spy.spy != null && !Spy.impostorsCanKillAnyone) untargetables.Add(Spy.spy);
+        if (Mini.mini != null && !Mini.isGrownUp()) untargetables.Add(Mini.mini);
+        if (Sidekick.wasTeamRed && !Spy.impostorsCanKillAnyone) untargetables.Add(Sidekick.sidekick);
+        if (Jackal.wasTeamRed && !Spy.impostorsCanKillAnyone) untargetables.Add(Jackal.jackal);
+        Ninja.currentTarget =
+            PlayerControlFixedUpdatePatch.setTarget(Spy.spy == null || !Spy.impostorsCanKillAnyone, untargetablePlayers: untargetables);
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Ninja.currentTarget, Ninja.color);
+
+        // ninjaUpdate
+        if (Ninja.isInvisble && Ninja.invisibleTimer <= 0 && Ninja.ninja == player)
+        {
+            var invisibleWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.SetInvisible, SendOption.Reliable);
+            invisibleWriter.Write(Ninja.ninja.PlayerId);
+            invisibleWriter.Write(byte.MaxValue);
+            AmongUsClient.Instance.FinishRpcImmediately(invisibleWriter);
+            RPCProcedure.setInvisible(Ninja.ninja.PlayerId, byte.MaxValue);
+        }
+        if (Ninja.arrow?.arrow != null)
+        {
+            if (Ninja.ninja == null || Ninja.ninja != player || !Ninja.knowsTargetLocation)
+            {
+                Ninja.arrow.arrow.SetActive(false);
+                return;
+            }
+            if (Ninja.ninjaMarked != null && !player.Data.IsDead)
+            {
+                var trackedOnMap = !Ninja.ninjaMarked.Data.IsDead;
+                var position = Ninja.ninjaMarked.transform.position;
+                if (!trackedOnMap)
+                {
+                    var body = Object.FindObjectsOfType<DeadBody>()
+                        .FirstOrDefault(b => b.ParentId == Ninja.ninjaMarked.PlayerId);
+                    if (body != null) { trackedOnMap = true; position = body.transform.position; }
+                }
+                Ninja.arrow.Update(position);
+                Ninja.arrow.arrow.SetActive(trackedOnMap);
+            }
+            else
+            {
+                Ninja.arrow.arrow.SetActive(false);
+            }
+        }
     }
 }

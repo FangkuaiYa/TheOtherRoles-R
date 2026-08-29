@@ -89,12 +89,12 @@ public class ModUpdater : MonoBehaviour
 
         var button = popup.transform.GetChild(2).gameObject;
         button.SetActive(false);
-        popup.TextAreaTMP.text = "Updating TOR\nPlease wait...";
+        popup.TextAreaTMP.text = ModTranslation.GetString("ModUpdater-Text", 1);
 
         var asset = release.Assets.Find(FilterPluginAsset);
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
-        www.SetUrl(Helpers.isChinese() ? "https://v6.gh-proxy.org/" : "" + asset.DownloadUrl);
+        www.SetUrl((Helpers.isChinese() ? "https://v6.gh-proxy.org/" : "") + asset.DownloadUrl);
         www.downloadHandler = new DownloadHandlerBuffer();
         var operation = www.SendWebRequest();
 
@@ -102,18 +102,18 @@ public class ModUpdater : MonoBehaviour
         {
             var stars = Mathf.CeilToInt(www.downloadProgress * 10);
             var progress =
-                $"Updating TOR\nPlease wait...\nDownloading...\n{new string((char)0x25A0, stars) + new string((char)0x25A1, 10 - stars)}";
+                string.Format(ModTranslation.GetString("ModUpdater-Text", 2), new string((char)0x25A0, stars) + new string((char)0x25A1, 10 - stars));
             popup.TextAreaTMP.text = progress;
             yield return new WaitForEndOfFrame();
         }
 
         if (www.isNetworkError || www.isHttpError)
         {
-            popup.TextAreaTMP.text = "Update wasn't successful\nTry again later,\nor update manually.";
+            popup.TextAreaTMP.text = ModTranslation.GetString("ModUpdater-Text", 3);
             yield break;
         }
 
-        popup.TextAreaTMP.text = "Updating TOR\nPlease wait...\n\nDownload complete\ncopying file...";
+        popup.TextAreaTMP.text = ModTranslation.GetString("ModUpdater-Text", 4);
 
         var filePath = Path.Combine(Paths.PluginPath, asset.Name);
 
@@ -136,7 +136,7 @@ public class ModUpdater : MonoBehaviour
         www.downloadHandler.Dispose();
         www.Dispose();
 
-        if (!hasError) popup.TextAreaTMP.text = "TheOtherRoles\nupdated successfully\nPlease restart the game.";
+        if (!hasError) popup.TextAreaTMP.text = ModTranslation.GetString("ModUpdater-Text", 5);
         button.SetActive(true);
         _busy = false;
     }
@@ -186,13 +186,13 @@ public class ModUpdater : MonoBehaviour
         }));
 
         var text = button.transform.GetComponentInChildren<TMP_Text>();
-        var t = "Update TOR";
+        var t = ModTranslation.GetString("ModUpdater-Text", 6);
         StartCoroutine(Effects.Lerp(0.1f, (Action<float>)(p => text.SetText(t))));
         passiveButton.OnMouseOut.AddListener((Action)(() => text.color = Color.red));
         passiveButton.OnMouseOver.AddListener((Action)(() => text.color = Color.white));
 #endif
         var announcement =
-            $"<size=150%>A new THE OTHER ROLES update to {latestRelease.Tag} is available</size>\n{latestRelease.Description}";
+            string.Format(ModTranslation.GetString("ModUpdater-Text", 7), latestRelease.Tag, latestRelease.Description);
         var mgr = FindObjectOfType<MainMenuManager>(true);
         if (showPopUp)
             mgr.StartCoroutine(CoShowAnnouncement(announcement, shortTitle: "TOR Update",
@@ -221,7 +221,7 @@ public class ModUpdater : MonoBehaviour
             Id = "torAnnouncement",
             Language = 0,
             Number = 6969,
-            Title = title == "" ? "The Other Roles Announcement" : title,
+            Title = title == "" ? "The Other Roles Reactivated Announcement" : title,
             ShortTitle = shortTitle,
             SubTitle = "",
             PinState = false,

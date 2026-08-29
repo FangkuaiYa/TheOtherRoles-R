@@ -41,12 +41,11 @@ public class CustomOption
 
     public int defaultSelection;
     public ConfigEntry<int> entry;
-    public string heading = "";
-
+    public TranslationInfo translationInfo;
+    public TranslationInfo headingTranslation = null;
     public int id;
     public bool invertedParent;
     public bool isHeader;
-    public string name;
     public Action onChange;
     public OptionBehaviour optionBehaviour;
     public CustomOption parent;
@@ -56,11 +55,12 @@ public class CustomOption
 
     // Option creation
 
-    public CustomOption(int id, CustomOptionType type, string name, object[] selections, object defaultValue,
-        CustomOption parent, bool isHeader, Action onChange = null, string heading = "", bool invertedParent = false)
+    public CustomOption(int id, CustomOptionType type, TranslationInfo translationInfo, object[] selections, object defaultValue,
+        CustomOption parent, bool isHeader, Action onChange = null, TranslationInfo headingTranslation = null, bool invertedParent = false)
     {
         this.id = id;
-        this.name = parent == null ? name : "- " + name;
+        this.translationInfo = translationInfo;
+        this.headingTranslation = headingTranslation;
         this.selections = selections;
         var index = Array.IndexOf(selections, defaultValue);
         defaultSelection = index >= 0 ? index : 0;
@@ -68,7 +68,6 @@ public class CustomOption
         this.isHeader = isHeader;
         this.type = type;
         this.onChange = onChange;
-        this.heading = heading;
         this.invertedParent = invertedParent;
         selection = 0;
         if (id != 0)
@@ -80,33 +79,32 @@ public class CustomOption
         options.Add(this);
     }
 
-    public static CustomOption Create(CustomOptionType type, string name, string[] selections,
-        CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "",
+    public static CustomOption Create(CustomOptionType type, TranslationInfo translationInfo, TranslationInfo[] selections,
+        CustomOption parent = null, bool isHeader = false, Action onChange = null, TranslationInfo heading = null,
         bool invertedParent = false)
     {
-        return new CustomOption(number++, type, name, selections, "", parent, isHeader, onChange, heading,
+        return new CustomOption(number++, type, translationInfo, selections, "", parent, isHeader, onChange, heading,
             invertedParent);
     }
 
-    public static CustomOption Create(CustomOptionType type, string name, float defaultValue, float min,
+    public static CustomOption Create(CustomOptionType type, TranslationInfo translationInfo, float defaultValue, float min,
         float max, float step, CustomOption parent = null, bool isHeader = false, Action onChange = null,
-        string heading = "", bool invertedParent = false)
+        TranslationInfo heading = null, bool invertedParent = false)
     {
         List<object> selections = new();
         for (var s = min; s <= max; s += step)
             selections.Add(s);
-        return new CustomOption(number++, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange,
+        return new CustomOption(number++, type, translationInfo, selections.ToArray(), defaultValue, parent, isHeader, onChange,
             heading,
             invertedParent);
     }
 
-    public static CustomOption Create(CustomOptionType type, string name, bool defaultValue,
-        CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "",
-        bool invertedParent = false)
+    public static CustomOption Create(CustomOptionType type, TranslationInfo translationInfo, bool defaultValue,
+        CustomOption parent = null, bool isHeader = false, Action onChange = null, TranslationInfo heading = null, bool invertedParent = false)
     {
-        return new CustomOption(number++, type, name, new[] { "Off", "On" }, defaultValue ? "On" : "Off", parent,
-            isHeader,
-            onChange, heading, invertedParent);
+        var off = new TranslationInfo("Opt-General", 69);
+        var on = new TranslationInfo("Opt-General", 70);
+        return new CustomOption(number++, type, translationInfo, new object[] { off, on }, defaultValue ? on : off, parent, isHeader, onChange, heading, invertedParent);
     }
 
     // Static behaviour
@@ -128,7 +126,7 @@ public class CustomOption
             if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption)
             {
                 stringOption.oldValue = stringOption.Value = option.selection;
-                stringOption.ValueText.text = option.selections[option.selection].ToString();
+                stringOption.ValueText.text = option.getSelectionString();
             }
         }
 
@@ -247,7 +245,26 @@ public class CustomOption
 
         return false;
     }
+    public string getName()
+    {
+        string title = translationInfo?.GetString() ?? "";
+        if (parent != null)
+            return "- " + title;
+        return title;
+    }
 
+    public string getHeading()
+    {
+        return headingTranslation?.GetString() ?? "";
+    }
+
+    public string getSelectionString()
+    {
+        object sel = selections[selection];
+        if (sel is TranslationInfo ti)
+            return ti.GetString();
+        return sel.ToString();
+    }
 
     public void updateSelection(int newSelection, bool notifyUsers = true)
     {
@@ -284,7 +301,7 @@ public class CustomOption
         if (optionBehaviour != null && optionBehaviour is StringOption stringOption)
         {
             stringOption.oldValue = stringOption.Value = selection;
-            stringOption.ValueText.text = selections[selection].ToString();
+            stringOption.ValueText.text = getSelectionString();
             if (AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer)
             {
                 if (id == 0 && selection != preset)
@@ -421,8 +438,7 @@ public class CustomOption
             if (TheOtherRolesPlugin.Version > versionInfo && versionInfo < Version.Parse("4.6.0"))
             {
                 vanillaOptionsFine = false;
-                FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
-                    "Host Info: Pasting vanilla settings failed, TOR Options applied!");
+                FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, ModTranslation.GetString("CustomOption-Text", 1));
             }
             else
             {
@@ -435,7 +451,7 @@ public class CustomOption
             TheOtherRolesPlugin.Logger.LogWarning($"{e}: tried to paste invalid settings!\n{allSettings}");
             var errorStr = allSettings.Length > 2 ? allSettings.Substring(0, 3) : "(empty clipboard) ";
             FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer,
-                $"Host Info: You tried to paste invalid settings: \"{errorStr}...\"");
+                string.Format(ModTranslation.GetString("CustomOption-Text", 2), errorStr));
             SoundEffectsManager.Load();
             SoundEffectsManager.play("fail");
         }
@@ -622,9 +638,9 @@ internal class LobbyViewSettingsPatch
 
         foreach (var option in relevantOptions)
         {
-            if ((option.isHeader && (int)optionType != 99 && !isOptionHiddenByAncestor(option)) ||
-                ((int)optionType == 99 && curType != option.type))
+            if (option.isHeader && (int)optionType != 99)
             {
+                if (isOptionHiddenByAncestor(option)) continue;
                 curType = option.type;
                 if (i != 0)
                 {
@@ -636,12 +652,31 @@ internal class LobbyViewSettingsPatch
                 headers++; // for header
                 var categoryHeaderMasked = Object.Instantiate(__instance.categoryHeaderOrigin);
                 categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 61);
-                categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
-                if ((int)optionType == 99)
-                    categoryHeaderMasked.Title.text = new Dictionary<CustomOptionType, string>
+                categoryHeaderMasked.Title.text = option.getHeading() != "" ? option.getHeading() : option.getName();
+                categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
+                categoryHeaderMasked.transform.localScale = Vector3.one;
+                categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
+                __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
+                num -= 1.05f;
+                i = 0;
+            }
+            else if ((int)optionType == 99 && curType != option.type)
+            {
+                curType = option.type;
+                if (i != 0)
+                {
+                    num -= 0.85f;
+                    numBonus++;
+                }
+
+                if (i % 2 != 0) singles++;
+                headers++;
+                var categoryHeaderMasked = Object.Instantiate(__instance.categoryHeaderOrigin);
+                categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 61);
+                categoryHeaderMasked.Title.text = new Dictionary<CustomOptionType, string>
                     {
-                        { CustomOptionType.Impostor, "Impostor Roles" }, { CustomOptionType.Neutral, "Neutral Roles" },
-                        { CustomOptionType.Crewmate, "Crewmate Roles" }, { CustomOptionType.Modifier, "Modifiers" }
+                        { CustomOptionType.Impostor, ModTranslation.GetString("CustomOption-Text", 4) }, { CustomOptionType.Neutral, ModTranslation.GetString("CustomOption-Text", 5) },
+                        { CustomOptionType.Crewmate, ModTranslation.GetString("CustomOption-Text", 6) }, { CustomOptionType.Modifier, ModTranslation.GetString("CustomOption-Text", 7) }
                     }[curType];
                 categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
                 categoryHeaderMasked.transform.localScale = Vector3.one;
@@ -678,13 +713,13 @@ internal class LobbyViewSettingsPatch
 
             viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
             var value = option.getSelection();
-            var settingTuple = handleSpecialOptionsView(option, option.name, option.selections[value].ToString());
+            var settingTuple = handleSpecialOptionsView(option, option.getName(), option.selections[value].ToString());
             viewSettingsInfoPanel.SetInfo(StringNames.ImpostorsCategory, settingTuple.Item2, 61);
             viewSettingsInfoPanel.titleText.text = settingTuple.Item1;
-            if (option.isHeader && (int)optionType != 99 && option.heading == "" &&
+            if (option.isHeader && (int)optionType != 99 && option.getHeading() == "" &&
                 (option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate ||
                  option.type == CustomOptionType.Impostor ||
-                 option.type == CustomOptionType.Modifier)) viewSettingsInfoPanel.titleText.text = "Spawn Chance";
+                 option.type == CustomOptionType.Modifier)) viewSettingsInfoPanel.titleText.text = ModTranslation.GetString("CustomOption-Text", 7);
             if ((int)optionType == 99)
                 if (option.type == CustomOptionType.Modifier)
                     viewSettingsInfoPanel.settingText.text = viewSettingsInfoPanel.settingText.text +
@@ -707,7 +742,7 @@ internal class LobbyViewSettingsPatch
         if (option == CustomOptionHolder.crewmateRolesCountMin)
         {
             val = "";
-            name = "Crewmate Roles";
+            name = ModTranslation.GetString("CustomOption-Text", 5);
             var min = CustomOptionHolder.crewmateRolesCountMin.getSelection();
             var max = CustomOptionHolder.crewmateRolesCountMax.getSelection();
             if (CustomOptionHolder.crewmateRolesFill.getBool())
@@ -721,7 +756,7 @@ internal class LobbyViewSettingsPatch
                 max = crewCount - minNeutral;
                 if (min < 0) min = 0;
                 if (max < 0) max = 0;
-                val = "Fill: ";
+                val = ModTranslation.GetString("CustomOption-Text", 8) + " ";
             }
 
             if (min > max) min = max;
@@ -730,7 +765,7 @@ internal class LobbyViewSettingsPatch
 
         if (option == CustomOptionHolder.neutralRolesCountMin)
         {
-            name = "Neutral Roles";
+            name = ModTranslation.GetString("CustomOption-Text", 4);
             var min = CustomOptionHolder.neutralRolesCountMin.getSelection();
             var max = CustomOptionHolder.neutralRolesCountMax.getSelection();
             if (min > max) min = max;
@@ -739,7 +774,7 @@ internal class LobbyViewSettingsPatch
 
         if (option == CustomOptionHolder.impostorRolesCountMin)
         {
-            name = "Impostor Roles";
+            name = ModTranslation.GetString("CustomOption-Text", 3);
             var min = CustomOptionHolder.impostorRolesCountMin.getSelection();
             var max = CustomOptionHolder.impostorRolesCountMax.getSelection();
             if (max > GameOptionsManager.Instance.currentGameOptions.NumImpostors)
@@ -750,7 +785,7 @@ internal class LobbyViewSettingsPatch
 
         if (option == CustomOptionHolder.modifiersCountMin)
         {
-            name = "Modifiers";
+            name = ModTranslation.GetString("CustomOption-Text", 6);
             var min = CustomOptionHolder.modifiersCountMin.getSelection();
             var max = CustomOptionHolder.modifiersCountMax.getSelection();
             if (min > max) min = max;
@@ -767,30 +802,30 @@ internal class LobbyViewSettingsPatch
         if (TORMapOptions.gameMode == CustomGamemodes.Guesser || TORMapOptions.gameMode == CustomGamemodes.Classic)
         {
             // create TOR settings
-            createCustomButton(__instance, next++, "TORSettings", "TOR Settings", CustomOptionType.General);
+            createCustomButton(__instance, next++, "TORSettings", ModTranslation.GetString("CustomOption-Text", 9), CustomOptionType.General);
             // create TOR settings
-            createCustomButton(__instance, next++, "RoleOverview", "Role Overview", (CustomOptionType)99);
+            createCustomButton(__instance, next++, "RoleOverview", ModTranslation.GetString("CustomOption-Text", 10), (CustomOptionType)99);
             // IMp
-            createCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles", CustomOptionType.Impostor);
+            createCustomButton(__instance, next++, "ImpostorSettings", ModTranslation.GetString("CustomOption-Text", 3), CustomOptionType.Impostor);
 
             // Neutral
-            createCustomButton(__instance, next++, "NeutralSettings", "Neutral Roles", CustomOptionType.Neutral);
+            createCustomButton(__instance, next++, "NeutralSettings", ModTranslation.GetString("CustomOption-Text", 4), CustomOptionType.Neutral);
             // Crew
-            createCustomButton(__instance, next++, "CrewmateSettings", "Crewmate Roles", CustomOptionType.Crewmate);
+            createCustomButton(__instance, next++, "CrewmateSettings", ModTranslation.GetString("CustomOption-Text", 5), CustomOptionType.Crewmate);
             // Modifier
-            createCustomButton(__instance, next++, "ModifierSettings", "Modifiers", CustomOptionType.Modifier);
+            createCustomButton(__instance, next++, "ModifierSettings", ModTranslation.GetString("CustomOption-Text", 6), CustomOptionType.Modifier);
         }
         else if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
         {
             // create Main HNS settings
-            createCustomButton(__instance, next++, "HideNSeekMain", "Hide 'N' Seek", CustomOptionType.HideNSeekMain);
+            createCustomButton(__instance, next++, "HideNSeekMain", ModTranslation.GetString("CustomOption-Text", 11), CustomOptionType.HideNSeekMain);
             // create HNS Role settings
-            createCustomButton(__instance, next++, "HideNSeekRoles", "Hide 'N' Seek Roles",
+            createCustomButton(__instance, next++, "HideNSeekRoles", ModTranslation.GetString("CustomOption-Text", 12),
                 CustomOptionType.HideNSeekRoles);
         }
         else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
         {
-            createCustomButton(__instance, next++, "PropHunt", "Prop Hunt", CustomOptionType.PropHunt);
+            createCustomButton(__instance, next++, "PropHunt", ModTranslation.GetString("CustomOption-Text", 13), CustomOptionType.PropHunt);
         }
     }
 }
@@ -912,12 +947,13 @@ internal class GameOptionsMenuStartPatch
         var num = 1.5f;
         foreach (var option in options)
         {
-            if (option.isHeader && !isOptionHiddenByAncestor(option))
+            if (option.isHeader)
             {
+                if (isOptionHiddenByAncestor(option)) continue;
                 var categoryHeaderMasked = Object.Instantiate(menu.categoryHeaderOrigin, Vector3.zero,
                     Quaternion.identity, menu.settingsContainer);
                 categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 20);
-                categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
+                categoryHeaderMasked.Title.text = option.getHeading() != "" ? option.getHeading() : option.getName();
                 categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
                 categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, -2f);
                 num -= 0.63f;
@@ -944,12 +980,12 @@ internal class GameOptionsMenuStartPatch
 
             var stringOption = optionBehaviour as StringOption;
             stringOption.OnValueChanged = new Action<OptionBehaviour>(o => { });
-            stringOption.TitleText.text = option.name;
-            if (option.isHeader && option.heading == "" && (option.type == CustomOptionType.Neutral ||
+            stringOption.TitleText.text = option.getName();
+            if (option.isHeader && option.getHeading() == "" && (option.type == CustomOptionType.Neutral ||
                                                             option.type == CustomOptionType.Crewmate ||
                                                             option.type == CustomOptionType.Impostor ||
                                                             option.type == CustomOptionType.Modifier))
-                stringOption.TitleText.text = "Spawn Chance";
+                stringOption.TitleText.text = ModTranslation.GetString("CustomOption-Text", 7);
             if (stringOption.TitleText.text.Length > 25)
                 stringOption.TitleText.fontSize = 2.2f;
             if (stringOption.TitleText.text.Length > 40)
@@ -1048,41 +1084,41 @@ internal class GameOptionsMenuStartPatch
         if (TORMapOptions.gameMode == CustomGamemodes.Guesser || TORMapOptions.gameMode == CustomGamemodes.Classic)
         {
             // create TOR settings
-            createCustomButton(__instance, next++, "TORSettings", "TOR Settings");
+            createCustomButton(__instance, next++, "TORSettings", ModTranslation.GetString("CustomOption-Text", 9));
             createGameOptionsMenu(__instance, CustomOptionType.General, "TORSettings");
             // Guesser if applicable
             if (TORMapOptions.gameMode == CustomGamemodes.Guesser)
             {
-                createCustomButton(__instance, next++, "GuesserSettings", "Guesser Settings");
+                createCustomButton(__instance, next++, "GuesserSettings", ModTranslation.GetString("CustomOption-Text", 14));
                 createGameOptionsMenu(__instance, CustomOptionType.Guesser, "GuesserSettings");
             }
 
             // IMp
-            createCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles");
+            createCustomButton(__instance, next++, "ImpostorSettings", ModTranslation.GetString("CustomOption-Text", 3));
             createGameOptionsMenu(__instance, CustomOptionType.Impostor, "ImpostorSettings");
 
             // Neutral
-            createCustomButton(__instance, next++, "NeutralSettings", "Neutral Roles");
+            createCustomButton(__instance, next++, "NeutralSettings", ModTranslation.GetString("CustomOption-Text", 4));
             createGameOptionsMenu(__instance, CustomOptionType.Neutral, "NeutralSettings");
             // Crew
-            createCustomButton(__instance, next++, "CrewmateSettings", "Crewmate Roles");
+            createCustomButton(__instance, next++, "CrewmateSettings", ModTranslation.GetString("CustomOption-Text", 5));
             createGameOptionsMenu(__instance, CustomOptionType.Crewmate, "CrewmateSettings");
             // Modifier
-            createCustomButton(__instance, next++, "ModifierSettings", "Modifiers");
+            createCustomButton(__instance, next++, "ModifierSettings", ModTranslation.GetString("CustomOption-Text", 6));
             createGameOptionsMenu(__instance, CustomOptionType.Modifier, "ModifierSettings");
         }
         else if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
         {
             // create Main HNS settings
-            createCustomButton(__instance, next++, "HideNSeekMain", "Hide 'N' Seek");
+            createCustomButton(__instance, next++, "HideNSeekMain", ModTranslation.GetString("CustomOption-Text", 11));
             createGameOptionsMenu(__instance, CustomOptionType.HideNSeekMain, "HideNSeekMain");
             // create HNS Role settings
-            createCustomButton(__instance, next++, "HideNSeekRoles", "Hide 'N' Seek Roles");
+            createCustomButton(__instance, next++, "HideNSeekRoles", ModTranslation.GetString("CustomOption-Text", 12));
             createGameOptionsMenu(__instance, CustomOptionType.HideNSeekRoles, "HideNSeekRoles");
         }
         else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt)
         {
-            createCustomButton(__instance, next++, "PropHunt", "Prop Hunt");
+            createCustomButton(__instance, next++, "PropHunt", ModTranslation.GetString("CustomOption-Text", 13));
             createGameOptionsMenu(__instance, CustomOptionType.PropHunt, "PropHunt");
         }
     }
@@ -1206,11 +1242,11 @@ internal class LegacyGameOptionsPatch
     {
         // find options children with quantity
         var children = options.Where(o => o.parent == customOption);
-        var quantity = children.Where(o => o.name.Contains("Quantity")).ToList();
+        var quantity = children.Where(o => o.getName().Contains("Quantity")).ToList();
         if (customOption.getSelection() == 0) return "";
         if (quantity.Count == 1) return $" ({quantity[0].getQuantity()})";
         if (customOption == CustomOptionHolder.modifierLover)
-            return $" (1 Evil: {CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10}%)";
+            return string.Format(" " + ModTranslation.GetString("CustomOption-Text", 15), CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10);
         return "";
     }
 
@@ -1243,7 +1279,7 @@ internal class LegacyGameOptionsPatch
         foreach (var option in options)
             if (option.parent == null)
             {
-                var line = $"{option.name}: {option.selections[option.selection]}";
+                var line = $"{option.getName()}: {option.getSelection()}";
                 if (type == CustomOptionType.Modifier) line += buildModifierExtras(option);
                 sb.AppendLine(line);
             }
@@ -1251,13 +1287,13 @@ internal class LegacyGameOptionsPatch
             {
                 if (option == CustomOptionHolder.deputySpawnRate) //Deputy
                     sb.AppendLine(
-                        $"- {Helpers.cs(Deputy.color, "Deputy")}: {option.selections[option.selection].ToString()}");
+                        $"- {Helpers.cs(Deputy.color, Deputy.Info.name)}: {option.getSelection()}");
                 else if (option == CustomOptionHolder.jackalCanCreateSidekick) //Sidekick
                     sb.AppendLine(
-                        $"- {Helpers.cs(Sidekick.color, "Sidekick")}: {option.selections[option.selection].ToString()}");
+                        $"- {Helpers.cs(Sidekick.color, Sidekick.Info.name)}: {option.getSelection()}");
                 else if (option == CustomOptionHolder.lawyerIsProsecutorChance) //Prosecutor
                     sb.AppendLine(
-                        $"- {Helpers.cs(Lawyer.color, "Prosecutor")}: {option.selections[option.selection].ToString()}");
+                        $"- {Helpers.cs(Lawyer.color, Lawyer.Info.name)}: {option.getSelection()}");
             }
 
         if (headerOnly) return sb.ToString();
@@ -1275,14 +1311,14 @@ internal class LegacyGameOptionsPatch
 
                 var c = isIrrelevant ? Color.grey : Color.white; // No use for now
                 if (isIrrelevant) continue;
-                sb.AppendLine(Helpers.cs(c, $"{option.name}: {option.selections[option.selection]}"));
+                sb.AppendLine(Helpers.cs(c, $"{option.getName()}: {option.getSelection()}"));
             }
             else
             {
                 if (option == CustomOptionHolder.crewmateRolesCountMin)
                 {
                     var optionName =
-                        CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Crewmate Roles");
+                        CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), ModTranslation.GetString("CustomOption-Text", 5));
                     var min = CustomOptionHolder.crewmateRolesCountMin.getSelection();
                     var max = CustomOptionHolder.crewmateRolesCountMax.getSelection();
                     var optionValue = "";
@@ -1297,7 +1333,7 @@ internal class LegacyGameOptionsPatch
                         max = crewCount - minNeutral;
                         if (min < 0) min = 0;
                         if (max < 0) max = 0;
-                        optionValue = "Fill: ";
+                        optionValue = $"{ModTranslation.GetString("CustomOption-Text", 8)}: ";
                     }
 
                     if (min > max) min = max;
@@ -1306,7 +1342,7 @@ internal class LegacyGameOptionsPatch
                 }
                 else if (option == CustomOptionHolder.neutralRolesCountMin)
                 {
-                    var optionName = CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Neutral Roles");
+                    var optionName = CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), ModTranslation.GetString("CustomOption-Text", 4));
                     var min = CustomOptionHolder.neutralRolesCountMin.getSelection();
                     var max = CustomOptionHolder.neutralRolesCountMax.getSelection();
                     if (min > max) min = max;
@@ -1316,7 +1352,7 @@ internal class LegacyGameOptionsPatch
                 else if (option == CustomOptionHolder.impostorRolesCountMin)
                 {
                     var optionName =
-                        CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Impostor Roles");
+                        CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), ModTranslation.GetString("CustomOption-Text", 3));
                     var min = CustomOptionHolder.impostorRolesCountMin.getSelection();
                     var max = CustomOptionHolder.impostorRolesCountMax.getSelection();
                     if (max > GameOptionsManager.Instance.currentGameOptions.NumImpostors)
@@ -1327,7 +1363,7 @@ internal class LegacyGameOptionsPatch
                 }
                 else if (option == CustomOptionHolder.modifiersCountMin)
                 {
-                    var optionName = CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Modifiers");
+                    var optionName = CustomOptionHolder.cs(new Color(204f / 255f, 204f / 255f, 0, 1f), ModTranslation.GetString("CustomOption-Text", 6));
                     var min = CustomOptionHolder.modifiersCountMin.getSelection();
                     var max = CustomOptionHolder.modifiersCountMax.getSelection();
                     if (min > max) min = max;
@@ -1342,7 +1378,7 @@ internal class LegacyGameOptionsPatch
                 }
                 else
                 {
-                    sb.AppendLine($"\n{option.name}: {option.selections[option.selection].ToString()}");
+                    sb.AppendLine($"\n{option.getName()}: {option.getSelection()}");
                 }
             }
         }
@@ -1350,15 +1386,13 @@ internal class LegacyGameOptionsPatch
         return sb.ToString();
     }
 
-    public static string buildAllOptions(string vanillaSettings = "", bool hideExtras = false)
+    public static string buildAllOptions(string vanillaSettings = "")
     {
         if (vanillaSettings == "")
             vanillaSettings =
                 GameOptionsManager.Instance.CurrentGameOptions.ToHudString(PlayerControl.AllPlayerControls.Count);
         var counter = TheOtherRolesPlugin.optionsPage;
-        var hudString = counter != 0 && !hideExtras
-            ? Helpers.cs(DateTime.Now.Second % 2 == 0 ? Color.white : Color.red, "(Use scroll wheel if necessary)\n\n")
-            : "";
+        var hudString = "";
 
         if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek)
         {
@@ -1367,11 +1401,11 @@ internal class LegacyGameOptionsPatch
             switch (counter)
             {
                 case 0:
-                    hudString += "Page 1: Hide N Seek Settings \n\n" +
+                    hudString += ModTranslation.GetString("CustomOption-Text", 16) + " \n\n" +
                                  buildOptionsOfType(CustomOptionType.HideNSeekMain, false);
                     break;
                 case 1:
-                    hudString += "Page 2: Hide N Seek Role Settings \n\n" +
+                    hudString += ModTranslation.GetString("CustomOption-Text", 17) + " \n\n" +
                                  buildOptionsOfType(CustomOptionType.HideNSeekRoles, false);
                     break;
             }
@@ -1382,7 +1416,7 @@ internal class LegacyGameOptionsPatch
             switch (counter)
             {
                 case 0:
-                    hudString += "Page 1: Prop Hunt Settings \n\n" +
+                    hudString += ModTranslation.GetString("CustomOption-Text", 18) + " \n\n" +
                                  buildOptionsOfType(CustomOptionType.PropHunt, false);
                     break;
             }
@@ -1393,45 +1427,36 @@ internal class LegacyGameOptionsPatch
             switch (counter)
             {
                 case 0:
-                    hudString += (!hideExtras ? "" : "Page 1: Vanilla Settings \n\n") + vanillaSettings;
+                    hudString += ModTranslation.GetString("CustomOption-Text", 19) + " \n\n" + vanillaSettings;
                     break;
                 case 1:
-                    hudString += "Page 2: The Other Roles Settings \n" +
+                    hudString += ModTranslation.GetString("CustomOption-Text", 20) + " \n" +
                                  buildOptionsOfType(CustomOptionType.General, false);
                     break;
                 case 2:
-                    hudString += "Page 3: Role and Modifier Rates \n" + buildRoleOptions();
+                    hudString += ModTranslation.GetString("CustomOption-Text", 21) + " \n" + buildRoleOptions();
                     break;
                 case 3:
-                    hudString += "Page 4: Impostor Role Settings \n" +
+                    hudString += ModTranslation.GetString("CustomOption-Text", 22) + " \n" +
                                  buildOptionsOfType(CustomOptionType.Impostor, false);
                     break;
                 case 4:
-                    hudString += "Page 5: Neutral Role Settings \n" +
+                    hudString += ModTranslation.GetString("CustomOption-Text", 23) + " \n" +
                                  buildOptionsOfType(CustomOptionType.Neutral, false);
                     break;
                 case 5:
-                    hudString += "Page 6: Crewmate Role Settings \n" +
+                    hudString += ModTranslation.GetString("CustomOption-Text", 24) + " \n" +
                                  buildOptionsOfType(CustomOptionType.Crewmate, false);
                     break;
                 case 6:
-                    hudString += "Page 7: Modifier Settings \n" + buildOptionsOfType(CustomOptionType.Modifier, false);
+                    hudString += ModTranslation.GetString("CustomOption-Text", 25) + " \n" + buildOptionsOfType(CustomOptionType.Modifier, false);
                     break;
             }
         }
 
-        if (!hideExtras || counter != 0)
-            hudString += $"\n Press TAB or Page Number for more... ({counter + 1}/{maxPage})";
+        if (counter != 0)
+            hudString += $"\n " + string.Format(ModTranslation.GetString("CustomOption-Text", 26), counter + 1, maxPage);
         return hudString;
-    }
-
-
-    [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.ToHudString))]
-    private static void Postfix(ref string __result)
-    {
-        if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek)
-            return; // Allow Vanilla Hide N Seek
-        __result = buildAllOptions(__result);
     }
 }
 
@@ -1451,9 +1476,9 @@ public class AddToKillDistanceSetting
                                                           __instance.PlayerSpeedMod > 3f;
     }
 
-    [HarmonyPatch(typeof(NormalGameOptionsV07), nameof(NormalGameOptionsV07.AreInvalid))]
+    [HarmonyPatch(typeof(NormalGameOptionsV11), nameof(NormalGameOptionsV11.AreInvalid))]
     [HarmonyPrefix]
-    public static bool Prefix(NormalGameOptionsV07 __instance, ref int maxExpectedPlayers)
+    public static bool Prefix(NormalGameOptionsV11 __instance, ref int maxExpectedPlayers)
     {
         return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
                                                           || __instance.NumImpostors > 3 || __instance.KillDistance < 0
@@ -1512,7 +1537,7 @@ public class AddToKillDistanceSetting
     {
         if ((int)id == 49999)
         {
-            __result = "Very Short";
+            __result = ModTranslation.GetString("CustomOption-Text", 27);
             return false;
         }
 
@@ -1523,7 +1548,7 @@ public class AddToKillDistanceSetting
     {
         LegacyGameOptions.KillDistances = new Il2CppStructArray<float>(new[] { 0.5f, 1f, 1.8f, 2.5f });
         LegacyGameOptions.KillDistanceStrings =
-            new Il2CppStringArray(new[] { "Very Short", "Short", "Medium", "Long" });
+            new Il2CppStringArray(new[] { ModTranslation.GetString("CustomOption-Text", 27), DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.SettingShort), DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.SettingMedium), DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.SettingLong) });
     }
 
     [HarmonyPatch(typeof(StringGameSetting), nameof(StringGameSetting.GetValueString))]
@@ -1576,12 +1601,14 @@ public class HudManagerUpdate
     private static GameObject toggleZoomButtonObject;
     private static PassiveButton toggleZoomButton;
 
+    private static readonly List<PassiveButton> tabButtons = new();
+
     [HarmonyPrefix]
     public static void Prefix2(HudManager __instance)
     {
         if (!settingsTMPs[0]) return;
         foreach (var tmp in settingsTMPs) tmp.text = "";
-        var settingsString = LegacyGameOptionsPatch.buildAllOptions(hideExtras: true);
+        var settingsString = LegacyGameOptionsPatch.buildAllOptions();
         var blocks = settingsString.Split("\n\n", StringSplitOptions.RemoveEmptyEntries);
         ;
         var curString = "";
@@ -1635,6 +1662,8 @@ public class HudManagerUpdate
             settingsTMPs[i].transform.localScale = Vector3.one * 0.25f;
             settingsTMPs[i].gameObject.SetActive(true);
         }
+
+        CreateTabButtons(__instance);
     }
 
     public static void CloseSettings()
@@ -1644,6 +1673,50 @@ public class HudManagerUpdate
                 tmp.gameObject.Destroy();
 
         if (settingsBackground) settingsBackground.Destroy();
+
+        DestroyTabButtons();
+    }
+
+    private static void CreateTabButtons(HudManager __instance)
+    {
+        DestroyTabButtons();
+
+        int totalPages = LegacyGameOptionsPatch.maxPage;
+        float startY = 2.0f;
+        float spacing = -0.5f;
+
+        for (int i = 0; i < totalPages; i++)
+        {
+            int pageIndex = i;
+
+            var button = GameObject.Instantiate(__instance.MapButton, __instance.transform);
+            button.gameObject.SetActive(true);
+
+            var background = button.gameObject.transform.FindChild("Background");
+            if (background != null)
+                background.gameObject.SetActive(false);
+
+            var renderer = button.gameObject.transform.Find("Inactive").GetComponent<SpriteRenderer>();
+            var rendererActive = button.gameObject.transform.Find("Active").GetComponent<SpriteRenderer>();
+            renderer.sprite = Helpers.loadSpriteFromResources($"TheOtherRoles.Resources.SettingPage.{i + 1}.png", 100f);
+            rendererActive.sprite = Helpers.loadSpriteFromResources($"TheOtherRoles.Resources.SettingPage.a{i + 1}.png", 100f);
+
+            button.transform.localPosition = new Vector3(-5f, startY + (spacing * i), -500f);
+            button.enabled = true;
+
+            button.OnClick.RemoveAllListeners();
+            button.OnClick.AddListener((Action)(() => { TheOtherRolesPlugin.optionsPage = pageIndex; }));
+
+            tabButtons.Add(button);
+        }
+    }
+
+    private static void DestroyTabButtons()
+    {
+        foreach (var button in tabButtons)
+            if (button != null && button.gameObject != null)
+                button.gameObject.Destroy();
+        tabButtons.Clear();
     }
 
     public static void ToggleSettings(HudManager __instance)

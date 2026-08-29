@@ -1,3 +1,4 @@
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Impostor;
@@ -8,8 +9,7 @@ public class Warlock : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Warlock", color, "Curse other players and kill everyone",
-        "Curse and kill everyone", RoleId.Warlock);
+    public static RoleInfo Info = new(color, RoleId.Warlock);
 
     public static PlayerControl warlock;
     public static PlayerControl currentTarget;
@@ -73,5 +73,22 @@ public class Warlock : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Warlock.warlock == null || Warlock.warlock != player) return;
+        if (Warlock.curseVictim != null && (Warlock.curseVictim.Data.Disconnected || Warlock.curseVictim.Data.IsDead))
+            Warlock.resetCurse();
+        if (Warlock.curseVictim == null)
+        {
+            Warlock.currentTarget = PlayerControlFixedUpdatePatch.setTarget();
+            PlayerControlFixedUpdatePatch.setPlayerOutline(Warlock.currentTarget, Warlock.color);
+        }
+        else
+        {
+            Warlock.curseVictimTarget = PlayerControlFixedUpdatePatch.setTarget(targetingPlayer: Warlock.curseVictim);
+            PlayerControlFixedUpdatePatch.setPlayerOutline(Warlock.curseVictimTarget, Warlock.color);
+        }
     }
 }

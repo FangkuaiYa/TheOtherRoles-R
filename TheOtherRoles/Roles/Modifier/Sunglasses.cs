@@ -9,8 +9,7 @@ public class Sunglasses : RoleBase
 
     public static Color color = Color.yellow;
 
-    public static RoleInfo Info = new("Sunglasses", color, "You got the sunglasses", "Your vision is reduced",
-        RoleId.Sunglasses, false, true);
+    public static RoleInfo Info = new(color, RoleId.Sunglasses, isModifier: true);
 
     public static List<PlayerControl> sunglasses = new();
     public static int vision = 1;

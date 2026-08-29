@@ -1,3 +1,4 @@
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Crewmate;
@@ -8,8 +9,7 @@ public class Medic : RoleBase
 
     public static Color color = new Color32(126, 251, 194, byte.MaxValue);
 
-    public static RoleInfo Info = new("Medic", color, "Protect someone with your shield", "Protect other players",
-        RoleId.Medic);
+    public static RoleInfo Info = new(color, RoleId.Medic);
 
     public static PlayerControl medic;
     public static PlayerControl shielded;
@@ -90,5 +90,12 @@ public class Medic : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Medic.medic == null || Medic.medic != player) return;
+        Medic.currentTarget = PlayerControlFixedUpdatePatch.setTarget();
+        if (!Medic.usedShield) PlayerControlFixedUpdatePatch.setPlayerOutline(Medic.currentTarget, Medic.shieldedColor);
     }
 }

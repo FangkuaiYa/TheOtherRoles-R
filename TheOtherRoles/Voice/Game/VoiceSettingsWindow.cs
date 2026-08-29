@@ -377,20 +377,12 @@ public class VoiceSettingsWindow : MonoBehaviour
         }
 
         _y = 0f;
-        var isHost = (AmongUsClient.Instance?.AmHost ?? false)
-                     && AmongUsClient.Instance?.GameState == InnerNetClient.GameStates.Joined;
 
         try
         {
             RenderServerSection();
             AddGap(26f);
             RenderPersonalSection();
-            AddGap(26f);
-            RenderRoomSection(isHost);
-            AddGap(26f);
-            RenderPublicLobbySection(isHost);
-            AddGap(26f);
-            RenderAdvancedSection();
         }
         catch (Exception e)
         {
@@ -625,156 +617,6 @@ public class VoiceSettingsWindow : MonoBehaviour
     {
         var row = AddRow();
         AddRowSlider(row, label, min, max, value, onChange, formatter, enabled);
-    }
-
-    // -- Room ------------------------------------------------
-    private void RenderRoomSection(bool isHost)
-    {
-        AddSectionTitle("Room Settings");
-
-        void RoomChanged()
-        {
-            VoiceConfig.ApplyLocalHostSettingsToSynced();
-            TorVoiceHudState.MarkRoomSettingsDirty();
-        }
-
-        var isHnS = TORMapOptions.gameMode == CustomGamemodes.HideNSeek;
-        var isPropHunt = TORMapOptions.gameMode == CustomGamemodes.PropHunt;
-        var isModdedSurvival = isHnS || isPropHunt;
-
-        if (isModdedSurvival)
-        {
-            // Mode enable toggle
-            if (isHnS)
-                AddHostToggle("HideNSeek Voice", () => VoiceConfig.HideNSeekEnabled,
-                    v =>
-                    {
-                        VoiceConfig.ApplyLocalHostSettingsToSynced();
-                        RoomChanged();
-                    }, isHost);
-            else
-                AddHostToggle("PropHunt Voice", () => VoiceConfig.PropHuntEnabled,
-                    v =>
-                    {
-                        VoiceConfig.ApplyLocalHostSettingsToSynced();
-                        RoomChanged();
-                    }, isHost);
-
-            // Simplified settings when enabled
-            var moddedVoiceEnabled =
-                (isHnS && VoiceConfig.HideNSeekEnabled) || (isPropHunt && VoiceConfig.PropHuntEnabled);
-            if (moddedVoiceEnabled)
-            {
-                var modeName = isHnS ? "HideNSeek" : "PropHunt";
-                AddRowInfo($"Mode: {modeName} (Global Voice)");
-
-                AddHostToggle("Only Ghosts Can Talk", () => VoiceConfig.SyncedRoomSettings.OnlyGhostsCanTalk,
-                    v =>
-                    {
-                        VoiceConfig.SetHostOnlyGhostsCanTalk(v);
-                        RoomChanged();
-                    }, isHost);
-                AddHostToggle("Hear Through Cameras", () => VoiceConfig.SyncedRoomSettings.CameraCanHear,
-                    v =>
-                    {
-                        VoiceConfig.SetHostCameraCanHear(v);
-                        RoomChanged();
-                    }, isHost);
-            }
-        }
-        else
-        {
-            // Full settings for Classic / Guesser
-            AddRowSlider("Max Chat Distance" + ":", 1.5f, 20f,
-                isHost ? VoiceConfig.HostMaxChatDistance : VoiceConfig.SyncedRoomSettings.MaxChatDistance,
-                v =>
-                {
-                    VoiceConfig.SetHostMaxChatDistance(v);
-                    RoomChanged();
-                },
-                v => $"{v:F1}m", isHost);
-
-            AddHostToggle("Walls Block Sound", () => VoiceConfig.SyncedRoomSettings.WallsBlockSound,
-                v =>
-                {
-                    VoiceConfig.SetHostWallsBlockSound(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Only Hear In Sight", () => VoiceConfig.SyncedRoomSettings.OnlyHearInSight,
-                v =>
-                {
-                    VoiceConfig.SetHostOnlyHearInSight(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Impostor Hear Ghosts", () => VoiceConfig.SyncedRoomSettings.ImpostorHearGhosts,
-                v =>
-                {
-                    VoiceConfig.SetHostImpostorHearGhosts(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Only Ghosts Can Talk", () => VoiceConfig.SyncedRoomSettings.OnlyGhostsCanTalk,
-                v =>
-                {
-                    VoiceConfig.SetHostOnlyGhostsCanTalk(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Hear Outside In Vent", () => VoiceConfig.SyncedRoomSettings.HearInVent,
-                v =>
-                {
-                    VoiceConfig.SetHostHearInVent(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Hear Players In Vent", () => VoiceConfig.SyncedRoomSettings.HearVentPlayers,
-                v =>
-                {
-                    VoiceConfig.SetHostHearVentPlayers(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Vent Private Chat", () => VoiceConfig.SyncedRoomSettings.VentPrivateChat,
-                v =>
-                {
-                    VoiceConfig.SetHostVentPrivateChat(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Comms Sabotage Mutes", () => VoiceConfig.SyncedRoomSettings.CommsSabDisables,
-                v =>
-                {
-                    VoiceConfig.SetHostCommsSabDisables(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Hear Through Cameras", () => VoiceConfig.SyncedRoomSettings.CameraCanHear,
-                v =>
-                {
-                    VoiceConfig.SetHostCameraCanHear(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Impostor Private Radio", () => VoiceConfig.SyncedRoomSettings.ImpostorPrivateRadio,
-                v =>
-                {
-                    VoiceConfig.SetHostImpostorPrivateRadio(v);
-                    RoomChanged();
-                }, isHost);
-            AddHostToggle("Only Meeting / Lobby", () => VoiceConfig.SyncedRoomSettings.OnlyMeetingOrLobby,
-                v =>
-                {
-                    VoiceConfig.SetHostOnlyMeetingOrLobby(v);
-                    RoomChanged();
-                }, isHost);
-        }
-    }
-
-    private void AddRowInfo(string text)
-    {
-        var row = AddRow();
-        VCUiKit.CreateText(row, "Info", text,
-            new Vector2(-ContentW / 2f + 70f, 0f), new Vector2(ContentW - 120f, RowH - 12f),
-            F(20f), new Color(1f, 0.86f, 0.55f, 1f), FontStyles.Bold, TextAlignmentOptions.Left, true);
-    }
-
-    private void AddHostToggle(string label, Func<bool> getter, Action<bool> setter, bool isHost)
-    {
-        var row = AddRow();
-        AddRowToggle(row, label, getter, setter, isHost);
     }
 
     // -- Public Lobby ----------------------------------------

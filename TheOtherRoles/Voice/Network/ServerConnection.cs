@@ -523,9 +523,6 @@ internal class ServerConnection : IConnectionContext, IDisposable
     public void UpdateMuteStatus(bool mute, bool radio = false)
     {
         Emit("VAD", !mute);
-        // Broadcast impostor-radio state to all peers via the signal channel.
-        // (Official BCL does this over WebRTC data channels; here we mirror it
-        // through the server relay so radio mode works cross-player.)
         if (_localRadio != radio)
         {
             _localRadio = radio;

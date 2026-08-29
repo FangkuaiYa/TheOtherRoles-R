@@ -1,3 +1,5 @@
+using System.Linq;
+using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
 using UnityEngine;
 
@@ -9,8 +11,7 @@ public class SecurityGuard : RoleBase
 
     public static Color color = new Color32(195, 178, 95, byte.MaxValue);
 
-    public static RoleInfo Info = new("Security Guard", color, "Seal vents and place cameras",
-        "Seal vents and place cameras", RoleId.SecurityGuard);
+    public static RoleInfo Info = new(color, RoleId.SecurityGuard);
 
     public static PlayerControl securityGuard;
 
@@ -153,5 +154,40 @@ public class SecurityGuard : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        // securityGuardSetTarget
+        if (SecurityGuard.securityGuard == null || SecurityGuard.securityGuard != player ||
+            MapUtilities.CachedShipStatus == null || MapUtilities.CachedShipStatus.AllVents == null) return;
+        Vent target = null;
+        var truePosition = player.GetTruePosition();
+        var closestDistance = float.MaxValue;
+        for (var i = 0; i < MapUtilities.CachedShipStatus.AllVents.Length; i++)
+        {
+            var vent = MapUtilities.CachedShipStatus.AllVents[i];
+            if (vent.gameObject.name.StartsWith("JackInTheBoxVent_") ||
+                vent.gameObject.name.StartsWith("SealedVent_") ||
+                vent.gameObject.name.StartsWith("FutureSealedVent_")) continue;
+            if (SubmergedCompatibility.IsSubmerged && vent.Id == 9) continue;
+            var distance = Vector2.Distance(vent.transform.position, truePosition);
+            if (distance <= vent.UsableDistance && distance < closestDistance)
+            {
+                closestDistance = distance;
+                target = vent;
+            }
+        }
+        SecurityGuard.ventTarget = target;
+
+        // securityGuardUpdate
+        if (SecurityGuard.securityGuard.Data.IsDead) return;
+        var taskInfo = TasksHandler.taskInfo(SecurityGuard.securityGuard.Data);
+        int playerCompleted = taskInfo.Item1;
+        if (playerCompleted == SecurityGuard.rechargedTasks)
+        {
+            SecurityGuard.rechargedTasks += SecurityGuard.rechargeTasksNumber;
+            if (SecurityGuard.maxCharges > SecurityGuard.charges) SecurityGuard.charges++;
+        }
     }
 }

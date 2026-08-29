@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TheOtherRoles.Patches;
+using TheOtherRoles.Utilities;
 using UnityEngine;
 using static TheOtherRoles.TheOtherRoles;
 
@@ -12,8 +14,7 @@ public class Medium : RoleBase
 
     public static Color color = new Color32(98, 120, 115, byte.MaxValue);
 
-    public static RoleInfo Info = new("Medium", color, "Question the souls of the dead to gain information",
-        "Question the souls", RoleId.Medium);
+    public static RoleInfo Info = new(color, RoleId.Medium);
 
     public static PlayerControl medium;
     public static DeadPlayer target;
@@ -73,29 +74,24 @@ public class Medium : RoleBase
 
     public static string getInfo(PlayerControl target, PlayerControl killer, DeadPlayer.CustomDeathReason deathReason)
     {
-        var msg = "";
+        string msg = "";
 
-        var infos = new List<SpecialMediumInfo>();
+        List<SpecialMediumInfo> infos = new List<SpecialMediumInfo>();
+        // collect fitting death info types.
+        // suicides:
         if (killer == target)
         {
-            if ((target == Sheriff.sheriff || target == Sheriff.formerSheriff) &&
-                deathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialMediumInfo.SheriffSuicide);
+            if ((target == Sheriff.sheriff || target == Sheriff.formerSheriff) && deathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialMediumInfo.SheriffSuicide); if (target == Lovers.lover1 || target == Lovers.lover2) infos.Add(SpecialMediumInfo.PassiveLoverSuicide);
             if (target == Lovers.lover1 || target == Lovers.lover2) infos.Add(SpecialMediumInfo.PassiveLoverSuicide);
-            if (target == Thief.thief && deathReason != DeadPlayer.CustomDeathReason.LoverSuicide)
-                infos.Add(SpecialMediumInfo.ThiefSuicide);
-            if (target == Warlock.warlock && deathReason != DeadPlayer.CustomDeathReason.LoverSuicide)
-                infos.Add(SpecialMediumInfo.WarlockSuicide);
+            if (target == Thief.thief && deathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialMediumInfo.ThiefSuicide);
+            if (target == Warlock.warlock && deathReason != DeadPlayer.CustomDeathReason.LoverSuicide) infos.Add(SpecialMediumInfo.WarlockSuicide);
         }
         else
         {
             if (target == Lovers.lover1 || target == Lovers.lover2) infos.Add(SpecialMediumInfo.ActiveLoverDies);
-            if (target.Data.Role.IsImpostor && killer.Data.Role.IsImpostor && Thief.formerThief != killer)
-                infos.Add(SpecialMediumInfo.ImpostorTeamkill);
+            if (target.Data.Role.IsImpostor && killer.Data.Role.IsImpostor && Thief.formerThief != killer) infos.Add(SpecialMediumInfo.ImpostorTeamkill);
         }
-
-        if (target == Sidekick.sidekick &&
-            (killer == Jackal.jackal || Jackal.formerJackals.Any(x => x.PlayerId == killer.PlayerId)))
-            infos.Add(SpecialMediumInfo.JackalKillsSidekick);
+        if (target == Sidekick.sidekick && (killer == Jackal.jackal || Jackal.formerJackals.Any(x => x.PlayerId == killer.PlayerId))) infos.Add(SpecialMediumInfo.JackalKillsSidekick);
         if (target == Lawyer.lawyer && killer == Lawyer.target) infos.Add(SpecialMediumInfo.LawyerKilledByClient);
         if (Medium.target.wasCleaned) infos.Add(SpecialMediumInfo.BodyCleaned);
 
@@ -105,68 +101,57 @@ public class Medium : RoleBase
             switch (selectedInfo)
             {
                 case SpecialMediumInfo.SheriffSuicide:
-                    msg = "Yikes, that Sheriff shot backfired.";
+                    msg = ModTranslation.GetString("Opt-Medium", 5);
                     break;
                 case SpecialMediumInfo.WarlockSuicide:
-                    msg = "MAYBE I cursed the person next to me and killed myself. Oops.";
+                    msg = ModTranslation.GetString("Opt-Medium", 6);
                     break;
                 case SpecialMediumInfo.ThiefSuicide:
-                    msg = "I tried to steal the gun from their pocket, but they were just happy to see me.";
+                    msg = ModTranslation.GetString("Opt-Medium", 7);
                     break;
                 case SpecialMediumInfo.ActiveLoverDies:
-                    msg = "I wanted to get out of this toxic relationship anyways.";
+                    msg = ModTranslation.GetString("Opt-Medium", 8);
                     break;
                 case SpecialMediumInfo.PassiveLoverSuicide:
-                    msg = "The love of my life died, thus with a kiss I die.";
+                    msg = ModTranslation.GetString("Opt-Medium", 9);
                     break;
                 case SpecialMediumInfo.LawyerKilledByClient:
-                    msg = "My client killed me. Do I still get paid?";
+                    msg = ModTranslation.GetString("Opt-Medium", 10);
                     break;
                 case SpecialMediumInfo.JackalKillsSidekick:
-                    msg = "First they sidekicked me, then they killed me. At least I don't need to do tasks anymore.";
+                    msg = ModTranslation.GetString("Opt-Medium", 11);
                     break;
                 case SpecialMediumInfo.ImpostorTeamkill:
-                    msg = "I guess they confused me for the Spy, is there even one?";
+                    msg = ModTranslation.GetString("Opt-Medium", 12);
                     break;
                 case SpecialMediumInfo.BodyCleaned:
-                    msg = "Is my dead body some kind of art now or... aaand it's gone.";
+                    msg = ModTranslation.GetString("Opt-Medium", 13);
                     break;
             }
         }
         else
         {
             var randomNumber = rnd.Next(4);
-            var typeOfColor = Helpers.isLighterColor(Medium.target.killerIfExisting) ? "lighter" : "darker";
+            var typeOfColor = Helpers.isLighterColor(Medium.target.killerIfExisting) ? ModTranslation.GetString("Opt-Medium", 18) : ModTranslation.GetString("Opt-Medium", 19);
             var timeSinceDeath = (float)(meetingStartTime - Medium.target.timeOfDeath).TotalMilliseconds;
             var roleString = CustomRoleManager.GetRolesString(Medium.target.player, false);
             if (randomNumber == 0)
             {
-                if (!roleString.Contains("Impostor") && !roleString.Contains("Crewmate"))
-                    msg = "If my role hasn't been saved, there's no " + roleString + " in the game anymore.";
+                if (!roleString.Contains(ModTranslation.GetRoleName(RoleId.Impostor).GetString()) && !roleString.Contains(ModTranslation.GetRoleName(RoleId.Crewmate).GetString()))
+                    msg = string.Format(ModTranslation.GetString("Opt-Medium", 14), roleString);
                 else
-                    msg = "I was a " + roleString + " without another role.";
+                    msg = string.Format(ModTranslation.GetString("Opt-Medium", 15), typeOfColor);
             }
-            else if (randomNumber == 1)
-            {
-                msg = "I'm not sure, but I guess a " + typeOfColor + " color killed me.";
-            }
-            else if (randomNumber == 2)
-            {
-                msg = "If I counted correctly, I died " + Math.Round(timeSinceDeath / 1000) +
-                      "s before the next meeting started.";
-            }
-            else
-            {
-                msg = "It seems like my killer is the " +
-                      CustomRoleManager.GetRolesString(Medium.target.killerIfExisting, false, false, true) + ".";
-            }
+            else if (randomNumber == 1) msg = string.Format(ModTranslation.GetString("Opt-Medium", 20), typeOfColor);
+            else if (randomNumber == 2) msg = string.Format(ModTranslation.GetString("Opt-Medium", 16), Math.Round(timeSinceDeath / 1000));
+            else msg = string.Format(ModTranslation.GetString("Opt-Medium", 17), CustomRoleManager.GetRolesString(Medium.target.killerIfExisting, false, false, true));
         }
 
         if (rnd.NextDouble() < chanceAdditionalInfo)
         {
             var count = 0;
-            var condition = "";
             var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
+            string msgTemplate = "";
             switch (rnd.Next(3))
             {
                 case 0:
@@ -174,28 +159,30 @@ public class Medium : RoleBase
                         pc.Data.Role.IsImpostor ||
                         new List<RoleInfo> { Jackal.Info, Sidekick.Info, Sheriff.Info, Thief.Info }.Contains(
                             CustomRoleManager.getRoleInfoForPlayer(pc, false).FirstOrDefault())).Count();
-                    condition = "killer" + (count == 1 ? "" : "s");
+                    msgTemplate = count == 1
+                        ? ModTranslation.GetString("Opt-Medium", 21)
+                        : ModTranslation.GetString("Opt-Medium", 22);
                     break;
                 case 1:
                     count = alivePlayersList.Where(Helpers.roleCanUseVents).Count();
-                    condition = "player" + (count == 1 ? "" : "s") + " who can use vents";
+                    msgTemplate = count == 1
+                        ? ModTranslation.GetString("Opt-Medium", 23)
+                        : ModTranslation.GetString("Opt-Medium", 24);
                     break;
                 case 2:
                     count = alivePlayersList.Where(pc =>
                             Helpers.isNeutral(pc) && pc != Jackal.jackal && pc != Sidekick.sidekick &&
                             pc != Thief.thief)
                         .Count();
-                    condition = "player" + (count == 1 ? "" : "s") + " who " + (count == 1 ? "is" : "are") +
-                                " neutral but cannot kill";
-                    break;
-                case 3:
+                    msgTemplate = count == 1
+                        ? ModTranslation.GetString("Opt-Medium", 25)
+                        : ModTranslation.GetString("Opt-Medium", 26);
                     break;
             }
-
-            msg += $"\nWhen you asked, {count} " + condition + (count == 1 ? " was" : " were") + " still alive";
+            msg += "\n" + string.Format(msgTemplate, count);
         }
 
-        return Medium.target.player.Data.PlayerName + "'s Soul:\n" + msg;
+        return string.Format(ModTranslation.GetString("Opt-Medium", 27) + "\n", Medium.target.player.Data.PlayerName) + msg;
     }
 
     public override void ClearAndReload()
@@ -206,6 +193,26 @@ public class Medium : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Medium.medium == null || Medium.medium != player || Medium.medium.Data.IsDead ||
+            Medium.deadBodies == null || MapUtilities.CachedShipStatus?.AllVents == null) return;
+        DeadPlayer target = null;
+        var truePosition = player.GetTruePosition();
+        var closestDistance = float.MaxValue;
+        var usableDistance = MapUtilities.CachedShipStatus.AllVents.FirstOrDefault().UsableDistance;
+        foreach (var (dp, ps) in Medium.deadBodies)
+        {
+            var distance = Vector2.Distance(ps, truePosition);
+            if (distance <= usableDistance && distance < closestDistance)
+            {
+                closestDistance = distance;
+                target = dp;
+            }
+        }
+        Medium.target = target;
     }
 
     private enum SpecialMediumInfo

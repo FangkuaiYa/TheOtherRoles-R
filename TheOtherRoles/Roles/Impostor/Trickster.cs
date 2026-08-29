@@ -9,8 +9,7 @@ public class Trickster : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Trickster", color, "Use your jack-in-the-boxes to surprise others",
-        "Surprise your enemies", RoleId.Trickster);
+    public static RoleInfo Info = new(color, RoleId.Trickster);
 
     public static PlayerControl trickster;
     public static float placeBoxCooldown = 30f;
@@ -73,5 +72,10 @@ public class Trickster : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        Trickster.lightsOutTimer -= Time.deltaTime;
     }
 }

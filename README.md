@@ -1,5 +1,12 @@
 ## *Note: This repository is an unofficial continuation of The Other Roles*
 
+# Translation
+
+*We have added **multi-language** support to TheOtherRoles-R, but currently only English and Simplified Chinese are supported. If your language is not yet translated, and you have relevant translation experience and some free time, we would appreciate it if you could help add a translation for TheOtherRoles-R! (We are unable to offer any compensation to translators; what we can do is add you to the contributors list.)*
+
+## How to contribute a translation:
+First, log in to GitHub and fork our repository. Download the String.xlsx file from the repository and open it with WPS Office, Microsoft Office, or a similar spreadsheet application. This file is the translation file for the mod. Translate the English text into your language in the corresponding column below the language header. After that, submit a pull request to our GitHub repository, and we will process it within two business days!
+
 ![tor banner](./Images/TOR_logo.png)
 <p align="center"><a href="https://github.com/FangkuaiYa/TheOtherRoles-R/releases/"><img src="https://badgen.net/github/release/FangkuaiYa/TheOtherRoles-R"></a></p>
 

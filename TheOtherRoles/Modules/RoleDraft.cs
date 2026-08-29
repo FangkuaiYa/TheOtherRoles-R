@@ -43,14 +43,14 @@ internal class RoleDraft
         aspectPosition.DistanceFromEdge = new Vector2(1.62f, 1.2f);
         aspectPosition.AdjustPosition();
         feedText.transform.localScale = new Vector3(0.6f, 0.6f, 1);
-        feedText.text = "<size=200%>Player's Picks:</size>\n\n";
+        feedText.text = $"<size=200%>{ModTranslation.GetString("RoleDraft-Text", 1)}</size>\n\n";
         feedText.alignment = TextAlignmentOptions.TopLeft;
         feedText.autoSizeTextContainer = true;
         feedText.fontSize = 3f;
         feedText.enableAutoSizing = false;
         __instance.TeamTitle.transform.localPosition =
             __instance.TeamTitle.transform.localPosition + new Vector3(1f, 0f);
-        __instance.TeamTitle.text = "Currently Picking:";
+        __instance.TeamTitle.text = ModTranslation.GetString("RoleDraft-Text", 2);
         __instance.BackgroundBar.enabled = false;
         __instance.TeamTitle.transform.localScale = new Vector3(0.25f, 0.25f, 1f);
         __instance.TeamTitle.autoSizeTextContainer = true;
@@ -115,7 +115,7 @@ internal class RoleDraft
 
                     // enable pick, wait for pick
                     var youColor = timer - (int)timer > 0.5 ? Color.red : Color.yellow;
-                    playerText = Helpers.cs(youColor, "You!");
+                    playerText = Helpers.cs(youColor, ModTranslation.GetString("RoleDraft-Text", 3));
                     // Available Roles:
                     List<RoleInfo> availableRoles = new();
                     foreach (var roleInfo in CustomRoleManager.Instance.allRoleInfos)
@@ -316,19 +316,29 @@ internal class RoleDraft
                             actionButton.transform.localPosition = new Vector3(-8.4f + col * 5.5f, -10 - row * 3f);
                             actionButton.transform.localScale = new Vector3(2f, 2f);
                             actionButton.SetCoolDown(0, 0);
+
+                            GameObject buttonSprite = new GameObject("buttonSprite");
+                            var sprite = buttonSprite.AddComponent<SpriteRenderer>();
+                            sprite.sprite = roleInfo.isImpostor
+                                ? Helpers.loadSpriteFromResources("TheOtherRoles.Resources.RoleDraft.CardImpostor.png", 250f)
+                                : roleInfo.isNeutral
+                                    ? Helpers.loadSpriteFromResources("TheOtherRoles.Resources.RoleDraft.CardNeutral.png", 250f)
+                                    : Helpers.loadSpriteFromResources("TheOtherRoles.Resources.RoleDraft.CardCrew.png", 250f);
+                            buttonSprite.layer = actionButton.gameObject.layer;
+                            buttonSprite.transform.SetParent(actionButton.transform, false);
+                            buttonSprite.transform.localPosition = new Vector3(0, 0.025f, -1);
+
                             var textHolder = new GameObject("textHolder");
                             var text = textHolder.AddComponent<TextMeshPro>();
-                            text.text = roleInfo.name.Replace(" ", "\n");
+                            text.text = $"<b>{roleInfo.name}</b>";
                             text.horizontalAlignment = HorizontalAlignmentOptions.Center;
-                            text.fontSize = 5;
+                            text.fontSize = 4;
                             textHolder.layer = actionButton.gameObject.layer;
+                            text.outlineWidth = 0.1f;
+                            text.outlineColor = Color.black;
                             text.color = roleInfo.color;
                             textHolder.transform.SetParent(actionButton.transform, false);
-                            textHolder.transform.localPosition =
-                                new Vector3(0, text.text.Contains("\n") ? -1.975f : -2.2f, -1);
-                            var actionButtonGameObject = actionButton.gameObject;
-                            var actionButtonRenderer = actionButton.graphic;
-                            var actionButtonMat = actionButtonRenderer.material;
+                            textHolder.transform.localPosition = new Vector3(0, -3.075f, -1);
 
                             var button = actionButton.GetComponent<PassiveButton>();
                             button.OnClick = new Button.ButtonClickedEvent();
@@ -349,20 +359,30 @@ internal class RoleDraft
                             ActionButton randomButton = Object.Instantiate(HudManager.Instance.KillButton,
                                 __instance.TeamTitle.transform);
                             randomButton.gameObject.SetActive(true);
-                            randomButton.gameObject.name = "RoleButton";
+                            randomButton.gameObject.name = "RandomButton";
                             randomButton.transform.localPosition = new Vector3(-8.4f + col * 5.5f, -10 - row * 3f);
                             randomButton.transform.localScale = new Vector3(2f, 2f);
                             randomButton.SetCoolDown(0, 0);
-                            var randomTextHolder = new GameObject("textHolder");
+                            randomButton.buttonLabelText.gameObject.SetActive(false);
+
+                            GameObject buttonSprite = new GameObject("buttonSprite");
+                            var sprite = buttonSprite.AddComponent<SpriteRenderer>();
+                            sprite.sprite = Helpers.loadSpriteFromResources("TheOtherRoles.Resources.RoleDraft.CardRandom.png", 250f);
+                            buttonSprite.layer = randomButton.gameObject.layer;
+                            buttonSprite.transform.SetParent(randomButton.transform, false);
+                            buttonSprite.transform.localPosition = new Vector3(0, 0.025f, -1);
+
+                            var randomTextHolder = new GameObject("randomTextHolder");
                             var randomText = randomTextHolder.AddComponent<TextMeshPro>();
-                            randomText.text = "Random";
+                            randomText.text = $"<b>{ModTranslation.GetString("RoleDraft-Text", 4)}</b>";
                             randomText.horizontalAlignment = HorizontalAlignmentOptions.Center;
-                            randomText.fontSize = 5;
+                            randomText.fontSize = 4;
                             randomTextHolder.layer = randomButton.gameObject.layer;
+                            randomText.outlineWidth = 0.1f;
+                            randomText.outlineColor = Color.black;
                             randomText.color = Color.green;
                             randomTextHolder.transform.SetParent(randomButton.transform, false);
-                            randomTextHolder.transform.localPosition = new Vector3(0, -2.2f, -1);
-                            var randomButtonRenderer = randomButton.graphic;
+                            randomTextHolder.transform.localPosition = new Vector3(0, -3.075f, -1);
 
                             var randomPassiveButton = randomButton.GetComponent<PassiveButton>();
                             randomPassiveButton.OnClick = new Button.ButtonClickedEvent();
@@ -381,17 +401,17 @@ internal class RoleDraft
                 else
                 {
                     var currentPick = PlayerControl.AllPlayerControls.Count - pickOrder.Count + 1;
-                    playerText = $"Anonymous Player {currentPick}";
+                    playerText = string.Format(ModTranslation.GetString("RoleDraft-Text", 5), currentPick);
                     HudManager.Instance.FullScreen.color = Color.black;
                 }
 
                 __instance.TeamTitle.text =
-                    $"{Helpers.cs(Color.white, "<size=280%>Welcome to the Role Draft!</size>")}\n\n\n<size=200%> Currently Picking:</size>\n\n\n<size=250%>{playerText}</size>";
+                    $"{Helpers.cs(Color.white, $"<size=280%>{ModTranslation.GetString("RoleDraft-Text", 6)}</size>")}\n\n\n<size=200%> {ModTranslation.GetString("RoleDraft-Text", 2)}</size>\n\n\n<size=250%>{playerText}</size>";
                 var waitMore = pickOrder.IndexOf(PlayerControl.LocalPlayer.PlayerId);
                 var waitMoreText = "";
-                if (waitMore > 0) waitMoreText = $" ({waitMore} rounds until your turn)";
+                if (waitMore > 0) waitMoreText = " " + string.Format(ModTranslation.GetString("RoleDraft-Text", 7), waitMore);
                 __instance.TeamTitle.text +=
-                    $"\n\n{waitMoreText}\nRandom Selection In... {(int)(maxTimer + 1 - timer)}\n {(SoundManager.MusicVolume > -80 ? "♫ Music: Ultimate Superhero 3 - Kenët & Rez ♫" : "")}";
+                    $"\n\n{waitMoreText}\n{ModTranslation.GetString("RoleDraft-Text", 8)} {(int)(maxTimer + 1 - timer)}\n {(SoundManager.MusicVolume > -80 ? "♫ Music: Ultimate Superhero 3 - Kenët & Rez ♫" : "")}";
                 yield return null;
             }
         }
@@ -435,23 +455,23 @@ internal class RoleDraft
                 roleInfo.name.Length; // Not used for now, but stores the amount of charactes of the roleString.
             if (!CustomOptionHolder.draftModeShowRoles.getBool() && !(playerId == PlayerControl.LocalPlayer.PlayerId))
             {
-                roleString = "Unknown Role";
+                roleString = ModTranslation.GetString("RoleDraft-Text", 9);
                 roleLength = roleString.Length;
             }
             else if (CustomOptionHolder.draftModeHideImpRoles.getBool() && roleInfo.isImpostor &&
                      !(playerId == PlayerControl.LocalPlayer.PlayerId))
             {
-                roleString = Helpers.cs(Palette.ImpostorRed, "Impostor Role");
-                roleLength = "Impostor Role".Length;
+                roleString = Helpers.cs(Palette.ImpostorRed, ModTranslation.GetString("RoleDraft-Text", 10));
+                roleLength = ModTranslation.GetString("RoleDraft-Text", 10).Length;
             }
             else if (CustomOptionHolder.draftModeHideNeutralRoles.getBool() && roleInfo.isNeutral &&
                      !(playerId == PlayerControl.LocalPlayer.PlayerId))
             {
-                roleString = Helpers.cs(Palette.Blue, "Neutral Role");
-                roleLength = "Neutral Role".Length;
+                roleString = Helpers.cs(Palette.Blue, ModTranslation.GetString("RoleDraft-Text", 11));
+                roleLength = ModTranslation.GetString("RoleDraft-Text", 11).Length;
             }
 
-            var line = $"{(playerId == PlayerControl.LocalPlayer.PlayerId ? "You" : alreadyPicked.Count)}:";
+            var line = $"{(playerId == PlayerControl.LocalPlayer.PlayerId ? ModTranslation.GetString("RoleDraft-Text", 12) : alreadyPicked.Count)}:";
             line = line + string.Concat(Enumerable.Repeat(" ", 6 - line.Length)) + roleString;
             feedText.text += line + "\n";
             SoundEffectsManager.play("select");

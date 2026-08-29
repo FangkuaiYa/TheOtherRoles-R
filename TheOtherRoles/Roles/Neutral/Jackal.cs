@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using TheOtherRoles.Patches;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
@@ -10,8 +11,7 @@ public class Jackal : RoleBase
 
     public static Color color = new Color32(0, 180, 235, byte.MaxValue);
 
-    public static RoleInfo Info = new("Jackal", color,
-        "Kill all Crewmates and <color=#FF1919FF>Impostors</color> to win", "Kill everyone", RoleId.Jackal, true);
+    public static RoleInfo Info = new(color, RoleId.Jackal, isNeutral: true);
 
     public static PlayerControl jackal;
     public static PlayerControl fakeSidekick;
@@ -84,5 +84,18 @@ public class Jackal : RoleBase
     public override RoleInfo GetRoleInfo()
     {
         return Info;
+    }
+
+    public override void PlayerFixedUpdate(PlayerControl player)
+    {
+        if (Jackal.jackal == null || Jackal.jackal != player) return;
+        var untargetablePlayers = new List<PlayerControl>();
+        if (Jackal.canCreateSidekickFromImpostor)
+            if (Sidekick.sidekick != null)
+                untargetablePlayers.Add(Sidekick.sidekick);
+        if (Mini.mini != null && !Mini.isGrownUp())
+            untargetablePlayers.Add(Mini.mini);
+        Jackal.currentTarget = PlayerControlFixedUpdatePatch.setTarget(untargetablePlayers: untargetablePlayers);
+        PlayerControlFixedUpdatePatch.setPlayerOutline(Jackal.currentTarget, Palette.ImpostorRed);
     }
 }

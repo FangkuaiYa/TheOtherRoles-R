@@ -8,8 +8,7 @@ public class Camouflager : RoleBase
 
     public static Color color = Palette.ImpostorRed;
 
-    public static RoleInfo Info = new("Camouflager", color, "Camouflage and kill the Crewmates", "Hide among others",
-        RoleId.Camouflager);
+    public static RoleInfo Info = new(color, RoleId.Camouflager);
 
     public static PlayerControl camouflager;
     public static float cooldown = 30f;
