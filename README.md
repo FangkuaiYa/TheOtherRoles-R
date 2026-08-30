@@ -51,7 +51,7 @@ The [Role Assignment](#role-assignment) section explains how the roles are being
 # Releases
 | Among Us - Version| Mod Version | Link |
 |----------|-------------|-----------------|
-| 18.0 | v5.0.0| <s>Developing</s> |
+| 18.0 | v5.0.0-BETA| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/tag/v5.0.0) |
 
 
 <details>
@@ -148,13 +148,25 @@ The [Role Assignment](#role-assignment) section explains how the roles are being
   <summary>Click to show the Changelog</summary>
 
 **Version 5.0.0**
-- Added a new neutral role: Schrödinger's Cat. When killed, joins the killer's team. Complete tasks to choose your team.
-- Added Arrow mode to the Snitch: evil players see a blue arrow pointing at the Snitch, and the Snitch sees colored arrows pointing at all evil players.
-- Refactored role-specific code from PlayerControlFixedUpdatePatch into individual role files using PlayerFixedUpdate overrides.
-- Refactored HudManagerUpdatePatch timer decrements into individual role files.
-- Added tab navigation buttons to in-game settings page (F1 HUD overlay).
-- Added role card sprites to RoleDraft selection buttons.
-- Refactored EndGame win text to use RoleInfo.name instead of hardcoded strings.
+- **New Neutral Role:** Schrödinger's Cat — When killed, joins the killer's team. Complete tasks to choose your final team (dynamic alignment).
+- **Snitch Arrow Mode:** Evil players see a blue arrow pointing to the Snitch; the Snitch sees colored arrows pointing to all evil players.
+- **Proximity Voice Chat (BETA):** Built-in voice chat based on Interstellar, with role-based private channels (Impostor, Lovers, Jackal, Sheriff).
+- **In-Game Settings Tab Navigation:** Added tab buttons to the settings page (F1 HUD overlay) for quicker access.
+- **Role Draft Button Sprites:** Added role card sprites to selection buttons for better visual identification.
+- **Simplified Chinese Localization:** Added (translation reference: TheOtherRoles-MR).
+- **AMCI Mod Identifier:** Registered for better mod compatibility.
+- Restructured role codebase: migrated role-specific logic from PlayerControlFixedUpdatePatch into individual role files using PlayerFixedUpdate overrides.
+- Refactored timer decrements from HudManagerUpdatePatch into individual role files.
+- Refactored end-game win text to use RoleInfo.name instead of hardcoded strings.
+- Improved PingTracker text display.
+- Removed BETA days countdown check.
+- Removed BepInEx auto-update feature.
+- Removed custom server functionality.
+- Removed dependency on Reactor (now standalone).
+- Fixed settings not saving when modified via paste/import.
+- Fixed UI not refreshing after pasting settings.
+- Fixed certain setting options not collapsing/hiding as expected.
+- Re-enabled access to Innersloth official servers (BETA).
   
 **Version 4.8.0**
 - Added an optional Role Draft mode, where players can select their role out of some roles that are shown to them.
@@ -999,6 +1011,61 @@ The game will **remain** in the preset for that random map after the match.
 
 The random map presets can still be used like normal presets, if you **turn of** `Play On A Random Map` (make sure you do this in all presets you are using).
 
+
+# Voice Chat
+
+This mod includes a built-in proximity voice chat system (based on Interstellar). Players can talk to each other in-game based on distance, line of sight, and role.
+
+### How to Use
+- Press **F3** to open the Voice Chat settings window (server selection, microphone/speaker device).
+- Press **F4** to open the Player Volume window (adjust individual player volumes).
+- The **mic button**, **speaker button**, and **settings button** are displayed at the top-center of the screen during gameplay.
+
+### Server Settings (under F3)
+- **Server:** Select a voice server region. Options include official servers and a custom server.
+- **Custom URL:** When "Custom..." is selected, an inline text input field appears. Enter your server URL and click OK.
+
+### In-Game Settings (Mod Options > General > Voice Chat)
+These options are configured by the host in the lobby:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| **Enable Voice Chat** | Off | Master switch for the voice chat system. |
+| **Max Chat Distance** | 6 | Maximum distance (in game units) at which players can hear each other. Range: 1.5 – 20. |
+| **Walls Block Sound** | On | Walls and obstacles block voice transmission. |
+| **Only Hear In Sight** | Off | Players can only hear others who are in their line of sight. |
+| **Impostor Hear Ghosts** | Off | Impostors can hear ghost (dead) players. |
+| **Only Ghosts Can Talk** | Off | Only dead players can use voice chat. |
+| **Hear Outside In Vent** | On | Players inside vents can hear outside voice chat. |
+| **Hear Players In Vent** | On | Players outside can hear voice from players inside vents. |
+| **Vent Private Chat** | Off | Players in vents use a private channel (only other vent players can hear). |
+| **Comms Sabotage Mutes** | On | Communications sabotage disables voice chat. |
+| **Hear Through Cameras** | On | Players on security cameras can hear nearby voice chat. |
+| **Only Meeting / Lobby** | Off | Voice chat is only active during meetings and in the lobby. |
+
+### Role Voice Channels
+Each role channel can be enabled/disabled in Mod Options. When enabled, players with that role can cycle through private channels using the **channel button** (the button above the mic button cycles: All → Role Channel → All).
+
+| Channel | Description |
+|---------|-------------|
+| **Impostor Channel** | Impostors share a private voice channel. |
+| **Lovers Channel** | Lovers share a private voice channel. |
+| **Jackal Team Channel** | Jackal and Sidekick share a private voice channel. |
+| **Sheriff & Deputy Channel** | Sheriff and Deputy share a private voice channel (only if they know each other). |
+
+### Hide 'n' Seek / PropHunt Voice Settings
+Separate voice settings are available for Hide 'n' Seek and PropHunt game modes:
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| **Enable Voice Chat** | Off | Enable voice chat for this game mode. |
+| **Only Ghosts Can Talk** | Off | Only dead players can speak. |
+| **Hear Through Cameras** | On | Players on cameras can hear nearby voice. |
+
+### Notes
+- Voice chat works on **modded servers** (Modded NA, Modded EU, etc.) and can use custom Impostor servers.
+- Android speaker support includes automatic warmup to reduce first-use lag.
+- If voice connection fails, a 5-second retry cooldown prevents infinite reconnection loops.
 
 
 # Custom Hats
