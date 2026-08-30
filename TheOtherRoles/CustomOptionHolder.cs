@@ -286,6 +286,13 @@ public class CustomOptionHolder
     public static CustomOption thiefCanKillSheriff;
     public static CustomOption thiefCanStealWithGuess;
 
+    public static CustomOption schrodingersCatSpawnRate;
+    public static CustomOption schrodingersCatKillCooldown;
+    public static CustomOption schrodingersCatKillsKiller;
+    public static CustomOption schrodingersCatCantKillUntilLastOne;
+    public static CustomOption schrodingersCatExileType;
+    public static CustomOption schrodingersCatHideRole;
+    public static CustomOption schrodingersCatCanChooseTeam;
 
     public static CustomOption trapperSpawnRate;
     public static CustomOption trapperCooldown;
@@ -841,7 +848,7 @@ public class CustomOptionHolder
         snitchSpawnRate = CustomOption.Create(Types.Crewmate, new TranslationInfo(RoleId.Snitch, Snitch.color), rates, null, true);
         snitchLeftTasksForReveal = CustomOption.Create(Types.Crewmate,
             new TranslationInfo("Opt-Snitch", 1), 5f, 0f, 25f, 1f, snitchSpawnRate);
-        snitchMode = CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-Snitch", 2), new[] { new TranslationInfo("Opt-Snitch", 100), new TranslationInfo("Opt-Snitch", 101), new TranslationInfo("Opt-Snitch", 102) },
+        snitchMode = CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-Snitch", 2), new[] { new TranslationInfo("Opt-Snitch", 100), new TranslationInfo("Opt-Snitch", 101), new TranslationInfo("Opt-Snitch", 102), new TranslationInfo("Opt-Snitch", 103) },
             snitchSpawnRate);
         snitchTargets = CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-Snitch", 3),
             new[] { new TranslationInfo("Opt-Snitch", 110), new TranslationInfo("Opt-Snitch", 111) }, snitchSpawnRate);
@@ -901,6 +908,14 @@ public class CustomOptionHolder
         thiefCanUseVents = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-Thief", 4), true, thiefSpawnRate);
         thiefCanStealWithGuess = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-Thief", 5),
             false, thiefSpawnRate);
+
+        schrodingersCatSpawnRate = CustomOption.Create(Types.Neutral, new TranslationInfo(RoleId.SchrodingersCat, SchrodingersCat.color), rates, null, true);
+        schrodingersCatKillCooldown = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-SchrodingersCat", 1), 20f, 1f, 60f, 0.5f, schrodingersCatSpawnRate);
+        schrodingersCatKillsKiller = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-SchrodingersCat", 3), false, schrodingersCatSpawnRate);
+        schrodingersCatCantKillUntilLastOne = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-SchrodingersCat", 4), false, schrodingersCatSpawnRate);
+        schrodingersCatExileType = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-SchrodingersCat", 5), new[] { new TranslationInfo("Opt-SchrodingersCat", 100), new TranslationInfo("Opt-SchrodingersCat", 101), new TranslationInfo("Opt-SchrodingersCat", 102) }, schrodingersCatSpawnRate);
+        schrodingersCatHideRole = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-SchrodingersCat", 6), false, schrodingersCatSpawnRate);
+        schrodingersCatCanChooseTeam = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-SchrodingersCat", 7), false, schrodingersCatHideRole);
 
         trapperSpawnRate = CustomOption.Create(Types.Crewmate, new TranslationInfo(RoleId.Trapper, Trapper.color), rates, null, true);
         trapperCooldown =

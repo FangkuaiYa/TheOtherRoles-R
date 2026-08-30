@@ -75,6 +75,7 @@ public enum RoleId
     Prosecutor,
     Pursuer,
     Thief,
+    SchrodingersCat,
 
     // Modifier ---
     Lover,
@@ -164,6 +165,8 @@ internal enum CustomRPC
     YoyoMarkLocation,
     YoyoBlink,
     BreakArmor,
+    SchrodingersCatSetTeam,
+    SchrodingersCatSuicide,
 
     // Gamemode
     SetGuesserGm,
@@ -437,6 +440,9 @@ public static class RPCProcedure
                         break;
                     case RoleId.Thief:
                         Thief.thief = player;
+                        break;
+                    case RoleId.SchrodingersCat:
+                        SchrodingersCat.cat = player;
                         break;
                     case RoleId.Bomber:
                         Bomber.bomber = player;
@@ -884,6 +890,7 @@ public static class RPCProcedure
         if (player == Lawyer.lawyer) Lawyer.clearAndReload();
         if (player == Pursuer.pursuer) Pursuer.clearAndReload();
         if (player == Thief.thief) Thief.clearAndReload();
+        if (player == SchrodingersCat.cat) SchrodingersCat.clearAndReload();
 
         // Modifier
         if (!ignoreModifier)
@@ -1079,6 +1086,23 @@ public static class RPCProcedure
         }
 
         ventsToSeal.Add(vent);
+    }
+
+    public static void schrodingersCatSetTeam(byte team)
+    {
+        SchrodingersCat.setTeam((SchrodingersCat.CatTeam)team);
+    }
+
+    public static void schrodingersCatSuicide()
+    {
+        KillAnimationCoPerformKillPatch.hideNextAnimation = true;
+        if (SchrodingersCat.killer != null && !SchrodingersCat.killer.Data.IsDead)
+        {
+            SchrodingersCat.killer.MurderPlayer(SchrodingersCat.killer);
+            var deadPlayer = new DeadPlayer(SchrodingersCat.killer, System.DateTime.UtcNow, DeadPlayer.CustomDeathReason.Kill, SchrodingersCat.killer);
+            GameHistory.deadPlayers.Add(deadPlayer);
+        }
+        SchrodingersCat.killer = null;
     }
 
     public static void arsonistWin()
@@ -1758,6 +1782,13 @@ internal class RPCHandlerPatch
                 break;
             case (byte)CustomRPC.SealVent:
                 RPCProcedure.sealVent(reader.ReadPackedInt32());
+                break;
+            case (byte)CustomRPC.SchrodingersCatSetTeam:
+                var catTeam = reader.ReadByte();
+                RPCProcedure.schrodingersCatSetTeam(catTeam);
+                break;
+            case (byte)CustomRPC.SchrodingersCatSuicide:
+                RPCProcedure.schrodingersCatSuicide();
                 break;
             case (byte)CustomRPC.ArsonistWin:
                 RPCProcedure.arsonistWin();

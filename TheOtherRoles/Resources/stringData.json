@@ -955,6 +955,10 @@
         "0": "Chat & Map",
         "13": "\u804a\u5929\u548c\u5730\u56fe"
     },
+    "Opt-Snitch,103": {
+        "0": "Arrow",
+        "13": "\u7bad\u5934"
+    },
     "Opt-Snitch,110": {
         "0": "All Evil Players",
         "13": "\u6240\u6709\u90aa\u6076\u73a9\u5bb6"
@@ -1066,6 +1070,42 @@
     "Opt-Thief,5": {
         "0": "Thief Can Guess To Steal A Role (If Guesser)",
         "13": "\u53ef\u4ee5\u901a\u8fc7\u731c\u6d4b\u5077\u7a83\u804c\u4e1a(\u5982\u679c\u4e3a\u8d4c\u602a)"
+    },
+    "Opt-SchrodingersCat,1": {
+        "0": "Kill Cooldown",
+        "13": "\u51fb\u6740\u51b7\u5374"
+    },
+    "Opt-SchrodingersCat,3": {
+        "0": "Killer suicides after 15s",
+        "13": "\u51fb\u6740\u800515\u79d2\u540e\u81ea\u6740"
+    },
+    "Opt-SchrodingersCat,4": {
+        "0": "Cant Kill Until Last One On Team",
+        "13": "\u9635\u8425\u53ea\u5269\u81ea\u5df1\u524d\u4e0d\u53ef\u51fb\u6740"
+    },
+    "Opt-SchrodingersCat,5": {
+        "0": "Becomes which team if exiled",
+        "13": "\u88ab\u653e\u9010\u65f6\u52a0\u5165\u54ea\u4e2a\u9635\u8425"
+    },
+    "Opt-SchrodingersCat,6": {
+        "0": "Hide Schrodinger's Cat Role",
+        "13": "\u9690\u85cf\u859b\u5b9a\u8c14\u7684\u732b\u804c\u4e1a"
+    },
+    "Opt-SchrodingersCat,7": {
+        "0": "Can Choose Which Team To Be On",
+        "13": "\u5b8c\u6210\u4efb\u52a1\u540e\u53ef\u9009\u62e9\u9635\u8425"
+    },
+    "Opt-SchrodingersCat,100": {
+        "0": "None",
+        "13": "\u65e0"
+    },
+    "Opt-SchrodingersCat,101": {
+        "0": "Crewmate",
+        "13": "\u8239\u5458"
+    },
+    "Opt-SchrodingersCat,102": {
+        "0": "Random",
+        "13": "\u968f\u673a"
     },
     "Opt-Trapper,1": {
         "0": "Trapper Cooldown",
@@ -2072,146 +2112,158 @@
         "13": "\u5077\u7a83\u6267\u5203\u8005\u7684\u8eab\u4efd"
     },
     "Role-Name,46": {
+        "0": "Schr\u00f6dinger's Cat",
+        "13": "\u859b\u5b9a\u8c14\u7684\u732b"
+    },
+    "Role-IntroDesc,46": {
+        "0": "Get killed and join killer team",
+        "13": "\u901a\u8fc7\u88ab\u51fb\u6740\u6765\u52a0\u5165\u51f6\u624b\u6240\u5728\u7684\u9635\u8425"
+    },
+    "Role-ShortDesc,46": {
+        "0": "Get killed and join killer team",
+        "13": "\u901a\u8fc7\u88ab\u51fb\u6740\u6765\u52a0\u5165\u51f6\u624b\u6240\u5728\u7684\u9635\u8425"
+    },
+    "Role-Name,47": {
         "0": "Lover",
         "13": "\u604b\u4eba"
     },
-    "Role-IntroDesc,46": {
+    "Role-IntroDesc,47": {
         "0": "You are in love",
         "13": "\u4f60\u5760\u5165\u4e86\u7231\u6cb3"
     },
-    "Role-ShortDesc,46": {
+    "Role-ShortDesc,47": {
         "0": "You are in love",
         "13": "\u4f60\u5760\u5165\u4e86\u7231\u6cb3"
     },
-    "Role-Name,47": {
+    "Role-Name,48": {
         "0": "Bait",
         "13": "\u8bf1\u9975"
     },
-    "Role-IntroDesc,47": {
+    "Role-IntroDesc,48": {
         "0": "Bait your enemies",
         "13": "\u8bf1\u9a97\u4f60\u7684\u654c\u4eba"
     },
-    "Role-ShortDesc,47": {
+    "Role-ShortDesc,48": {
         "0": "Bait your enemies",
         "13": "\u8bf1\u9a97\u4f60\u7684\u654c\u4eba"
     },
-    "Role-Name,48": {
+    "Role-Name,49": {
         "0": "Bloody",
         "13": "\u6e85\u8840\u8005"
     },
-    "Role-IntroDesc,48": {
+    "Role-IntroDesc,49": {
         "0": "Your killer leaves a bloody trail",
         "13": "\u7528\u4f60\u7684\u8840\u542f\u793a\u540e\u4eba"
     },
-    "Role-ShortDesc,48": {
+    "Role-ShortDesc,49": {
         "0": "Your killer leaves a bloody trail",
         "13": "\u4f60\u7684\u51f6\u624b\u4f1a\u7559\u4e0b\u8840\u8ff9\u6591\u6591\u7684\u8f68\u8ff9"
     },
-    "Role-Name,49": {
+    "Role-Name,50": {
         "0": "Anti tp",
         "13": "\u901a\u8baf\u5175"
     },
-    "Role-IntroDesc,49": {
+    "Role-IntroDesc,50": {
         "0": "You will not get teleported",
         "13": "\u4f60\u65e0\u9700\u56de\u5230\u4f1a\u8bae\u684c"
     },
-    "Role-ShortDesc,49": {
+    "Role-ShortDesc,50": {
         "0": "You will not get teleported",
         "13": "\u4f60\u4e0d\u4f1a\u88ab\u4f20\u9001\u81f3\u4f1a\u8bae\u684c"
     },
-    "Role-Name,50": {
+    "Role-Name,51": {
         "0": "Tiebreaker",
         "13": "\u7834\u5e73\u8005"
     },
-    "Role-IntroDesc,50": {
+    "Role-IntroDesc,51": {
         "0": "Your vote breaks the tie",
         "13": "\u6253\u7834\u5e73\u5c40"
     },
-    "Role-ShortDesc,50": {
+    "Role-ShortDesc,51": {
         "0": "Break the tie",
         "13": "\u6253\u7834\u5e73\u5c40"
     },
-    "Role-Name,51": {
+    "Role-Name,52": {
         "0": "Sunglasses",
         "13": "\u76f2\u4eba"
     },
-    "Role-IntroDesc,51": {
+    "Role-IntroDesc,52": {
         "0": "You got the sunglasses",
         "13": "\u4f60\u5e26\u4e0a\u4e86\u592a\u9633\u955c"
     },
-    "Role-ShortDesc,51": {
+    "Role-ShortDesc,52": {
         "0": "Your vision is reduced",
         "13": "\u4f60\u5e26\u4e0a\u4e86\u592a\u9633\u955c"
     },
-    "Role-Name,52": {
+    "Role-Name,53": {
         "0": "Mini",
         "13": "\u8ff7\u4f60\u8239\u5458"
     },
-    "Role-IntroDesc,52": {
+    "Role-IntroDesc,53": {
         "0": "No one will harm you until you grow up",
         "13": "\u957f\u5927\u524d\u6ca1\u4eba\u80fd\u4f24\u5bb3\u4f60"
     },
-    "Role-ShortDesc,52": {
+    "Role-ShortDesc,53": {
         "0": "No one will harm you",
         "13": "\u6ca1\u4eba\u80fd\u4f24\u5bb3\u4f60"
     },
-    "Role-Name,53": {
+    "Role-Name,54": {
         "0": "VIP",
         "13": "VIP"
     },
-    "Role-IntroDesc,53": {
+    "Role-IntroDesc,54": {
         "0": "You are the VIP",
         "13": "\u4f60\u662fVIP"
     },
-    "Role-ShortDesc,53": {
+    "Role-ShortDesc,54": {
         "0": "Everyone is notified when you die",
         "13": "\u6240\u6709\u4eba\u90fd\u4f1a\u77e5\u9053\u4f60\u7684\u6b7b\u8baf"
     },
-    "Role-Name,54": {
+    "Role-Name,55": {
         "0": "Invert",
         "13": "\u9189\u9b3c"
     },
-    "Role-IntroDesc,54": {
+    "Role-IntroDesc,55": {
         "0": "Your movement is inverted",
         "13": "\u4f60\u7684\u52a8\u4f5c\u662f\u76f8\u53cd\u7684"
     },
-    "Role-ShortDesc,54": {
+    "Role-ShortDesc,55": {
         "0": "Your movement is inverted",
         "13": "\u4f60\u7684\u52a8\u4f5c\u662f\u76f8\u53cd\u7684"
     },
-    "Role-Name,55": {
+    "Role-Name,56": {
         "0": "Chameleon",
         "13": "\u53d8\u8272\u9f99"
     },
-    "Role-IntroDesc,55": {
+    "Role-IntroDesc,56": {
         "0": "You're hard to see when not moving",
         "13": "\u4f60\u5728\u4e00\u52a8\u4e0d\u52a8\u65f6\u5f88\u96be\u88ab\u53d1\u73b0"
     },
-    "Role-ShortDesc,55": {
+    "Role-ShortDesc,56": {
         "0": "You're hard to see when not moving",
         "13": "\u4f60\u5728\u4e00\u52a8\u4e0d\u52a8\u65f6\u5f88\u96be\u88ab\u53d1\u73b0"
     },
-    "Role-Name,56": {
+    "Role-Name,57": {
         "0": "Armored",
         "13": "\u88c5\u7532\u5175"
     },
-    "Role-IntroDesc,56": {
+    "Role-IntroDesc,57": {
         "0": "You are protected from one murder attempt",
         "13": "\u4f60\u53d7\u5230\u4fdd\u62a4\uff0c\u514d\u906d\u4e00\u6b21\u8c0b\u6740\u4f01\u56fe"
     },
-    "Role-ShortDesc,56": {
+    "Role-ShortDesc,57": {
         "0": "You are protected from one murder attempt",
         "13": "\u4f60\u6709\u4e00\u6b21\u514d\u6b7b\u673a\u4f1a"
     },
-    "Role-Name,57": {
+    "Role-Name,58": {
         "0": "Shifter",
         "13": "\u4ea4\u6362\u5e08"
     },
-    "Role-IntroDesc,57": {
+    "Role-IntroDesc,58": {
         "0": "Shift your role",
         "13": "\u4ea4\u6362\u804c\u4e1a"
     },
-    "Role-ShortDesc,57": {
+    "Role-ShortDesc,58": {
         "0": "Shift your role",
         "13": "\u4ea4\u6362\u804c\u4e1a"
     },
@@ -2807,7 +2859,7 @@
     },
     "PlayerInfo-Text,1": {
         "0": "Tasks {0}",
-        "13": "\u4efb\u52a1\u6570 0}"
+        "13": "\u4efb\u52a1\u6570 {0}"
     },
     "Game-Medic,1": {
         "0": "Body Report: Killed {0}s ago!",

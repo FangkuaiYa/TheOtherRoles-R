@@ -635,6 +635,7 @@ public static class MurderPlayerPatch
                 MapBehaviourPatch.herePoints.Remove(a.Key);
             }
 
+        // Schrödinger's Cat: revive if killed without team (handled by OnMurderPlayer in SchrodingersCat)
         // RoleBase lifecycle
         CustomRoleManager.Instance.OnMurderPlayer(__instance, target);
         CustomRoleManager.Instance.OnPlayerDeath(target);
@@ -817,6 +818,18 @@ public static class AdjustLight
             __instance.TargetFlashlight.transform);
 
         return false;
+    }
+}
+
+[HarmonyPatch(typeof(RoleManager), nameof(RoleManager.AssignRoleOnDeath))]
+public static class AssignRoleOnDeathPatch
+{
+    public static bool Prefix(PlayerControl player)
+    {
+        // Prevent ghost role assignment for Schrödinger's Cat when it has no team yet
+        if (SchrodingersCat.cat != null && player == SchrodingersCat.cat && !SchrodingersCat.hasTeam())
+            return false;
+        return true;
     }
 }
 

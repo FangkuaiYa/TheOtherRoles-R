@@ -35,7 +35,7 @@ Even more roles are coming soon. :)
 | [Eraser](#eraser) | [Time Master](#time-master) | [Prosecutor](#prosecutor) | [Mini](#mini) |
 | [Trickster](#trickster) | [Medic](#medic) | [Pursuer](#pursuer) | [VIP](#vip) |
 | [Cleaner](#cleaner) | [Swapper](#swapper) | [Thief](#thief) | [Invert](#invert) |
-| [Warlock](#warlock) | [Seer](#seer) |  | [Chameleon](#chameleon) |
+| [Warlock](#warlock) | [Seer](#seer) | [Schrödinger's Cat](#schrödingers-cat) | [Chameleon](#chameleon) |
 | [Bounty Hunter](#bounty-hunter) | [Hacker](#hacker) |  | [Shifter](#shifter)
 | [Witch](#witch) | [Tracker](#tracker) |  | [Armored](#armored) |
 | [Ninja](#ninja) | [Snitch](#snitch) |  |  |
@@ -51,7 +51,7 @@ The [Role Assignment](#role-assignment) section explains how the roles are being
 # Releases
 | Among Us - Version| Mod Version | Link |
 |----------|-------------|-----------------|
-| 18.0 | v5.0.0| <s>Developing</s>
+| 18.0 | v5.0.0| <s>Developing</s> |
 
 
 <details>
@@ -146,6 +146,15 @@ The [Role Assignment](#role-assignment) section explains how the roles are being
 # Changelog
 <details>
   <summary>Click to show the Changelog</summary>
+
+**Version 5.0.0**
+- Added a new neutral role: Schrödinger's Cat. When killed, joins the killer's team. Complete tasks to choose your team.
+- Added Arrow mode to the Snitch: evil players see a blue arrow pointing at the Snitch, and the Snitch sees colored arrows pointing at all evil players.
+- Refactored role-specific code from PlayerControlFixedUpdatePatch into individual role files using PlayerFixedUpdate overrides.
+- Refactored HudManagerUpdatePatch timer decrements into individual role files.
+- Added tab navigation buttons to in-game settings page (F1 HUD overlay).
+- Added role card sprites to RoleDraft selection buttons.
+- Refactored EndGame win text to use RoleInfo.name instead of hardcoded strings.
   
 **Version 4.8.0**
 - Added an optional Role Draft mode, where players can select their role out of some roles that are shown to them.
@@ -1571,6 +1580,33 @@ the Sheriff. While the Thief hasn't fired, their tasks do not count towards the 
 | Thief Can Guess To Steal Role | -
 -----------------------
 
+## Schrödinger's Cat
+### **Team: Neutral**
+The Schrödinger's Cat exists in a superposition of teams at the start of the game.\
+When killed, the Cat collapses into the killer's team:
+- Killed by an Impostor → joins the Impostors (and becomes a real Impostor if the option is enabled)
+- Killed by a Crewmate → joins the Crewmates
+- Killed by Jackal/Sidekick → joins the Jackal team
+
+The Cat is revived upon being killed (the body disappears). Tasks are cleared when joining a team.\
+If the Cat completes all tasks before being killed, a button appears allowing them to actively choose which team to join.\
+Being exiled always results in death (configurable: can join Crew or a random team instead).\
+If the "Kills Killer" option is enabled, the killer of the Cat will commit suicide after a short countdown.
+
+### Game Options
+| Name | Description |
+|----------|:-------------:|
+| Schrödinger's Cat Spawn Chance | -
+| Schrödinger's Cat Kill Cooldown | Kill cooldown after joining a team with killing ability
+| Schrödinger's Cat Become Real Impostor | When killed by Impostor, gain full Impostor role
+| Schrödinger's Cat Kills Killer | Revenge kill: killer commits suicide after countdown
+| Schrödinger's Cat Can't Kill Until Last One | Only gain kill ability when all original team members are dead
+| Schrödinger's Cat Exile Type | None (die) / Crew (join Crew) / Random
+| Schrödinger's Cat Hide Role | Show as Crewmate to others until a team is joined
+| Schrödinger's Cat Can Choose Team | Enable team selection button after completing all tasks
+
+-----------------------
+
 ## Mayor
 ### **Team: Crewmates**
 The Mayor leads the Crewmates by having a vote that counts twice.\
@@ -1822,7 +1858,8 @@ Depending on the options, the Tracker has another ability: They can track all co
 ## Snitch
 ### **Team: Crewmates**
 When the Snitch finishes all their tasks, they will get information in chat of the last location of all killers when the meeting starts.\
-When the Snitch only has a configurable amount of tasks left, it will be revealed that there is a Snitch in the game with a text on evil player's screens.
+When the Snitch only has a configurable amount of tasks left, it will be revealed that there is a Snitch in the game with a text on evil player's screens.\
+In Arrow mode, the Snitch sees colored arrows pointing at all evil players after completing all tasks, and evil players see a blue arrow pointing at the Snitch when tasks are almost done.
 
 **NOTE:**
 - If the Snitch dies, all killers will be informed that the Snitch is dead
@@ -1833,7 +1870,7 @@ When the Snitch only has a configurable amount of tasks left, it will be reveale
 |----------|:-------------:|
 | Snitch Spawn Chance | -
 | Task Count Where The Snitch Will Be Revealed | -
-| Information Mode  | Whether the snitch will get info on the map and/or in the chat 
+| Information Mode  | Chat / Map / Both / Arrow
 | Targets | Snitch Will See All Evil Players or Killing Evil Players
 -----------------------
 

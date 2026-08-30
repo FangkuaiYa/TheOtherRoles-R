@@ -114,6 +114,7 @@ public static class OnGameEndPatch
         if (Lawyer.lawyer != null) notWinners.Add(Lawyer.lawyer);
         if (Pursuer.pursuer != null) notWinners.Add(Pursuer.pursuer);
         if (Thief.thief != null) notWinners.Add(Thief.thief);
+        if (SchrodingersCat.cat != null) notWinners.Add(SchrodingersCat.cat);
 
         notWinners.AddRange(Jackal.formerJackals);
 
@@ -203,7 +204,8 @@ public static class OnGameEndPatch
                     else if (p == Pursuer.pursuer && !Pursuer.pursuer.Data.IsDead)
                         EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                     else if (p != Jester.jester && p != Jackal.jackal && p != Sidekick.sidekick &&
-                             p != Arsonist.arsonist && p != Vulture.vulture && !Jackal.formerJackals.Contains(p) &&
+                             p != Arsonist.arsonist && p != Vulture.vulture && p != SchrodingersCat.cat &&
+                             !Jackal.formerJackals.Contains(p) &&
                              !p.Data.Role.IsImpostor)
                         EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                 }
@@ -240,6 +242,33 @@ public static class OnGameEndPatch
                 var wpdFormerJackal = new CachedPlayerData(player.Data);
                 wpdFormerJackal.IsImpostor = false;
                 EndGameResult.CachedWinners.Add(wpdFormerJackal);
+            }
+
+            // Cat on Jackal team wins with Jackal
+            if (SchrodingersCat.cat != null && SchrodingersCat.team == SchrodingersCat.CatTeam.Jackal)
+            {
+                var wpdCat = new CachedPlayerData(SchrodingersCat.cat.Data);
+                wpdCat.IsImpostor = false;
+                EndGameResult.CachedWinners.Add(wpdCat);
+            }
+        }
+
+        // Schrödinger's Cat wins with its team (Impostor/Crew)
+        if (SchrodingersCat.cat != null && !SchrodingersCat.cat.Data.IsDead && SchrodingersCat.hasTeam())
+        {
+            if (SchrodingersCat.team == SchrodingersCat.CatTeam.Impostor &&
+                EndGameResult.CachedWinners.ToArray().Any(x => x.IsImpostor))
+            {
+                // Cat on Impostor team wins when Impostors win
+                if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == SchrodingersCat.cat.Data.PlayerName))
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(SchrodingersCat.cat.Data));
+            }
+            else if (SchrodingersCat.team == SchrodingersCat.CatTeam.Crewmate &&
+                     !EndGameResult.CachedWinners.ToArray().Any(x => x.IsImpostor) && !teamJackalWin)
+            {
+                // Cat on Crewmate team wins when Crew wins
+                if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == SchrodingersCat.cat.Data.PlayerName))
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(SchrodingersCat.cat.Data));
             }
         }
 
@@ -726,6 +755,16 @@ internal class PlayerStatistics
                     {
                         numImpostorsAlive++;
                         if (lover) impLover = true;
+                    }
+
+                    if (SchrodingersCat.cat != null && SchrodingersCat.cat.PlayerId == playerInfo.PlayerId && SchrodingersCat.team == SchrodingersCat.CatTeam.Impostor && !playerInfo.Role.IsImpostor)
+                    {
+                        numImpostorsAlive++;
+                    }
+
+                    if (SchrodingersCat.cat != null && SchrodingersCat.cat.PlayerId == playerInfo.PlayerId && SchrodingersCat.team == SchrodingersCat.CatTeam.Jackal)
+                    {
+                        numJackalAlive++;
                     }
 
                     if (Jackal.jackal != null && Jackal.jackal.PlayerId == playerInfo.PlayerId)

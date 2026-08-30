@@ -485,6 +485,11 @@ public static class Helpers
         {
             roleCouldUse = true;
         }
+        else if (SchrodingersCat.cat != null && SchrodingersCat.cat == player &&
+                 SchrodingersCat.hasTeam() && SchrodingersCat.team != SchrodingersCat.CatTeam.Crewmate)
+        {
+            roleCouldUse = true;
+        }
         else if (player.Data?.Role != null && player.Data.Role.CanVent)
         {
             if (Janitor.janitor != null && Janitor.janitor == PlayerControl.LocalPlayer)
@@ -684,6 +689,9 @@ public static class Helpers
 
     public static bool isNeutral(PlayerControl player)
     {
+        // Cat with a team is no longer neutral
+        if (SchrodingersCat.cat != null && player == SchrodingersCat.cat && SchrodingersCat.hasTeam())
+            return false;
         var roleInfo = CustomRoleManager.getRoleInfoForPlayer(player, false).FirstOrDefault();
         if (roleInfo != null)
             return roleInfo.isNeutral;
@@ -692,18 +700,25 @@ public static class Helpers
 
     public static bool isKiller(PlayerControl player)
     {
-        return player.Data.Role.IsImpostor ||
-               (isNeutral(player) &&
-                player != Jester.jester &&
-                player != Arsonist.arsonist &&
-                player != Vulture.vulture &&
-                player != Lawyer.lawyer &&
-                player != Pursuer.pursuer);
+        if (player.Data.Role.IsImpostor) return true;
+        if (SchrodingersCat.cat != null && player == SchrodingersCat.cat &&
+            SchrodingersCat.team != SchrodingersCat.CatTeam.None && SchrodingersCat.team != SchrodingersCat.CatTeam.Crewmate)
+            return true;
+        return isNeutral(player) &&
+               player != Jester.jester &&
+               player != Arsonist.arsonist &&
+               player != Vulture.vulture &&
+               player != Lawyer.lawyer &&
+               player != Pursuer.pursuer;
     }
 
     public static bool isEvil(PlayerControl player)
     {
-        return player.Data.Role.IsImpostor || isNeutral(player);
+        if (player.Data.Role.IsImpostor) return true;
+        if (SchrodingersCat.cat != null && player == SchrodingersCat.cat &&
+            (SchrodingersCat.team == SchrodingersCat.CatTeam.Impostor || SchrodingersCat.team == SchrodingersCat.CatTeam.Jackal))
+            return true;
+        return isNeutral(player);
     }
 
     public static void toggleZoom(bool reset = false)
@@ -756,7 +771,9 @@ public static class Helpers
                    Sidekick.hasImpostorVision)
                || (Spy.spy != null && Spy.spy.PlayerId == player.PlayerId && Spy.hasImpostorVision)
                || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision)
-               || (Thief.thief != null && Thief.thief.PlayerId == player.PlayerId && Thief.hasImpostorVision);
+               || (Thief.thief != null && Thief.thief.PlayerId == player.PlayerId && Thief.hasImpostorVision)
+               || (SchrodingersCat.cat != null && SchrodingersCat.cat.PlayerId == player.PlayerId &&
+                   SchrodingersCat.hasTeam() && SchrodingersCat.team != SchrodingersCat.CatTeam.Crewmate);
     }
 
     public static object TryCast(this Il2CppObjectBase self, Type type)

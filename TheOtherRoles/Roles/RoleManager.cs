@@ -243,6 +243,14 @@ public class CustomRoleManager
         if (p == Trapper.trapper) infos.Add(Trapper.Info);
         if (p == Pursuer.pursuer) infos.Add(Pursuer.Info);
         if (p == Thief.thief) infos.Add(Thief.Info);
+        if (p == SchrodingersCat.cat)
+        {
+            // Hide role: show as crewmate if cat has no team, is alive, and hideRole is enabled
+            if (SchrodingersCat.hideRole && !SchrodingersCat.hasTeam() && !PlayerControl.LocalPlayer.Data.IsDead)
+                infos.Add(crewmate);
+            else
+                infos.Add(SchrodingersCat.Info);
+        }
 
         // Default roles
         if (infos.Count == count)

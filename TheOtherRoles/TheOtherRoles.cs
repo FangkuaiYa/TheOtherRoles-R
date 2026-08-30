@@ -72,6 +72,7 @@ public static class TheOtherRoles
         new Lawyer();
         new Pursuer();
         new Thief();
+        new SchrodingersCat();
 
         new Bait();
         new Bloody();

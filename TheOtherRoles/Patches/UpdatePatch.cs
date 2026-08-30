@@ -153,6 +153,50 @@ internal class HudManagerUpdatePatch
             if (Jackal.jackal != null) setPlayerNameColor(Jackal.jackal, Jackal.color);
         }
 
+        // Schrödinger's Cat: show team color when cat has joined a team
+        if (SchrodingersCat.cat != null && SchrodingersCat.cat == localPlayer && SchrodingersCat.hasTeam())
+        {
+            Color catColor = SchrodingersCat.team switch
+            {
+                SchrodingersCat.CatTeam.Impostor => Palette.ImpostorRed,
+                SchrodingersCat.CatTeam.Jackal => Jackal.color,
+                _ => Color.white
+            };
+            setPlayerNameColor(SchrodingersCat.cat, catColor);
+        }
+
+        // Schrödinger's Cat on Impostor team: Impostors see cat in red
+        if (SchrodingersCat.cat != null && SchrodingersCat.team == SchrodingersCat.CatTeam.Impostor && localPlayer.Data.Role.IsImpostor)
+            setPlayerNameColor(SchrodingersCat.cat, Palette.ImpostorRed);
+
+        // Schrödinger's Cat on Jackal team: Jackal/Sidekick see cat in Jackal color
+        if (SchrodingersCat.cat != null && SchrodingersCat.team == SchrodingersCat.CatTeam.Jackal)
+        {
+            if (localPlayer == Jackal.jackal || localPlayer == Sidekick.sidekick)
+                setPlayerNameColor(SchrodingersCat.cat, Jackal.color);
+        }
+
+        // Schrödinger's Cat sees its team members
+        if (SchrodingersCat.cat != null && SchrodingersCat.cat == localPlayer && SchrodingersCat.hasTeam())
+        {
+            switch (SchrodingersCat.team)
+            {
+                case SchrodingersCat.CatTeam.Impostor:
+                    // Cat on Impostor team sees all Impostors in red
+                    foreach (var pc in PlayerControl.AllPlayerControls)
+                    {
+                        if (pc != SchrodingersCat.cat && pc.Data.Role.IsImpostor)
+                            setPlayerNameColor(pc, Palette.ImpostorRed);
+                    }
+                    break;
+                case SchrodingersCat.CatTeam.Jackal:
+                    // Cat on Jackal team sees Jackal and Sidekick
+                    if (Jackal.jackal != null) setPlayerNameColor(Jackal.jackal, Jackal.color);
+                    if (Sidekick.sidekick != null) setPlayerNameColor(Sidekick.sidekick, Jackal.color);
+                    break;
+            }
+        }
+
         // No else if here, as the Impostors need the Spy name to be colored
         if (Spy.spy != null && localPlayer.Data.Role.IsImpostor) setPlayerNameColor(Spy.spy, Spy.color);
         if (Sidekick.sidekick != null && Sidekick.wasTeamRed && localPlayer.Data.Role.IsImpostor)

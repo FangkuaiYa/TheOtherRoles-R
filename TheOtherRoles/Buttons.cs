@@ -76,6 +76,10 @@ internal static class HudManagerStartPatch
     public static CustomButton propHuntFindButton;
     public static CustomButton eventKickButton;
 
+    // Schrödinger's Cat
+    public static CustomButton schrodingersCatKillButton;
+    public static CustomButton schrodingersCatSwitchButton;
+
     public static Dictionary<byte, List<CustomButton>> deputyHandcuffedButtons;
     public static PoolablePlayer targetDisplay;
     public static GameObject propSpriteHolder;
@@ -135,6 +139,7 @@ internal static class HudManagerStartPatch
         securityGuardButton.MaxTimer = SecurityGuard.cooldown;
         securityGuardCamButton.MaxTimer = SecurityGuard.cooldown;
         arsonistButton.MaxTimer = Arsonist.cooldown;
+        if (schrodingersCatKillButton != null) schrodingersCatKillButton.MaxTimer = SchrodingersCat.killCooldown;
         vultureEatButton.MaxTimer = Vulture.cooldown;
         mediumButton.MaxTimer = Medium.cooldown;
         pursuerButton.MaxTimer = Pursuer.cooldown;
@@ -3061,6 +3066,95 @@ internal static class HudManagerStartPatch
                 eventKickButton.Timer = 69;
             },
             buttonText: "KICK"
+        );
+
+        // Schrödinger's Cat Kill Button
+        schrodingersCatKillButton = new CustomButton(
+            () =>
+            {
+                if (SchrodingersCat.cat != null && SchrodingersCat.cat == PlayerControl.LocalPlayer)
+                {
+                    var target = PlayerControlFixedUpdatePatch.setTarget();
+                    if (target != null)
+                    {
+                        var murderAttemptResult = Helpers.checkMuderAttempt(SchrodingersCat.cat, target);
+                        if (murderAttemptResult == MurderAttemptResult.SuppressKill) return;
+                        if (murderAttemptResult == MurderAttemptResult.PerformKill)
+                        {
+                            var killWriter = AmongUsClient.Instance.StartRpcImmediately(
+                                PlayerControl.LocalPlayer.NetId,
+                                (byte)CustomRPC.UncheckedMurderPlayer, SendOption.Reliable);
+                            killWriter.Write(SchrodingersCat.cat.Data.PlayerId);
+                            killWriter.Write(target.Data.PlayerId);
+                            killWriter.Write(byte.MaxValue);
+                            AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                            RPCProcedure.uncheckedMurderPlayer(
+                                SchrodingersCat.cat.Data.PlayerId,
+                                target.Data.PlayerId,
+                                byte.MaxValue);
+                        }
+                    }
+                    schrodingersCatKillButton.Timer = schrodingersCatKillButton.MaxTimer;
+                }
+            },
+            () =>
+            {
+                if (SchrodingersCat.cat == null || SchrodingersCat.cat != PlayerControl.LocalPlayer
+                    || !SchrodingersCat.hasTeam() || SchrodingersCat.team == SchrodingersCat.CatTeam.Crewmate
+                    || PlayerControl.LocalPlayer.Data.IsDead)
+                    return false;
+
+                // cantKillUntilLastOne: only allow kill when cat is the last alive on its team
+                if (SchrodingersCat.cantKillUntilLastOne)
+                {
+                    int aliveOnTeam = 0;
+                    foreach (var pc in PlayerControl.AllPlayerControls)
+                    {
+                        if (pc.Data.IsDead || pc.Data.Disconnected) continue;
+                        if (SchrodingersCat.team == SchrodingersCat.CatTeam.Impostor && pc.Data.Role.IsImpostor) aliveOnTeam++;
+                        else if (SchrodingersCat.team == SchrodingersCat.CatTeam.Jackal &&
+                                 (pc == Jackal.jackal || pc == Sidekick.sidekick || pc == SchrodingersCat.cat)) aliveOnTeam++;
+                    }
+                    if (aliveOnTeam > 1) return false;
+                }
+
+                return true;
+            },
+            () =>
+            {
+                var target = PlayerControlFixedUpdatePatch.setTarget();
+                return target != null && PlayerControl.LocalPlayer.CanMove;
+            },
+            () => { },
+            __instance.KillButton.graphic.sprite,
+            CustomButton.ButtonPositions.upperRowRight,
+            __instance,
+            KeyCode.Q
+        );
+        schrodingersCatKillButton.MaxTimer = SchrodingersCat.killCooldown;
+
+        // Schrödinger's Cat Switch Team Button
+        schrodingersCatSwitchButton = new CustomButton(
+            () =>
+            {
+                SchrodingersCat.showTeamMenu();
+            },
+            () =>
+            {
+                return SchrodingersCat.cat != null && SchrodingersCat.cat == PlayerControl.LocalPlayer
+                    && !SchrodingersCat.hasTeam()
+                    && SchrodingersCat.canChooseTeam
+                    && SchrodingersCat.tasksComplete(PlayerControl.LocalPlayer)
+                    && !PlayerControl.LocalPlayer.Data.IsDead;
+            },
+            () => true,
+            () => { },
+            SchrodingersCat.getSwitchButtonSprite(),
+            CustomButton.ButtonPositions.upperRowCenter,
+            __instance,
+            null,
+            false,
+            "Switch Team"
         );
 
         // Set the default (or settings from the previous game) timers / durations when spawning the buttons
