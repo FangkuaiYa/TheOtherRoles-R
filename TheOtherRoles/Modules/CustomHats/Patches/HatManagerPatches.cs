@@ -1,48 +1,63 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Cpp2IL.Core.Extensions;
 using HarmonyLib;
+using UnityEngine;
 
 namespace TheOtherRoles.Modules.CustomHats.Patches;
 
 [HarmonyPatch(typeof(HatManager))]
 internal static class HatManagerPatches
 {
+    private static bool isRunning;
     private static bool isLoaded;
+    private static float nextMergeAttempt;
+    private const float MergeCooldownSeconds = 1f;
 
     [HarmonyPatch(nameof(HatManager.GetHatById))]
     [HarmonyPrefix]
-    private static bool GetHatByIdPrefix(HatManager __instance)
+    private static void GetHatByIdPrefix(HatManager __instance)
     {
-        if (isLoaded || CustomHatManager.UnregisteredHats.Count == 0) return true;
-
-        var hatsToAdd = new List<HatData>();
-        var cache = CustomHatManager.UnregisteredHats.ToArray();
-        foreach (var hat in cache)
+        if (isRunning || isLoaded) return;
+        if (CustomHatManager.UnregisteredHats.Count == 0)
         {
+            isLoaded = true;
+            return;
+        }
+
+        if (Time.realtimeSinceStartup < nextMergeAttempt) return;
+        nextMergeAttempt = Time.realtimeSinceStartup + MergeCooldownSeconds;
+
+        isRunning = true;
+        // Maybe we can use lock keyword to ensure simultaneous list manipulations ?
+        // -> I think lock only lbocks other threads from changing the array, but this seems to happen in one thread
+        var allHats = __instance.allHats.ToList();
+        var cache = CustomHatManager.UnregisteredHats.Clone();
+        var added = false;
+        foreach (var hat in cache)
             try
             {
-                hatsToAdd.Add(CustomHatManager.CreateHatBehaviour(hat));
+                allHats.Add(CustomHatManager.CreateHatBehaviour(hat));
                 CustomHatManager.UnregisteredHats.Remove(hat);
+                added = true;
             }
             catch
             {
-                // File not downloaded yet
+                // This means the file has not been downloaded yet, do nothing...
             }
-        }
 
         if (CustomHatManager.UnregisteredHats.Count == 0)
             isLoaded = true;
+        cache.Clear();
 
-        if (hatsToAdd.Count > 0)
-        {
-            var oldLen = __instance.allHats.Length;
-            var newArray = new Il2CppReferenceArray<HatData>(oldLen + hatsToAdd.Count);
-            for (int i = 0; i < oldLen; i++)
-                newArray[i] = __instance.allHats[i];
-            for (int i = 0; i < hatsToAdd.Count; i++)
-                newArray[oldLen + i] = hatsToAdd[i];
-            __instance.allHats = newArray;
-        }
+        // only touch hats if something actually changed
+        if (added) __instance.allHats = allHats.ToArray();
+    }
 
-        return true;
+    [HarmonyPatch(nameof(HatManager.GetHatById))]
+    [HarmonyPostfix]
+    private static void GetHatByIdPostfix()
+    {
+        isRunning = false;
     }
 }
