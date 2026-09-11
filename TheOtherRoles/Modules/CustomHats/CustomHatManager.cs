@@ -42,7 +42,8 @@ public static class CustomHatManager
     }
 
 #if ANDROID
-    internal static string CustomSkinsDirectory => Path.Combine(Application.persistentDataPath, ResourcesDirectory);
+    internal static string CustomSkinsDirectory =>
+        Path.Combine(Environment.GetEnvironmentVariable("STAR_DATA_PATH")!, ResourcesDirectory);
 #else
     internal static string CustomSkinsDirectory =>
         Path.Combine(Path.GetDirectoryName(Application.dataPath)!, ResourcesDirectory);
