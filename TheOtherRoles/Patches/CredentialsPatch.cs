@@ -23,20 +23,20 @@ public static class CredentialsPatch
             var gameModeText = "";
             if (AmongUsClient.Instance.GameState != InnerNetClient.GameStates.Started)
             {
-                if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek) gameModeText = "Hide 'N Seek";
-                else if (TORMapOptions.gameMode == CustomGamemodes.Guesser) gameModeText = "Guesser";
-                else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt) gameModeText = "Prop Hunt";
+                if (TORMapOptions.gameMode == CustomGamemodes.HideNSeek) gameModeText = ModTranslation.GetString("Credentials-Text", 3);
+                else if (TORMapOptions.gameMode == CustomGamemodes.Guesser) gameModeText = ModTranslation.GetString("Credentials-Text", 4);
+                else if (TORMapOptions.gameMode == CustomGamemodes.PropHunt) gameModeText = ModTranslation.GetString("Credentials-Text", 5);
 
                 try
                 {
                     var GameModeText = GameObject.Find("GameModeText")?.GetComponent<TextMeshPro>();
                     GameModeText.text = gameModeText == ""
                         ? GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek
-                            ? "Van. HideNSeek"
-                            : "Classic"
+                            ? ModTranslation.GetString("Credentials-Text", 6)
+                            : ModTranslation.GetString("Credentials-Text", 7)
                         : gameModeText;
                     var ModeLabel = GameObject.Find("ModeLabel")?.GetComponentInChildren<TextMeshPro>();
-                    ModeLabel.text = "Game Mode";
+                    ModeLabel.text = ModTranslation.GetString("Credentials-Text", 8);
                 }
                 catch
                 {
@@ -44,9 +44,9 @@ public static class CredentialsPatch
             }
             else
             {
-                if (HideNSeek.isHideNSeekGM) gameModeText = "Hide 'N Seek";
-                else if (HandleGuesser.isGuesserGm) gameModeText = "Guesser";
-                else if (PropHunt.isPropHuntGM) gameModeText = "Prop Hunt";
+                if (HideNSeek.isHideNSeekGM) gameModeText = ModTranslation.GetString("Credentials-Text", 3);
+                else if (HandleGuesser.isGuesserGm) gameModeText = ModTranslation.GetString("Credentials-Text", 4);
+                else if (PropHunt.isPropHuntGM) gameModeText = ModTranslation.GetString("Credentials-Text", 5);
             }
 
             if (gameModeText != "")

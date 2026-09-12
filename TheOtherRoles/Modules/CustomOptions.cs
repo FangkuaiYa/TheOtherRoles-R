@@ -1548,7 +1548,7 @@ public class AddToKillDistanceSetting
     {
         LegacyGameOptions.KillDistances = new Il2CppStructArray<float>(new[] { 0.5f, 1f, 1.8f, 2.5f });
         LegacyGameOptions.KillDistanceStrings =
-            new Il2CppStringArray(new[] { ModTranslation.GetString("CustomOption-Text", 27), DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.SettingShort), DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.SettingMedium), DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.SettingLong) });
+            new Il2CppStringArray(new[] { ModTranslation.GetString("CustomOption-Text", 27), "Short", "Medium", "Long" });
     }
 
     [HarmonyPatch(typeof(StringGameSetting), nameof(StringGameSetting.GetValueString))]

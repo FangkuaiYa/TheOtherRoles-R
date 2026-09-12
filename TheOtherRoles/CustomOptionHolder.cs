@@ -38,6 +38,7 @@ public class CustomOptionHolder
     public static CustomOption draftModeShowRoles;
     public static CustomOption draftModeHideImpRoles;
     public static CustomOption draftModeHideNeutralRoles;
+    public static CustomOption draftModeCanChat;
 
     public static CustomOption anyPlayerCanStopStart;
     public static CustomOption enableEventMode;
@@ -504,6 +505,8 @@ public class CustomOptionHolder
             draftModeShowRoles);
         draftModeHideNeutralRoles = CustomOption.Create(Types.General, new TranslationInfo("Opt-General", 16, Color.yellow),
             false, draftModeShowRoles);
+        draftModeCanChat = CustomOption.Create(Types.General, new TranslationInfo("Opt-General", 107, Color.yellow), true,
+            isDraftMode);
 
         // Using new id's for the options to not break compatibilty with older versions
         crewmateRolesCountMin = CustomOption.Create(Types.General,

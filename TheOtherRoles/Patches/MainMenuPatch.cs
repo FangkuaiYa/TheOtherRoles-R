@@ -3,6 +3,7 @@ using AmongUs.Data;
 using Assets.InnerNet;
 using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
+using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,7 +16,6 @@ namespace TheOtherRoles.Patches;
 [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
 public class MainMenuPatch
 {
-    private static bool horseButtonState = TORMapOptions.enableHorseMode;
     private static AnnouncementPopUp popUp;
 
     private static void Prefix(MainMenuManager __instance)
@@ -200,9 +200,9 @@ License: TheOtherRoles is licensed under the [https://github.com/TheOtherRolesAU
 
             template.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p =>
             {
-                guesserButtonText.SetText("TOR Guesser");
-                HideNSeekButtonText.SetText("TOR Hide N Seek");
-                PropHuntButtonText.SetText("TOR Prop Hunt");
+                guesserButtonText.SetText(ModTranslation.GetString("ModeSwitch-Text", 4));
+                HideNSeekButtonText.SetText(ModTranslation.GetString("ModeSwitch-Text", 5));
+                PropHuntButtonText.SetText(ModTranslation.GetString("ModeSwitch-Text", 6));
             })));
         }));
     }

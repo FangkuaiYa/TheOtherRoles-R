@@ -1,6 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using Cpp2IL.Core.Extensions;
 using HarmonyLib;
 
 namespace TheOtherRoles.Modules.CustomHats.Patches;
@@ -8,41 +6,43 @@ namespace TheOtherRoles.Modules.CustomHats.Patches;
 [HarmonyPatch(typeof(HatManager))]
 internal static class HatManagerPatches
 {
-    private static bool isRunning;
     private static bool isLoaded;
-    private static List<HatData> allHats;
 
     [HarmonyPatch(nameof(HatManager.GetHatById))]
     [HarmonyPrefix]
-    private static void GetHatByIdPrefix(HatManager __instance)
+    private static bool GetHatByIdPrefix(HatManager __instance)
     {
-        if (isRunning || isLoaded) return;
-        isRunning = true;
-        // Maybe we can use lock keyword to ensure simultaneous list manipulations ?
-        allHats = __instance.allHats.ToList();
-        var cache = CustomHatManager.UnregisteredHats.Clone();
+        if (isLoaded || CustomHatManager.UnregisteredHats.Count == 0) return true;
+
+        var hatsToAdd = new List<HatData>();
+        var cache = CustomHatManager.UnregisteredHats.ToArray();
         foreach (var hat in cache)
+        {
             try
             {
-                allHats.Add(CustomHatManager.CreateHatBehaviour(hat));
+                hatsToAdd.Add(CustomHatManager.CreateHatBehaviour(hat));
                 CustomHatManager.UnregisteredHats.Remove(hat);
             }
             catch
             {
-                // This means the file has not been downloaded yet, do nothing...
+                // File not downloaded yet
             }
+        }
 
         if (CustomHatManager.UnregisteredHats.Count == 0)
             isLoaded = true;
-        cache.Clear();
 
-        __instance.allHats = allHats.ToArray();
-    }
+        if (hatsToAdd.Count > 0)
+        {
+            var oldLen = __instance.allHats.Length;
+            var newArray = new Il2CppReferenceArray<HatData>(oldLen + hatsToAdd.Count);
+            for (int i = 0; i < oldLen; i++)
+                newArray[i] = __instance.allHats[i];
+            for (int i = 0; i < hatsToAdd.Count; i++)
+                newArray[oldLen + i] = hatsToAdd[i];
+            __instance.allHats = newArray;
+        }
 
-    [HarmonyPatch(nameof(HatManager.GetHatById))]
-    [HarmonyPostfix]
-    private static void GetHatByIdPostfix()
-    {
-        isRunning = false;
+        return true;
     }
 }

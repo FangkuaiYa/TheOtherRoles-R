@@ -97,6 +97,7 @@ public class Bomb
                         .position); // every player only checks that for their own client (desynct with positions sucks)
             if (distance < Bomber.destructionRange && !PlayerControl.LocalPlayer.Data.IsDead)
             {
+                SchrodingersCat.skipRevival = true;
                 Helpers.checkMurderAttemptAndKill(Bomber.bomber, PlayerControl.LocalPlayer, false, false, true, true);
 
                 var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,

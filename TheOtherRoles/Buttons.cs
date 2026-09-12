@@ -1135,7 +1135,7 @@ internal static class HudManagerStartPatch
             () => { return PlayerControl.LocalPlayer.CanMove && !Vampire.localPlacedGarlic; },
             () => { },
             Vampire.getGarlicButtonSprite(),
-            new Vector3(0, -0.06f, 0),
+            new Vector3(Application.platform == RuntimePlatform.Android ? -1f : 0, -0.06f, 0),
             __instance,
             null,
             true
@@ -1393,6 +1393,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
+                if (Helpers.isFungle()) return false;
                 return ((Jackal.jackal != null && Jackal.jackal == PlayerControl.LocalPlayer &&
                          Jackal.canSabotageLights) ||
                         (Sidekick.sidekick != null && Sidekick.sidekick == PlayerControl.LocalPlayer &&

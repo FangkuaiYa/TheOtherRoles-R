@@ -96,6 +96,18 @@ public static class OnGameEndPatch
                       .getRoleInfoForPlayer(playerControl, false).FirstOrDefault()) ||
                   playerControl.Data.Role.IsImpostor)) killCount = null;
             var roleString = CustomRoleManager.GetRolesString(playerControl, true);
+            // Override cat's role display with team-specific text
+            if (SchrodingersCat.cat != null && playerControl == SchrodingersCat.cat && SchrodingersCat.hasTeam())
+            {
+                var catTeamName = SchrodingersCat.team switch
+                {
+                    SchrodingersCat.CatTeam.Impostor => Helpers.cs(Palette.ImpostorRed, SchrodingersCat.Info.name + " (Impostor)"),
+                    SchrodingersCat.CatTeam.Crewmate => Helpers.cs(Color.white, SchrodingersCat.Info.name + " (Crewmate)"),
+                    SchrodingersCat.CatTeam.Jackal => Helpers.cs(Jackal.color, SchrodingersCat.Info.name + " (Jackal)"),
+                    _ => roleString
+                };
+                roleString = catTeamName;
+            }
             AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo
             {
                 PlayerName = playerControl.Data.PlayerName, Roles = roles, RoleNames = roleString,

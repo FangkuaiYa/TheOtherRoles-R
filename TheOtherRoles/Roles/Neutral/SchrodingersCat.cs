@@ -35,6 +35,9 @@ public class SchrodingersCat : RoleBase
     public static PlayerControl killer;
     public static ExileType exileType = ExileType.None;
 
+    public static bool skipRevival;
+    private static int _lastDeathFrame = -10;
+
     // Settings
     public static float killCooldown = 20f;
     public static bool killsKiller = false;
@@ -110,12 +113,21 @@ public class SchrodingersCat : RoleBase
     {
         if (victim == null || victim != cat || hasTeam()) return;
 
-        CatTeam newTeam;
-        if (killerPlayer == null)
+        // Don't revive if this is a bomb/guess/etc kill
+        if (skipRevival)
         {
+            skipRevival = false;
             return;
         }
-        else if (killerPlayer.Data.Role.IsImpostor)
+
+        // Prevent simultaneous kills from reviving (e.g. Witch + Jackal same frame)
+        int currentFrame = Time.frameCount;
+        if (currentFrame - _lastDeathFrame < 3) return;
+
+        if (killerPlayer == null) return;
+
+        CatTeam newTeam;
+        if (killerPlayer.Data.Role.IsImpostor)
         {
             newTeam = CatTeam.Impostor;
         }
@@ -127,6 +139,9 @@ public class SchrodingersCat : RoleBase
         {
             newTeam = CatTeam.Crewmate;
         }
+
+        // Mark death frame BEFORE revive to prevent double-processing
+        _lastDeathFrame = currentFrame;
 
         // Revive FIRST (before setting team, since SetRole needs alive player)
         victim.Revive();
@@ -158,6 +173,13 @@ public class SchrodingersCat : RoleBase
     {
         if (cat == null || cat.Data.Disconnected) return;
         if (hasTeam()) return;
+
+        // If guessed (skipRevival set by guess RPC), die permanently
+        if (skipRevival)
+        {
+            skipRevival = false;
+            return;
+        }
 
         switch (exileType)
         {
@@ -226,6 +248,8 @@ public class SchrodingersCat : RoleBase
         cat = null;
         team = CatTeam.None;
         killer = null;
+        skipRevival = false;
+        _lastDeathFrame = -10;
         killCooldown = CustomOptionHolder.schrodingersCatKillCooldown.getFloat();
         killsKiller = CustomOptionHolder.schrodingersCatKillsKiller.getBool();
         cantKillUntilLastOne = CustomOptionHolder.schrodingersCatCantKillUntilLastOne.getBool();

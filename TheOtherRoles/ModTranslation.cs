@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using HarmonyLib;
 using Newtonsoft.Json.Linq;
@@ -84,56 +85,92 @@ namespace TheOtherRoles
         // Dictionary<Category, Dictionary<Category-Id, Dictionary<Lang-Id, Str>>>
         public static Dictionary<string, Dictionary<int, Dictionary<int, string>>> stringTable;
 
+        // Language code (filename) -> SupportedLangs int id
+        private static readonly Dictionary<string, int> langCodeToId = new()
+        {
+            { "en",       0 },
+            { "es_419",   1 },
+            { "pt_BR",    2 },
+            { "pt",       3 },
+            { "ko",       4 },
+            { "ru",       5 },
+            { "nl",       6 },
+            { "fil",      7 },
+            { "fr",       8 },
+            { "de",       9 },
+            { "it",      10 },
+            { "ja",      11 },
+            { "es",      12 },
+            { "zh_Hans", 13 },
+            { "zh_Hant", 14 },
+            { "ga",      15 },
+        };
+
         public static void Load()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            Stream stream = assembly.GetManifestResourceStream("TheOtherRoles.Resources.stringData.json");
-            var byteArray = new byte[stream.Length];
-            var read = stream.Read(byteArray, 0, (int)stream.Length);
-            string json = System.Text.Encoding.UTF8.GetString(byteArray);
             stringTable = new();
-            JObject parsed = JObject.Parse(json);
+            var assembly = Assembly.GetExecutingAssembly();
 
-            for (int i = 0; i < parsed.Count; i++)
+            // Find all translation JSON files embedded as resources
+            // Resource names follow pattern: TheOtherRoles.Resources.Translations.XX.json
+            string prefix = "TheOtherRoles.Resources.Translations.";
+            string suffix = ".json";
+            var resourceNames = assembly.GetManifestResourceNames()
+                .Where(n => n.StartsWith(prefix) && n.EndsWith(suffix));
+
+            foreach (var resourceName in resourceNames)
             {
-                JProperty token = parsed.ChildrenTokens[i].TryCast<JProperty>();
-                if (token == null) continue;
-                var val = token.Value.TryCast<JObject>();
-                if (token.HasValues)
+                // Extract language code from resource name
+                // e.g. "TheOtherRoles.Resources.Translations.en.json" -> "en"
+                string langCode = resourceName.Substring(prefix.Length, resourceName.Length - prefix.Length - suffix.Length);
+
+                if (!langCodeToId.TryGetValue(langCode, out int langId))
+                    continue;
+
+                // Read and parse the JSON file
+                using Stream stream = assembly.GetManifestResourceStream(resourceName);
+                if (stream == null) continue;
+                using var reader = new StreamReader(stream);
+                string json = reader.ReadToEnd();
+                var parsed = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json);
+                if (parsed == null) continue;
+
+                // Parse each key-value pair: "Category,Id" -> "text"
+                foreach (var kvp in parsed)
                 {
-                    string categoryStr = token.Name;
-                    int index = categoryStr.IndexOf(",");
-                    string categoryName = categoryStr.Substring(0, index);
-                    int categoryId = int.Parse(categoryStr.Substring(index + 1));
-                    
-                    if (!stringTable.TryGetValue(categoryName, out var t))
-					{
-						t = new();
-                        stringTable.Add(categoryName, t);
-                    }
+                    string key = kvp.Key;
+                    string text = kvp.Value;
+                    if (string.IsNullOrEmpty(text)) continue;
 
-                    var strings = new Dictionary<int, string>();
-                    for (int j = 0; j < (int)SupportedLangs.Irish + 1; j++)
+                    int commaIndex = key.IndexOf(",");
+                    if (commaIndex < 0) continue;
+
+                    string categoryName = key.Substring(0, commaIndex);
+                    if (!int.TryParse(key.Substring(commaIndex + 1), out int categoryId))
+                        continue;
+
+                    // Get or create category dict
+                    if (!stringTable.TryGetValue(categoryName, out var categoryDict))
                     {
-                        string key = j.ToString();
-                        var text = val[key]?.TryCast<JValue>().Value.ToString();
-
-                        if (text != null && text.Length > 0)
-                        {
-                            if (text == blankText) strings[j] = "";
-                            else strings[j] = text;
-                        }
+                        categoryDict = new();
+                        stringTable[categoryName] = categoryDict;
                     }
 
-                    t[categoryId] = strings;
+                    // Get or create id dict
+                    if (!categoryDict.TryGetValue(categoryId, out var langDict))
+                    {
+                        langDict = new();
+                        categoryDict[categoryId] = langDict;
+                    }
+
+                    // Store the translation
+                    langDict[langId] = (text == blankText) ? "" : text;
                 }
             }
-            //TheOtherRolesPlugin.Instance.Log.LogMessage($"Language: {stringTable.Keys}");
         }
 
         public static string GetString(string category, int id, string def = null)
         {
-            //TheOtherRolesPlugin.Instance.Log.LogMessage($"category:{category}, id:{id}, def:{def}");
             if (!stringTable.TryGetValue(category, out var t))
                 return def;
             if (!t.TryGetValue(id, out var t2))
@@ -160,6 +197,11 @@ namespace TheOtherRoles
         public static TranslationInfo GetRoleShortDesc(RoleId roleId, Color? color = null)
         {
             return new TranslationInfo("Role-ShortDesc", (int)roleId, color.HasValue ? color.Value : Color.white);
+        }
+
+        public static TranslationInfo GetRoleDesc(RoleId roleId)
+        {
+            return new TranslationInfo("Role-Desc", (int)roleId, Color.white);
         }
 
         const string blankText = "[BLANK]";

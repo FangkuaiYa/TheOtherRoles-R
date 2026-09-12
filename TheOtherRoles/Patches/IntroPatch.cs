@@ -579,8 +579,8 @@ internal class IntroPatch
 public static class ShouldAlwaysHorseAround {
     public static bool Prefix(ref bool __result) {
         __result = EventUtility.isEnabled && !EventUtility.disableEventMode;
-        return false;
-    }
+                return false;
+        }
 }*/
 
 [HarmonyPatch(typeof(AprilFoolsMode), nameof(AprilFoolsMode.ShouldShowAprilFoolsToggle))]

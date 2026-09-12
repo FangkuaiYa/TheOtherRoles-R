@@ -299,160 +299,69 @@ public static class RPCProcedure
         }
     }
 
+    private static readonly Dictionary<RoleId, Action<PlayerControl>> RoleSetters = new()
+    {
+        { RoleId.Jester, p => Jester.jester = p },
+        { RoleId.Mayor, p => Mayor.mayor = p },
+        { RoleId.Portalmaker, p => Portalmaker.portalmaker = p },
+        { RoleId.Engineer, p => Engineer.engineer = p },
+        { RoleId.Sheriff, p => Sheriff.sheriff = p },
+        { RoleId.Deputy, p => Deputy.deputy = p },
+        { RoleId.Lighter, p => Lighter.lighter = p },
+        { RoleId.Godfather, p => Godfather.godfather = p },
+        { RoleId.Mafioso, p => Mafioso.mafioso = p },
+        { RoleId.Janitor, p => Janitor.janitor = p },
+        { RoleId.Detective, p => Detective.detective = p },
+        { RoleId.TimeMaster, p => TimeMaster.timeMaster = p },
+        { RoleId.Medic, p => Medic.medic = p },
+        { RoleId.Shifter, p => Shifter.shifter = p },
+        { RoleId.Swapper, p => Swapper.swapper = p },
+        { RoleId.Seer, p => Seer.seer = p },
+        { RoleId.Morphling, p => Morphling.morphling = p },
+        { RoleId.Camouflager, p => Camouflager.camouflager = p },
+        { RoleId.Hacker, p => Hacker.hacker = p },
+        { RoleId.Tracker, p => Tracker.tracker = p },
+        { RoleId.Vampire, p => Vampire.vampire = p },
+        { RoleId.Snitch, p => Snitch.snitch = p },
+        { RoleId.Jackal, p => Jackal.jackal = p },
+        { RoleId.Sidekick, p => Sidekick.sidekick = p },
+        { RoleId.Eraser, p => Eraser.eraser = p },
+        { RoleId.Spy, p => Spy.spy = p },
+        { RoleId.Trickster, p => Trickster.trickster = p },
+        { RoleId.Cleaner, p => Cleaner.cleaner = p },
+        { RoleId.Warlock, p => Warlock.warlock = p },
+        { RoleId.SecurityGuard, p => SecurityGuard.securityGuard = p },
+        { RoleId.Arsonist, p => Arsonist.arsonist = p },
+        { RoleId.EvilGuesser, p => Guesser.evilGuesser = p },
+        { RoleId.NiceGuesser, p => Guesser.niceGuesser = p },
+        { RoleId.BountyHunter, p => BountyHunter.bountyHunter = p },
+        { RoleId.Vulture, p => Vulture.vulture = p },
+        { RoleId.Medium, p => Medium.medium = p },
+        { RoleId.Trapper, p => Trapper.trapper = p },
+        { RoleId.Lawyer, p => Lawyer.lawyer = p },
+        { RoleId.Prosecutor, p => { Lawyer.lawyer = p; Lawyer.isProsecutor = true; } },
+        { RoleId.Pursuer, p => Pursuer.pursuer = p },
+        { RoleId.Witch, p => Witch.witch = p },
+        { RoleId.Ninja, p => Ninja.ninja = p },
+        { RoleId.Thief, p => Thief.thief = p },
+        { RoleId.SchrodingersCat, p => SchrodingersCat.cat = p },
+        { RoleId.Bomber, p => Bomber.bomber = p },
+        { RoleId.Yoyo, p => Yoyo.yoyo = p },
+    };
+
     public static void setRole(byte roleId, byte playerId)
     {
-        foreach (var player in PlayerControl.AllPlayerControls)
-            if (player.PlayerId == playerId)
-            {
-                switch ((RoleId)roleId)
-                {
-                    case RoleId.Jester:
-                        Jester.jester = player;
-                        break;
-                    case RoleId.Mayor:
-                        Mayor.mayor = player;
-                        break;
-                    case RoleId.Portalmaker:
-                        Portalmaker.portalmaker = player;
-                        break;
-                    case RoleId.Engineer:
-                        Engineer.engineer = player;
-                        break;
-                    case RoleId.Sheriff:
-                        Sheriff.sheriff = player;
-                        break;
-                    case RoleId.Deputy:
-                        Deputy.deputy = player;
-                        break;
-                    case RoleId.Lighter:
-                        Lighter.lighter = player;
-                        break;
-                    case RoleId.Godfather:
-                        Godfather.godfather = player;
-                        break;
-                    case RoleId.Mafioso:
-                        Mafioso.mafioso = player;
-                        break;
-                    case RoleId.Janitor:
-                        Janitor.janitor = player;
-                        break;
-                    case RoleId.Detective:
-                        Detective.detective = player;
-                        break;
-                    case RoleId.TimeMaster:
-                        TimeMaster.timeMaster = player;
-                        break;
-                    case RoleId.Medic:
-                        Medic.medic = player;
-                        break;
-                    case RoleId.Shifter:
-                        Shifter.shifter = player;
-                        break;
-                    case RoleId.Swapper:
-                        Swapper.swapper = player;
-                        break;
-                    case RoleId.Seer:
-                        Seer.seer = player;
-                        break;
-                    case RoleId.Morphling:
-                        Morphling.morphling = player;
-                        break;
-                    case RoleId.Camouflager:
-                        Camouflager.camouflager = player;
-                        break;
-                    case RoleId.Hacker:
-                        Hacker.hacker = player;
-                        break;
-                    case RoleId.Tracker:
-                        Tracker.tracker = player;
-                        break;
-                    case RoleId.Vampire:
-                        Vampire.vampire = player;
-                        break;
-                    case RoleId.Snitch:
-                        Snitch.snitch = player;
-                        break;
-                    case RoleId.Jackal:
-                        Jackal.jackal = player;
-                        break;
-                    case RoleId.Sidekick:
-                        Sidekick.sidekick = player;
-                        break;
-                    case RoleId.Eraser:
-                        Eraser.eraser = player;
-                        break;
-                    case RoleId.Spy:
-                        Spy.spy = player;
-                        break;
-                    case RoleId.Trickster:
-                        Trickster.trickster = player;
-                        break;
-                    case RoleId.Cleaner:
-                        Cleaner.cleaner = player;
-                        break;
-                    case RoleId.Warlock:
-                        Warlock.warlock = player;
-                        break;
-                    case RoleId.SecurityGuard:
-                        SecurityGuard.securityGuard = player;
-                        break;
-                    case RoleId.Arsonist:
-                        Arsonist.arsonist = player;
-                        break;
-                    case RoleId.EvilGuesser:
-                        Guesser.evilGuesser = player;
-                        break;
-                    case RoleId.NiceGuesser:
-                        Guesser.niceGuesser = player;
-                        break;
-                    case RoleId.BountyHunter:
-                        BountyHunter.bountyHunter = player;
-                        break;
-                    case RoleId.Vulture:
-                        Vulture.vulture = player;
-                        break;
-                    case RoleId.Medium:
-                        Medium.medium = player;
-                        break;
-                    case RoleId.Trapper:
-                        Trapper.trapper = player;
-                        break;
-                    case RoleId.Lawyer:
-                        Lawyer.lawyer = player;
-                        break;
-                    case RoleId.Prosecutor:
-                        Lawyer.lawyer = player;
-                        Lawyer.isProsecutor = true;
-                        break;
-                    case RoleId.Pursuer:
-                        Pursuer.pursuer = player;
-                        break;
-                    case RoleId.Witch:
-                        Witch.witch = player;
-                        break;
-                    case RoleId.Ninja:
-                        Ninja.ninja = player;
-                        break;
-                    case RoleId.Thief:
-                        Thief.thief = player;
-                        break;
-                    case RoleId.SchrodingersCat:
-                        SchrodingersCat.cat = player;
-                        break;
-                    case RoleId.Bomber:
-                        Bomber.bomber = player;
-                        break;
-                    case RoleId.Yoyo:
-                        Yoyo.yoyo = player;
-                        break;
-                }
+        var player = Helpers.playerById(playerId);
+        if (player == null) return;
 
-                if (AmongUsClient.Instance.AmHost && player.roleCanUseVents() && !player.Data.Role.IsImpostor)
-                {
-                    player.RpcSetRole(RoleTypes.Engineer);
-                    player.CoSetRole(RoleTypes.Engineer, true);
-                }
-            }
+        if (RoleSetters.TryGetValue((RoleId)roleId, out var setter))
+            setter(player);
+
+        if (AmongUsClient.Instance.AmHost && player.roleCanUseVents() && !player.Data.Role.IsImpostor)
+        {
+            player.RpcSetRole(RoleTypes.Engineer);
+            player.CoSetRole(RoleTypes.Engineer, true);
+        }
     }
 
     public static void setModifier(byte modifierId, byte playerId, byte flag)
@@ -824,89 +733,88 @@ public static class RPCProcedure
         Sidekick.clearAndReload();
     }
 
+    private static readonly (Func<PlayerControl, bool> match, Action clear)[] RoleClearers =
+    {
+        (p => p == Mayor.mayor, Mayor.clearAndReload),
+        (p => p == Portalmaker.portalmaker, Portalmaker.clearAndReload),
+        (p => p == Engineer.engineer, Engineer.clearAndReload),
+        (p => p == Sheriff.sheriff, Sheriff.clearAndReload),
+        (p => p == Deputy.deputy, Deputy.clearAndReload),
+        (p => p == Lighter.lighter, Lighter.clearAndReload),
+        (p => p == Detective.detective, Detective.clearAndReload),
+        (p => p == TimeMaster.timeMaster, TimeMaster.clearAndReload),
+        (p => p == Medic.medic, Medic.clearAndReload),
+        (p => p == Shifter.shifter, Shifter.clearAndReload),
+        (p => p == Seer.seer, Seer.clearAndReload),
+        (p => p == Hacker.hacker, Hacker.clearAndReload),
+        (p => p == Tracker.tracker, Tracker.clearAndReload),
+        (p => p == Snitch.snitch, Snitch.clearAndReload),
+        (p => p == Swapper.swapper, Swapper.clearAndReload),
+        (p => p == Spy.spy, Spy.clearAndReload),
+        (p => p == SecurityGuard.securityGuard, SecurityGuard.clearAndReload),
+        (p => p == Medium.medium, Medium.clearAndReload),
+        (p => p == Trapper.trapper, Trapper.clearAndReload),
+        (p => p == Morphling.morphling, Morphling.clearAndReload),
+        (p => p == Camouflager.camouflager, Camouflager.clearAndReload),
+        (p => p == Godfather.godfather, Godfather.clearAndReload),
+        (p => p == Mafioso.mafioso, Mafioso.clearAndReload),
+        (p => p == Janitor.janitor, Janitor.clearAndReload),
+        (p => p == Vampire.vampire, Vampire.clearAndReload),
+        (p => p == Eraser.eraser, Eraser.clearAndReload),
+        (p => p == Trickster.trickster, Trickster.clearAndReload),
+        (p => p == Cleaner.cleaner, Cleaner.clearAndReload),
+        (p => p == Warlock.warlock, Warlock.clearAndReload),
+        (p => p == Witch.witch, Witch.clearAndReload),
+        (p => p == Ninja.ninja, Ninja.clearAndReload),
+        (p => p == Bomber.bomber, Bomber.clearAndReload),
+        (p => p == Yoyo.yoyo, Yoyo.clearAndReload),
+        (p => p == Jester.jester, Jester.clearAndReload),
+        (p => p == Arsonist.arsonist, Arsonist.clearAndReload),
+        (p => p == Sidekick.sidekick, Sidekick.clearAndReload),
+        (p => p == BountyHunter.bountyHunter, BountyHunter.clearAndReload),
+        (p => p == Vulture.vulture, Vulture.clearAndReload),
+        (p => p == Lawyer.lawyer, (Action)(() => Lawyer.clearAndReload(false))),
+        (p => p == Pursuer.pursuer, Pursuer.clearAndReload),
+        (p => p == Thief.thief, Thief.clearAndReload),
+        (p => p == SchrodingersCat.cat, SchrodingersCat.clearAndReload),
+    };
+
+    private static readonly (Func<PlayerControl, bool> match, Action<byte> remove)[] ModifierRemovers =
+    {
+        (p => Bait.bait.Any(x => x.PlayerId == p.PlayerId), id => Bait.bait.RemoveAll(x => x.PlayerId == id)),
+        (p => Bloody.bloody.Any(x => x.PlayerId == p.PlayerId), id => Bloody.bloody.RemoveAll(x => x.PlayerId == id)),
+        (p => AntiTeleport.antiTeleport.Any(x => x.PlayerId == p.PlayerId), id => AntiTeleport.antiTeleport.RemoveAll(x => x.PlayerId == id)),
+        (p => Sunglasses.sunglasses.Any(x => x.PlayerId == p.PlayerId), id => Sunglasses.sunglasses.RemoveAll(x => x.PlayerId == id)),
+        (p => Vip.vip.Any(x => x.PlayerId == p.PlayerId), id => Vip.vip.RemoveAll(x => x.PlayerId == id)),
+        (p => Invert.invert.Any(x => x.PlayerId == p.PlayerId), id => Invert.invert.RemoveAll(x => x.PlayerId == id)),
+        (p => Chameleon.chameleon.Any(x => x.PlayerId == p.PlayerId), id => Chameleon.chameleon.RemoveAll(x => x.PlayerId == id)),
+    };
+
     public static void erasePlayerRoles(byte playerId, bool ignoreModifier = true)
     {
         var player = Helpers.playerById(playerId);
         if (player == null || !player.canBeErased()) return;
 
-        // Crewmate roles
-        if (player == Mayor.mayor) Mayor.clearAndReload();
-        if (player == Portalmaker.portalmaker) Portalmaker.clearAndReload();
-        if (player == Engineer.engineer) Engineer.clearAndReload();
-        if (player == Sheriff.sheriff) Sheriff.clearAndReload();
-        if (player == Deputy.deputy) Deputy.clearAndReload();
-        if (player == Lighter.lighter) Lighter.clearAndReload();
-        if (player == Detective.detective) Detective.clearAndReload();
-        if (player == TimeMaster.timeMaster) TimeMaster.clearAndReload();
-        if (player == Medic.medic) Medic.clearAndReload();
-        if (player == Shifter.shifter) Shifter.clearAndReload();
-        if (player == Seer.seer) Seer.clearAndReload();
-        if (player == Hacker.hacker) Hacker.clearAndReload();
-        if (player == Tracker.tracker) Tracker.clearAndReload();
-        if (player == Snitch.snitch) Snitch.clearAndReload();
-        if (player == Swapper.swapper) Swapper.clearAndReload();
-        if (player == Spy.spy) Spy.clearAndReload();
-        if (player == SecurityGuard.securityGuard) SecurityGuard.clearAndReload();
-        if (player == Medium.medium) Medium.clearAndReload();
-        if (player == Trapper.trapper) Trapper.clearAndReload();
+        foreach (var (match, clear) in RoleClearers)
+            if (match(player)) clear();
 
-        // Impostor roles
-        if (player == Morphling.morphling) Morphling.clearAndReload();
-        if (player == Camouflager.camouflager) Camouflager.clearAndReload();
-        if (player == Godfather.godfather) Godfather.clearAndReload();
-        if (player == Mafioso.mafioso) Mafioso.clearAndReload();
-        if (player == Janitor.janitor) Janitor.clearAndReload();
-        if (player == Vampire.vampire) Vampire.clearAndReload();
-        if (player == Eraser.eraser) Eraser.clearAndReload();
-        if (player == Trickster.trickster) Trickster.clearAndReload();
-        if (player == Cleaner.cleaner) Cleaner.clearAndReload();
-        if (player == Warlock.warlock) Warlock.clearAndReload();
-        if (player == Witch.witch) Witch.clearAndReload();
-        if (player == Ninja.ninja) Ninja.clearAndReload();
-        if (player == Bomber.bomber) Bomber.clearAndReload();
-        if (player == Yoyo.yoyo) Yoyo.clearAndReload();
-
-        // Other roles
-        if (player == Jester.jester) Jester.clearAndReload();
-        if (player == Arsonist.arsonist) Arsonist.clearAndReload();
         if (Guesser.isGuesser(player.PlayerId)) Guesser.clear(player.PlayerId);
         if (player == Jackal.jackal)
         {
-            // Promote Sidekick and hence override the the Jackal or erase Jackal
             if (Sidekick.promotesToJackal && Sidekick.sidekick != null && !Sidekick.sidekick.Data.IsDead)
                 sidekickPromotes();
             else
                 Jackal.clearAndReload();
         }
 
-        if (player == Sidekick.sidekick) Sidekick.clearAndReload();
-        if (player == BountyHunter.bountyHunter) BountyHunter.clearAndReload();
-        if (player == Vulture.vulture) Vulture.clearAndReload();
-        if (player == Lawyer.lawyer) Lawyer.clearAndReload();
-        if (player == Pursuer.pursuer) Pursuer.clearAndReload();
-        if (player == Thief.thief) Thief.clearAndReload();
-        if (player == SchrodingersCat.cat) SchrodingersCat.clearAndReload();
-
-        // Modifier
         if (!ignoreModifier)
         {
             if (player == Lovers.lover1 || player == Lovers.lover2)
-                Lovers.clearAndReload(); // The whole Lover couple is being erased
-            if (Bait.bait.Any(x => x.PlayerId == player.PlayerId))
-                Bait.bait.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Bloody.bloody.Any(x => x.PlayerId == player.PlayerId))
-                Bloody.bloody.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (AntiTeleport.antiTeleport.Any(x => x.PlayerId == player.PlayerId))
-                AntiTeleport.antiTeleport.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Sunglasses.sunglasses.Any(x => x.PlayerId == player.PlayerId))
-                Sunglasses.sunglasses.RemoveAll(x => x.PlayerId == player.PlayerId);
+                Lovers.clearAndReload();
+            foreach (var (match, remove) in ModifierRemovers)
+                if (match(player)) remove(player.PlayerId);
             if (player == Tiebreaker.tiebreaker) Tiebreaker.clearAndReload();
             if (player == Mini.mini) Mini.clearAndReload();
-            if (Vip.vip.Any(x => x.PlayerId == player.PlayerId)) Vip.vip.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Invert.invert.Any(x => x.PlayerId == player.PlayerId))
-                Invert.invert.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Chameleon.chameleon.Any(x => x.PlayerId == player.PlayerId))
-                Chameleon.chameleon.RemoveAll(x => x.PlayerId == player.PlayerId);
             if (player == Armored.armored) Armored.clearAndReload();
         }
     }
@@ -1167,6 +1075,7 @@ public static class RPCProcedure
             overrideDeathReasonAndKiller(Lawyer.lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, guesser);
         }
 
+        SchrodingersCat.skipRevival = true;
         dyingTarget.Exiled();
         overrideDeathReasonAndKiller(dyingTarget, DeadPlayer.CustomDeathReason.Guess, guesser);
         var partnerId = dyingLoverPartner != null ? dyingLoverPartner.PlayerId : dyingTargetId;
@@ -1280,19 +1189,42 @@ public static class RPCProcedure
         Tiebreaker.isTiebreak = true;
     }
 
+    private static readonly (Func<PlayerControl, bool> match, Action<PlayerControl> assign)[] ThiefRoleAssigners =
+    {
+        (t => t == Sheriff.sheriff, (thief) => Sheriff.sheriff = thief),
+        (t => t == Guesser.evilGuesser, (thief) => Guesser.evilGuesser = thief),
+        (t => t == Godfather.godfather, (thief) => Godfather.godfather = thief),
+        (t => t == Mafioso.mafioso, (thief) => Mafioso.mafioso = thief),
+        (t => t == Janitor.janitor, (thief) => Janitor.janitor = thief),
+        (t => t == Morphling.morphling, (thief) => Morphling.morphling = thief),
+        (t => t == Camouflager.camouflager, (thief) => Camouflager.camouflager = thief),
+        (t => t == Vampire.vampire, (thief) => Vampire.vampire = thief),
+        (t => t == Eraser.eraser, (thief) => Eraser.eraser = thief),
+        (t => t == Trickster.trickster, (thief) => Trickster.trickster = thief),
+        (t => t == Cleaner.cleaner, (thief) => Cleaner.cleaner = thief),
+        (t => t == Warlock.warlock, (thief) => Warlock.warlock = thief),
+        (t => t == BountyHunter.bountyHunter, (thief) => BountyHunter.bountyHunter = thief),
+        (t => t == Ninja.ninja, (thief) => Ninja.ninja = thief),
+        (t => t == Bomber.bomber, (thief) => Bomber.bomber = thief),
+    };
+
     public static void thiefStealsRole(byte playerId)
     {
         var target = Helpers.playerById(playerId);
         var thief = Thief.thief;
         if (target == null) return;
-        if (target == Sheriff.sheriff) Sheriff.sheriff = thief;
+
+        // Simple role reassignment via lookup
+        foreach (var (match, assign) in ThiefRoleAssigners)
+            if (match(target)) assign(thief);
+
+        // Special cases with extra logic
         if (target == Jackal.jackal)
         {
             Jackal.jackal = thief;
             Jackal.formerJackals.Add(target);
         }
-
-        if (target == Sidekick.sidekick)
+        else if (target == Sidekick.sidekick)
         {
             Sidekick.sidekick = thief;
             Jackal.formerJackals.Add(target);
@@ -1301,30 +1233,18 @@ public static class RPCProcedure
                 setGuesserGm(thief.PlayerId);
         }
 
-        if (target == Guesser.evilGuesser) Guesser.evilGuesser = thief;
-        if (target == Godfather.godfather) Godfather.godfather = thief;
-        if (target == Mafioso.mafioso) Mafioso.mafioso = thief;
-        if (target == Janitor.janitor) Janitor.janitor = thief;
-        if (target == Morphling.morphling) Morphling.morphling = thief;
-        if (target == Camouflager.camouflager) Camouflager.camouflager = thief;
-        if (target == Vampire.vampire) Vampire.vampire = thief;
-        if (target == Eraser.eraser) Eraser.eraser = thief;
-        if (target == Trickster.trickster) Trickster.trickster = thief;
-        if (target == Cleaner.cleaner) Cleaner.cleaner = thief;
-        if (target == Warlock.warlock) Warlock.warlock = thief;
-        if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = thief;
         if (target == Witch.witch)
         {
             Witch.witch = thief;
             if (MeetingHud.Instance)
-                if (Witch.witchVoteSavesTargets) // In a meeting, if the thief guesses the witch, all targets are saved or no target is saved.
+            {
+                if (Witch.witchVoteSavesTargets)
                     Witch.futureSpelled = new List<PlayerControl>();
-                else // If thief kills witch during the round, remove the thief from the list of spelled people, keep the rest
+                else
                     Witch.futureSpelled.RemoveAll(x => x.PlayerId == thief.PlayerId);
+            }
         }
 
-        if (target == Ninja.ninja) Ninja.ninja = thief;
-        if (target == Bomber.bomber) Bomber.bomber = thief;
         if (target == Yoyo.yoyo)
         {
             Yoyo.yoyo = thief;
@@ -1342,7 +1262,7 @@ public static class RPCProcedure
             Lawyer.target = thief;
         if (Thief.thief == PlayerControl.LocalPlayer) CustomButton.ResetAllCooldowns();
         Thief.clearAndReload();
-        Thief.formerThief = thief; // After clearAndReload, else it would get reset...
+        Thief.formerThief = thief;
     }
 
     public static void setTrap(byte[] buff)
