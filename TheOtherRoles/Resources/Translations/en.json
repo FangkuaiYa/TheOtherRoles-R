@@ -801,6 +801,5 @@
     "Role-Name,58": "Shifter",
     "Role-IntroDesc,58": "Shift roles with another player",
     "Role-ShortDesc,58": "Shift roles with another player",
-    "Role-Desc,58": "The Shifter has the ability to shift roles with another player. After selecting a target, the Shifter will shift roles with them after the next meeting. The Shifter takes over the target role and the target becomes a regular Crewmate. The shift affects all role-specific abilities and variables. Depending on the options, the Shifter can also shift the Medic shield.",
-    "Opt-General, 107": "Can Use Chat"
+    "Role-Desc,58": "The Shifter has the ability to shift roles with another player. After selecting a target, the Shifter will shift roles with them after the next meeting. The Shifter takes over the target role and the target becomes a regular Crewmate. The shift affects all role-specific abilities and variables. Depending on the options, the Shifter can also shift the Medic shield."
 }
