@@ -51,8 +51,15 @@ jobs:
       - name: Prepare Windows x86 package
         run: |
           mkdir -p ${{ runner.temp }}/win-x86
-          unzip -q ".github/BepInEx/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.735+5fef357.zip" -d ${{ runner.temp }}/win-x86
+          
+          curl -L -o ${{ runner.temp }}/win-x86/BepInEx-x86.zip "https://builds.bepinex.dev/projects/bepinex_be/735/BepInEx-Unity.IL2CPP-win-x86-6.0.0-be.735%2B5fef357.zip"
+          unzip -q ${{ runner.temp }}/win-x86/BepInEx-x86.zip -d ${{ runner.temp }}/win-x86
+          rm ${{ runner.temp }}/win-x86/BepInEx-x86.zip
+          
+          unzip -q -o ".github/BepInEx/BepInEx-Extra.zip" -d ${{ runner.temp }}/win-x86
+          
           cp ${{ runner.temp }}/windows/TheOtherRoles.dll ${{ runner.temp }}/win-x86/BepInEx/plugins/TheOtherRoles.dll
+          
           cd ${{ runner.temp }}/win-x86
           zip -r -q ${{ runner.temp }}/TheOtherRoles_Steam.zip .
 
@@ -65,8 +72,15 @@ jobs:
       - name: Prepare Windows x64 package
         run: |
           mkdir -p ${{ runner.temp }}/win-x64
-          unzip -q ".github/BepInEx/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.735+5fef357.zip" -d ${{ runner.temp }}/win-x64
+          
+          curl -L -o ${{ runner.temp }}/win-x64/BepInEx-x64.zip "https://builds.bepinex.dev/projects/bepinex_be/735/BepInEx-Unity.IL2CPP-win-x64-6.0.0-be.735%2B5fef357.zip"
+          unzip -q ${{ runner.temp }}/win-x64/BepInEx-x64.zip -d ${{ runner.temp }}/win-x64
+          rm ${{ runner.temp }}/win-x64/BepInEx-x64.zip
+          
+          unzip -q -o ".github/BepInEx/BepInEx-Extra.zip" -d ${{ runner.temp }}/win-x64
+          
           cp ${{ runner.temp }}/windows/TheOtherRoles.dll ${{ runner.temp }}/win-x64/BepInEx/plugins/TheOtherRoles.dll
+          
           cd ${{ runner.temp }}/win-x64
           zip -r -q ${{ runner.temp }}/TheOtherRoles_MSStore_Epic.zip .
 

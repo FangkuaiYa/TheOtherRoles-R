@@ -5,7 +5,24 @@
 *We have added **multi-language** support to TheOtherRoles-R, but currently only English and Simplified Chinese are supported. If your language is not yet translated, and you have relevant translation experience and some free time, we would appreciate it if you could help add a translation for TheOtherRoles-R! (We are unable to offer any compensation to translators; what we can do is add you to the contributors list.)*
 
 ## How to contribute a translation:
-First, log in to GitHub and fork our repository. Download the String.xlsx file from the repository and open it with WPS Office, Microsoft Office, or a similar spreadsheet application. This file is the translation file for the mod. Translate the English text into your language in the corresponding column below the language header. After that, submit a pull request to our GitHub repository, and we will process it within two business days!
+
+We now use **Weblate** (hosted by **miniduikboot**) for our translation workflow. You can find our Weblate instance here: **https://weblate.duikbo.at**
+
+To apply to become a translator, please follow these steps:
+
+1. **Open a GitHub Issue**: Go to our GitHub repository and create a new issue.
+2. **Provide your details**: In the issue, please include:
+   - Your email address.
+   - The language you wish to translate.
+   - A brief introduction of your relevant translation experience and your motivation.
+3. **Wait for approval**: We will process your request within **three weeks** and send a reply to your email.
+4. **Start translating**: Once approved, we will grant you translation permissions, and you can begin translating directly on Weblate.
+
+If you have any other questions, please contact us at **2683748223@qq.com** (recommended) or **3163369607@qq.com**.
+
+---
+
+# The Other Roles: Reactivated
 
 ![tor banner](./Images/TOR_logo.png)
 <p align="center"><a href="https://github.com/FangkuaiYa/TheOtherRoles-R/releases/"><img src="https://badgen.net/github/release/FangkuaiYa/TheOtherRoles-R"></a></p>
@@ -1010,62 +1027,6 @@ Example: If you configure 4 common tasks on Airship crewmates will only receive 
 The game will **remain** in the preset for that random map after the match.
 
 The random map presets can still be used like normal presets, if you **turn of** `Play On A Random Map` (make sure you do this in all presets you are using).
-
-
-# Voice Chat
-
-This mod includes a built-in proximity voice chat system (based on Interstellar). Players can talk to each other in-game based on distance, line of sight, and role.
-
-### How to Use
-- Press **F3** to open the Voice Chat settings window (server selection, microphone/speaker device).
-- Press **F4** to open the Player Volume window (adjust individual player volumes).
-- The **mic button**, **speaker button**, and **settings button** are displayed at the top-center of the screen during gameplay.
-
-### Server Settings (under F3)
-- **Server:** Select a voice server region. Options include official servers and a custom server.
-- **Custom URL:** When "Custom..." is selected, an inline text input field appears. Enter your server URL and click OK.
-
-### In-Game Settings (Mod Options > General > Voice Chat)
-These options are configured by the host in the lobby:
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| **Enable Voice Chat** | Off | Master switch for the voice chat system. |
-| **Max Chat Distance** | 6 | Maximum distance (in game units) at which players can hear each other. Range: 1.5 – 20. |
-| **Walls Block Sound** | On | Walls and obstacles block voice transmission. |
-| **Only Hear In Sight** | Off | Players can only hear others who are in their line of sight. |
-| **Impostor Hear Ghosts** | Off | Impostors can hear ghost (dead) players. |
-| **Only Ghosts Can Talk** | Off | Only dead players can use voice chat. |
-| **Hear Outside In Vent** | On | Players inside vents can hear outside voice chat. |
-| **Hear Players In Vent** | On | Players outside can hear voice from players inside vents. |
-| **Vent Private Chat** | Off | Players in vents use a private channel (only other vent players can hear). |
-| **Comms Sabotage Mutes** | On | Communications sabotage disables voice chat. |
-| **Hear Through Cameras** | On | Players on security cameras can hear nearby voice chat. |
-| **Only Meeting / Lobby** | Off | Voice chat is only active during meetings and in the lobby. |
-
-### Role Voice Channels
-Each role channel can be enabled/disabled in Mod Options. When enabled, players with that role can cycle through private channels using the **channel button** (the button above the mic button cycles: All → Role Channel → All).
-
-| Channel | Description |
-|---------|-------------|
-| **Impostor Channel** | Impostors share a private voice channel. |
-| **Lovers Channel** | Lovers share a private voice channel. |
-| **Jackal Team Channel** | Jackal and Sidekick share a private voice channel. |
-| **Sheriff & Deputy Channel** | Sheriff and Deputy share a private voice channel (only if they know each other). |
-
-### Hide 'n' Seek / PropHunt Voice Settings
-Separate voice settings are available for Hide 'n' Seek and PropHunt game modes:
-
-| Option | Default | Description |
-|--------|---------|-------------|
-| **Enable Voice Chat** | Off | Enable voice chat for this game mode. |
-| **Only Ghosts Can Talk** | Off | Only dead players can speak. |
-| **Hear Through Cameras** | On | Players on cameras can hear nearby voice. |
-
-### Notes
-- Voice chat works on **modded servers** (Modded NA, Modded EU, etc.) and can use custom Impostor servers.
-- Android speaker support includes automatic warmup to reduce first-use lag.
-- If voice connection fails, a 5-second retry cooldown prevents infinite reconnection loops.
 
 
 # Custom Hats
