@@ -41,7 +41,7 @@ public class CustomButton
     public TextMeshPro actionButtonLabelText;
     public Material actionButtonMat;
     public SpriteRenderer actionButtonRenderer;
-    public string buttonText;
+    public ButtonText buttonText;
     public KeyCode? hotkey;
     public HudManager hudManager;
     public bool isEffectActive;
@@ -52,7 +52,7 @@ public class CustomButton
 
     public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite,
         Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool HasEffect, float EffectDuration,
-        Action OnEffectEnds, bool mirror = false, string buttonText = "")
+        Action OnEffectEnds, bool mirror = false, ButtonText buttonText = null)
     {
         this.hudManager = hudManager;
         this.OnClick = OnClick;
@@ -77,14 +77,14 @@ public class CustomButton
         actionButtonMat = actionButtonRenderer.material;
         actionButtonLabelText = actionButton.buttonLabelText;
         var button = actionButton.GetComponent<PassiveButton>();
-        showButtonText = actionButtonRenderer.sprite == Sprite || buttonText != "";
+        showButtonText = actionButtonRenderer.sprite == Sprite || buttonText != null;
         button.OnClick = new Button.ButtonClickedEvent();
         button.OnClick.AddListener((UnityAction)onClickEvent);
         setActive(false);
     }
 
     public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite,
-        Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool mirror = false, string buttonText = "")
+        Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool mirror = false, ButtonText buttonText = null)
         : this(OnClick, HasButton, CouldUse, OnMeetingEnds, Sprite, PositionOffset, hudManager, hotkey, false, 0f,
             () => { }, mirror, buttonText)
     {
@@ -228,7 +228,11 @@ public class CustomButton
         }
 
         actionButtonRenderer.sprite = Sprite;
-        if (showButtonText && buttonText != "") actionButton.OverrideText(buttonText);
+        if (showButtonText && buttonText != null)
+        {
+            actionButton.OverrideText(buttonText.GetText());
+            buttonText.ApplyMaterial(this);
+        }
         actionButtonLabelText.enabled = showButtonText; // Only show the text if it's a kill button
         if (hudManager.UseButton != null)
         {
@@ -300,5 +304,39 @@ public class CustomButton
         public static readonly Vector3 upperRowLeft = new(-2f, 1f, 0f);
         public static readonly Vector3 upperRowFarLeft = new(-3f, 1f, 0f);
         public static readonly Vector3 highRowRight = new(0f, 2.06f, 0f);
+    }
+
+    public class ButtonText
+    {
+        private readonly int? _translationId;
+        private readonly StringNames? _stringName;
+
+        public Material Material { get; }
+
+        public ButtonText(int translationId, Material material = null)
+        {
+            _translationId = translationId;
+            Material = material;
+        }
+
+        public ButtonText(StringNames stringName, Material material = null)
+        {
+            _stringName = stringName;
+            Material = material;
+        }
+
+        public string GetText()
+        {
+            if (_stringName.HasValue)
+                return TranslationController.Instance.GetString(_stringName.Value);
+
+            return ModTranslation.GetString("Button", _translationId.Value);
+        }
+
+        public void ApplyMaterial(CustomButton customButton)
+        {
+            if (Material != null && customButton?.actionButtonLabelText != null)
+                customButton.actionButtonLabelText.SetSharedMaterial(Material);
+        }
     }
 }

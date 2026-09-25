@@ -277,8 +277,7 @@ public static class RPCProcedure
         if (AmongUsClient.Instance.AmHost)
         {
             GameStartManager.Instance.ResetStartState();
-            PlayerControl.LocalPlayer.RpcSendChat(
-                $"{Helpers.playerById(playerId).Data.PlayerName} stopped the game start!");
+            HudManager.Instance.Notifier.AddDisconnectMessage(string.Format(ModTranslation.GetString("Game-Normal", 1), Helpers.playerById(playerId).Data.PlayerName));
         }
     }
 
@@ -488,7 +487,7 @@ public static class RPCProcedure
         Engineer.remainingFixes--;
         if (Helpers.shouldShowGhostInfo())
         {
-            Helpers.showFlash(Engineer.color, 0.5f, "Engineer Fix");
+            Helpers.showFlash(Engineer.color, 0.5f, ModTranslation.GetString("Game-Normal", 2));
             ;
         }
     }
@@ -569,7 +568,7 @@ public static class RPCProcedure
         var isMedicAndShow = Medic.medic == PlayerControl.LocalPlayer && Medic.showAttemptToMedic;
 
         if (isShieldedAndShow || isMedicAndShow || Helpers.shouldShowGhostInfo())
-            Helpers.showFlash(Palette.ImpostorRed, 0.5f, "Failed Murder Attempt on Shielded Player");
+            Helpers.showFlash(Palette.ImpostorRed, 0.5f, ModTranslation.GetString("Game-Normal", 3));
     }
 
     public static void shifterShift(byte targetId)
@@ -925,7 +924,7 @@ public static class RPCProcedure
 
         var camera = Object.Instantiate(referenceCamera);
         camera.transform.position = new Vector3(position.x, position.y, referenceCamera.transform.position.z - 1f);
-        camera.CamName = $"Security Camera {SecurityGuard.placedCameras}";
+        camera.CamName = string.Format(ModTranslation.GetString("Game-Normal", 4), SecurityGuard.placedCameras);
         camera.Offset = new Vector3(0f, 0f, camera.Offset.z);
         if (GameOptionsManager.Instance.currentNormalGameOptions.MapId == 2 ||
             GameOptionsManager.Instance.currentNormalGameOptions.MapId == 4)
@@ -1154,7 +1153,7 @@ public static class RPCProcedure
         {
             var roleInfo = CustomRoleManager.Instance.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
             var msg =
-                $"{guesser.Data.PlayerName} guessed the role {roleInfo?.name ?? ""} for {guessedTarget.Data.PlayerName}!";
+                string.Format(ModTranslation.GetString("Game-Normal", 5), guesser.Data.PlayerName, roleInfo?.name ?? "", guessedTarget.Data.PlayerName);
             if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
                 FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(guesser, msg);
             if (msg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
