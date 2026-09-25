@@ -475,7 +475,7 @@
     "GameOptions-Text,4": "A standalone Gamemode where Hunter have to catch their prey (\"Hunted\" players).",
     "GameOptions-Text,5": "TOR Prop Hunt",
     "GameOptions-Text,6": "A standalone Gamemode where Hunters have to find the disguised players (\"Props\").",
-    "Credentials-Text,1": "Modded by <color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>EndOfFile</color>\n<color=#FCCE03FF>Mallöris</color>, <color=#FCCE03FF>Gendelo</color> & <color=#00ffff>FangkuaiYa</color>\nDesign by <color=#FCCE03FF>Bavari</color>",
+    "Credentials-Text,1": "Modded by <color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>EndOfFile</color>\n<color=#FCCE03FF>Mallöris</color>, <color=#FCCE03FF>Gendelo</color> & <color=#00ffff>FangkuaiYa</color>\nDesign by <color=#FCCE03FF>Bavari</color>,  Art by <color=#00BFFF>Farewell</color>",
     "Credentials-Text,2": "<size=60%><color=#FCCE03FF>Special thanks to Smeggy</color></size>",
     "Credentials-Text,3": "Hide 'N Seek",
     "Credentials-Text,4": "Guesser",
@@ -846,5 +846,12 @@
     "Button,44": "Boost",
     "Button,45": "Find",
     "Button,46": "Kick",
-    "Button,47": "Switch Team"
+    "Button,47": "Switch Team",
+    "Game-Normal,1": "{0} stopped the game start!",
+    "Game-Normal,2": "Engineer Fix",
+    "Game-Normal,3": "Failed Murder Attempt on Shielded Player",
+    "Game-Normal,4": "Security Camera {0}",
+    "Game-Normal,5": "{0} guessed the role {1} for {2}!",
+    "Game-Jackal,1": "{0}: Kill everyone{1}",
+    "Game-Jackal,2": "and recruit a Sidekick"
 }
