@@ -370,7 +370,6 @@
     "Opt-PropHunt,105": "Submerged",
     "Opt-PropHunt,106": "LI Map",
     "Opt-Shifter,1": "Can Shift Medic Shield",
-    "VoiceChat-Text,2": "{0} Channel",
     "ChatCommands,1": "Nice try, but you have to be the host to use this feature",
     "ChatCommands,2": "Unable to parse color id\nUsage: /color {id}",
     "ChatCommands,3": "Changed color succesfully",
