@@ -430,8 +430,8 @@
     "CustomOption-Text,6": "附加职业",
     "CustomOption-Text,7": "分配概率",
     "CustomOption-Text,8": "填充:",
-    "CustomOption-Text,9": "TOR设置",
-    "CustomOption-Text,10": "职业总览",
+    "CustomOption-Text,9": "MOD",
+    "CustomOption-Text,10": "总览",
     "CustomOption-Text,11": "捉迷藏设置",
     "CustomOption-Text,12": "捉迷藏职业",
     "CustomOption-Text,13": "变形狩猎设置",
@@ -847,5 +847,11 @@
     "Game-Normal,5": "{0}猜测玩家 {2} 的职业是 {1}！",
     "Game-Jackal,1": "{0}: 击杀所有人{1}",
     "Game-Jackal,2": "并招募一个跟班",
-    "Opt-Mafia,2": "清洁工技能冷却时间"
+    "Opt-Mafia,2": "清洁工技能冷却时间",
+    "CustomOption-Text, 28": "短",
+    "CustomOption-Text, 29": "中等",
+    "CustomOption-Text, 30": "长",
+    "RoleInfo-Text,1": "返回",
+    "RoleInfo-Text,2": "关闭",
+    "RoleInfo-Text,3": "游戏模式"
 }
