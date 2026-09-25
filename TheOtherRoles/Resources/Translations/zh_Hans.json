@@ -473,7 +473,7 @@
     "GameOptions-Text,4": "一个独立的游戏模式，猎人必须捕获他们的猎物（即“被猎杀”的玩家）。",
     "GameOptions-Text,5": "TOR变形狩猎",
     "GameOptions-Text,6": "一个独立的游戏模式，猎人们必须找到伪装的玩家（即“道具”）。",
-    "Credentials-Text,1": "模组由<color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>EndOfFile</color>\n<color=#FCCE03FF>Mallöris</color>, <color=#FCCE03FF>Gendelo</color> & <color=#00ffff>FangkuaiYa</color>开发\n由<color=#FCCE03FF>Bavari</color>设计",
+    "Credentials-Text,1": "模组由<color=#FCCE03FF>Eisbison</color>, <color=#FCCE03FF>Thunderstorm584</color>, <color=#FCCE03FF>EndOfFile</color>\n<color=#FCCE03FF>Mallöris</color>, <color=#FCCE03FF>Gendelo</color> & <color=#00ffff>FangkuaiYa</color>开发\n由<color=#FCCE03FF>Bavari</color>设计,  由<color=#00BFFF>Farewell</color>美工",
     "Credentials-Text,2": "<size=60%><color=#FCCE03FF>特别感谢 Smeggy</color></size>",
     "Credentials-Text,3": "捉迷藏模式",
     "Credentials-Text,4": "赌怪模式",
@@ -846,5 +846,12 @@
     "Button,44": "冲刺",
     "Button,45": "寻找",
     "Button,46": "踢出",
-    "Button,47": "选择阵营"
+    "Button,47": "选择阵营",
+    "Game-Normal,1": "{0} 阻止了游戏开始！",
+    "Game-Normal,2": "工程师修复破坏",
+    "Game-Normal,3": "对受护盾保护的玩家谋杀失败",
+    "Game-Normal,4": "安保摄像头 {0}",
+    "Game-Normal,5": "{0}猜测玩家 {2} 的职业是 {1}！",
+    "Game-Jackal,1": "{0}: 击杀所有人{1}",
+    "Game-Jackal,2": "并招募一个跟班"
 }
