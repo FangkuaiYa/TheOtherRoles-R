@@ -798,6 +798,5 @@
     "Role-Desc,57": "The Armored is a Modifier that protects the player from the first shot that would have killed them. There can only be one Armored player per round. Armored is only active during the round and does not protect from guesses or votes. Armored is applied after all other shields or protections, so that the Armor only breaks if the player would have otherwise died.",
     "Role-Name,58": "Shifter",
     "Role-IntroDesc,58": "Shift roles with another player",
-    "Role-ShortDesc,58": "Shift roles with another player",
-    "Role-Desc,58": "The Shifter has the ability to shift roles with another player. After selecting a target, the Shifter will shift roles with them after the next meeting. The Shifter takes over the target role and the target becomes a regular Crewmate. The shift affects all role-specific abilities and variables. Depending on the options, the Shifter can also shift the Medic shield."
+    "Role-ShortDesc,58": "Shift roles with another player"
 }
