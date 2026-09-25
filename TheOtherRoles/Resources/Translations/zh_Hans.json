@@ -68,7 +68,7 @@
     "Opt-General,105": "Submerged",
     "Opt-General,106": "LI Map",
     "Opt-General,107": "轮抽期间允许聊天",
-    "Opt-Mafia,1": "清洁工技能冷却时间",
+    "Opt-Mafia,1": "黑手党",
     "Opt-Morphling,1": "化形技能冷却",
     "Opt-Morphling,2": "化形持续时间",
     "Opt-Camouflager,1": "隐蔽技能冷却",
@@ -853,5 +853,6 @@
     "Game-Normal,4": "安保摄像头 {0}",
     "Game-Normal,5": "{0}猜测玩家 {2} 的职业是 {1}！",
     "Game-Jackal,1": "{0}: 击杀所有人{1}",
-    "Game-Jackal,2": "并招募一个跟班"
+    "Game-Jackal,2": "并招募一个跟班",
+    "Opt-Mafia,2": "清洁工技能冷却时间"
 }
