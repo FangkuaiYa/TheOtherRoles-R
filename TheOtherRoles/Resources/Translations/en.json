@@ -68,7 +68,7 @@
     "Opt-General,105": "Submerged",
     "Opt-General,106": "LI Map",
     "Opt-General,107": "Allow Chat During Draft",
-    "Opt-Mafia,1": "Janitor Cooldown",
+    "Opt-Mafia,1": "Mafia",
     "Opt-Morphling,1": "Morphling Cooldown",
     "Opt-Morphling,2": "Morph Duration",
     "Opt-Camouflager,1": "Camouflager Cooldown",
@@ -853,5 +853,6 @@
     "Game-Normal,4": "Security Camera {0}",
     "Game-Normal,5": "{0} guessed the role {1} for {2}!",
     "Game-Jackal,1": "{0}: Kill everyone{1}",
-    "Game-Jackal,2": "and recruit a Sidekick"
+    "Game-Jackal,2": "and recruit a Sidekick",
+    "Opt-Mafia,2": "Janitor Cooldown"
 }
