@@ -853,5 +853,8 @@
     "CustomOption-Text, 30": "Long",
     "RoleInfo-Text,1": "Back",
     "RoleInfo-Text,2": "Close",
-    "RoleInfo-Text,3": "Game Modes"
+    "RoleInfo-Text,3": "Game Modes",
+    "RoleInfo-Text,4": "My Role",
+    "RoleInfo-Text,5": "Your own role can be viewed once the game has started.",
+    "RoleInfo-Text,6": "Modifiers:"
 }
