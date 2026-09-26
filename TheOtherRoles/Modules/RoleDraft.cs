@@ -56,6 +56,7 @@ internal class RoleDraft
         feedText.autoSizeTextContainer = true;
         feedText.fontSize = 3f;
         feedText.enableAutoSizing = false;
+        feedText.font = HudManager.Instance.TaskPanel.taskText.font;
         __instance.TeamTitle.transform.localPosition =
             __instance.TeamTitle.transform.localPosition + new Vector3(1f, 0f);
         __instance.TeamTitle.text = ModTranslation.GetString("RoleDraft-Text", 2);
@@ -332,7 +333,7 @@ internal class RoleDraft
 
                             var textHolder = new GameObject("textHolder");
                             var text = textHolder.AddComponent<TextMeshPro>();
-                            text.text = roleInfo.name.Replace(" ", "\n");
+                            text.text = $"<b>{roleInfo.name.Replace(" ", "\n")}</b>";
                             text.horizontalAlignment = HorizontalAlignmentOptions.Center;
                             text.fontSize = 5;
                             textHolder.layer = actionButton.gameObject.layer;
