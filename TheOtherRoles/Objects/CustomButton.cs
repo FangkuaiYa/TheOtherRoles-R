@@ -47,6 +47,7 @@ public class CustomButton
     public bool isEffectActive;
     public bool isHandcuffed = false;
     public bool mirror;
+    public bool forceActive;
     public KeyCode? originalHotkey;
     public bool showButtonText;
 
@@ -203,7 +204,7 @@ public class CustomButton
             return;
         }
 
-        setActive(hudManager.UseButton.isActiveAndEnabled || hudManager.PetButton.isActiveAndEnabled);
+        setActive(forceActive || hudManager.UseButton.isActiveAndEnabled || hudManager.PetButton.isActiveAndEnabled);
 
         if (DeputyTimer >= 0)
         {

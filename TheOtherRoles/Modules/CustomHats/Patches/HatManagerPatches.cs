@@ -12,7 +12,9 @@ internal static class HatManagerPatches
     private static bool isRunning;
     private static bool isLoaded;
     private static float nextMergeAttempt;
-    private const float MergeCooldownSeconds = 1f;
+    private const float BaseMergeCooldown = 0.2f;
+    private const float MaxMergeCooldown = 2f;
+    private static float currentCooldown = BaseMergeCooldown;
 
     [HarmonyPatch(nameof(HatManager.GetHatById))]
     [HarmonyPrefix]
@@ -26,7 +28,6 @@ internal static class HatManagerPatches
         }
 
         if (Time.realtimeSinceStartup < nextMergeAttempt) return;
-        nextMergeAttempt = Time.realtimeSinceStartup + MergeCooldownSeconds;
 
         isRunning = true;
         // Maybe we can use lock keyword to ensure simultaneous list manipulations ?
@@ -34,7 +35,10 @@ internal static class HatManagerPatches
         var allHats = __instance.allHats.ToList();
         var cache = CustomHatManager.UnregisteredHats.Clone();
         var added = false;
+        var failedCount = 0;
+
         foreach (var hat in cache)
+        {
             try
             {
                 allHats.Add(CustomHatManager.CreateHatBehaviour(hat));
@@ -44,10 +48,25 @@ internal static class HatManagerPatches
             catch
             {
                 // This means the file has not been downloaded yet, do nothing...
+                failedCount++;
             }
+        }
 
         if (CustomHatManager.UnregisteredHats.Count == 0)
+        {
             isLoaded = true;
+            currentCooldown = BaseMergeCooldown;
+        }
+        else if (failedCount > 0)
+        {
+            currentCooldown = Mathf.Min(currentCooldown * 1.5f, MaxMergeCooldown);
+        }
+        else
+        {
+            currentCooldown = BaseMergeCooldown;
+        }
+
+        nextMergeAttempt = Time.realtimeSinceStartup + currentCooldown;
         cache.Clear();
 
         // only touch hats if something actually changed

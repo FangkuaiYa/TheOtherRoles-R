@@ -504,9 +504,9 @@ public class CustomOptionHolder
         crewmateRolesFill = CustomOption.Create(Types.General,
             new TranslationInfo("Opt-General", 25, new Color(204f / 255f, 204f / 255f, 0, 1f)), false);
 
-        mafiaSpawnRate = CustomOption.Create(Types.Impostor, new TranslationInfo(RoleId.Mafioso, Janitor.color), rates, null, true);
+        mafiaSpawnRate = CustomOption.Create(Types.Impostor, new TranslationInfo("Opt-Mafia", 1, Janitor.color), rates, null, true);
         janitorCooldown =
-            CustomOption.Create(Types.Impostor, new TranslationInfo("Opt-Mafia", 1), 30f, 10f, 60f, 2.5f, mafiaSpawnRate);
+            CustomOption.Create(Types.Impostor, new TranslationInfo("Opt-Mafia", 2), 30f, 10f, 60f, 2.5f, mafiaSpawnRate);
 
         morphlingSpawnRate =
             CustomOption.Create(Types.Impostor, new TranslationInfo(RoleId.Morphling, Morphling.color), rates, null, true);
@@ -621,7 +621,7 @@ public class CustomOptionHolder
             new[] { new TranslationInfo("0%"), new TranslationInfo("10%"), new TranslationInfo("20%"), new TranslationInfo("30%"), new TranslationInfo("40%"), new TranslationInfo("50%") }, yoyoSpawnRate);
 
 
-        guesserSpawnRate = CustomOption.Create(Types.Neutral, new TranslationInfo(RoleId.NiceGuesser, Guesser.color), rates, null, true);
+        guesserSpawnRate = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-Guesser", 0, Guesser.color), rates, null, true);
         guesserIsImpGuesserRate = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-Guesser", 1),
             rates, guesserSpawnRate);
         guesserNumberOfShots = CustomOption.Create(Types.Neutral, new TranslationInfo("Opt-Guesser", 2), 2f, 1f, 15f, 1f,

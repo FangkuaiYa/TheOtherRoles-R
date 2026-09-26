@@ -97,16 +97,15 @@ public static class DynamicLobbies
         }
     }
 
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnPlayerJoined))]
-    [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.CreatePlayer))]
-    public static class AmongUsClientOnPlayerJoined
+    [HarmonyPatch(typeof(AmongUsClient._CreatePlayer_d__43), "MoveNext")]
+    public static class AmongUsClientCreatePlayer
     {
-        public static bool Prefix(AmongUsClient __instance, [HarmonyArgument(0)] ClientData client)
+        public static bool Prefix(AmongUsClient._CreatePlayer_d__43 __instance)
         {
-            if (LobbyLimit < __instance.allClients.Count)
+            if (LobbyLimit < __instance.__4__this.allClients.Count)
             {
                 // TODO: Fix this canceling start
-                DisconnectPlayer(__instance, client.Id);
+                DisconnectPlayer(__instance.__4__this, __instance.clientData.Id);
                 return false;
             }
 

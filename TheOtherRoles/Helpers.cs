@@ -64,6 +64,24 @@ public static class Helpers
         return null;
     }
 
+    private static Sprite menuBackground;
+
+    public static Sprite getMenuBackground()
+    {
+        if (menuBackground) return menuBackground;
+        menuBackground = loadSpriteFromResources("TheOtherRoles.Resources.RoleListScreen.png", 110f);
+        return menuBackground;
+    }
+
+    private static Sprite roleSummaryBackground;
+
+    public static Sprite getRoleSummaryBackground()
+    {
+        if (roleSummaryBackground) return roleSummaryBackground;
+        roleSummaryBackground = loadSpriteFromResources("TheOtherRoles.Resources.TeamScreen.png", 110f);
+        return roleSummaryBackground;
+    }
+
     // Check for the first 8 bytes all valid PNGs should have so we can (hopefully lol) detect corrupted images
     private static readonly byte[] PngSignature = { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
 

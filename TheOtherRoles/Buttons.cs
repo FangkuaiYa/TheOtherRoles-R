@@ -1101,12 +1101,10 @@ internal static class HudManagerStartPatch
                 if (Vampire.targetNearGarlic && Vampire.canKillNearGarlics)
                 {
                     vampireKillButton.actionButton.graphic.sprite = __instance.KillButton.graphic.sprite;
-                    vampireKillButton.showButtonText = true;
                 }
                 else
                 {
                     vampireKillButton.actionButton.graphic.sprite = Vampire.getButtonSprite();
-                    vampireKillButton.showButtonText = false;
                 }
 
                 return Vampire.currentTarget != null && PlayerControl.LocalPlayer.CanMove &&
@@ -1125,7 +1123,7 @@ internal static class HudManagerStartPatch
             false,
             0f,
             () => { vampireKillButton.Timer = vampireKillButton.MaxTimer; },
-            buttonText: new CustomButton.ButtonText(13)
+            buttonText: new ButtonText(13)
         );
 
         garlicButton = new CustomButton(

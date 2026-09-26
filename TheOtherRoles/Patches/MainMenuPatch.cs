@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections;
 using AmongUs.Data;
 using Assets.InnerNet;
+using BepInEx.Unity.IL2CPP.Utils;
 using HarmonyLib;
 using Il2CppSystem.Collections.Generic;
+using TheOtherRoles.Modules.CustomHats;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 using static UnityEngine.UI.Button;
 using Object = UnityEngine.Object;
 
@@ -22,6 +26,8 @@ public class MainMenuPatch
     {
         // Force Reload of SoundEffectHolder
         SoundEffectsManager.Load();
+
+        SetupHatDownloadToast();
 
         // var template = GameObject.Find("ExitGameButton");
         var template2 = GameObject.Find("CreditsButton");
@@ -148,6 +154,108 @@ License: TheOtherRoles is licensed under the [https://github.com/TheOtherRolesAU
                 }
             })));
         });
+    }
+
+    private static HatsLoader toastHost;
+    private static Coroutine toastCoroutine;
+
+    private static void SetupHatDownloadToast()
+    {
+        var canvasGo = GameObject.Find("hatsDownloaderTOR");
+        if (canvasGo == null)
+        {
+            canvasGo = new GameObject("hatsDownloaderTOR");
+            canvasGo.DontDestroy();
+
+            var canvas = canvasGo.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.sortingOrder = 32767;
+
+            var canvasScaler = canvasGo.AddComponent<CanvasScaler>();
+            canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+            canvasScaler.referenceResolution = new Vector2(1920f, 1080f);
+            canvasScaler.screenMatchMode = CanvasScaler.ScreenMatchMode.MatchWidthOrHeight;
+            canvasScaler.matchWidthOrHeight = 0.5f;
+        }
+
+        var textGo = canvasGo.transform.Find("hatsDownloaderTOR_Text")?.gameObject;
+        if (textGo == null)
+        {
+            textGo = new GameObject("hatsDownloaderTOR_Text");
+            textGo.transform.SetParent(canvasGo.transform, false);
+
+            var hatsDownloaderText = textGo.AddComponent<TextMeshProUGUI>();
+            hatsDownloaderText.alignment = TextAlignmentOptions.TopLeft;
+            hatsDownloaderText.fontSize = 36f;
+
+            var rect = hatsDownloaderText.rectTransform;
+            rect.anchorMin = new Vector2(0f, 1f);
+            rect.anchorMax = new Vector2(0f, 1f);
+            rect.pivot = new Vector2(0f, 1f);
+            rect.anchoredPosition = new Vector2(30f, -30f);
+            rect.sizeDelta = new Vector2(500f, 80f);
+        }
+
+        if (toastCoroutine != null && toastHost != null) toastHost.StopCoroutine(toastCoroutine);
+        toastCoroutine = null;
+        toastHost = null;
+
+        if (!HatsLoader.ManifestFetched && !HatsLoader.DownloadComplete)
+            CustomHatManager.LoadHats();
+
+        var text = textGo.GetComponent<TextMeshProUGUI>();
+        if (text == null || (HatsLoader.ManifestFetched && HatsLoader.DownloadComplete))
+        {
+            textGo.SetActive(false);
+            return;
+        }
+
+        text.SetText("");
+        textGo.SetActive(true);
+        toastHost = CustomHatManager.Loader;
+        if (toastHost == null)
+        {
+            textGo.SetActive(false);
+            return;
+        }
+
+        toastCoroutine = toastHost.StartCoroutine(MonitorHatDownloadProgress(text, textGo));
+    }
+
+    private static IEnumerator MonitorHatDownloadProgress(TextMeshProUGUI text, GameObject textGo)
+    {
+        if (text == null || textGo == null)
+        {
+            if (textGo != null) textGo.SetActive(false);
+            yield break;
+        }
+
+        while (!HatsLoader.ManifestFetched)
+        {
+            text.SetText($"<b><color=#FF0000>{ModTranslation.GetString("MainMenu", 1)}</color></b>");
+            yield return new WaitForSeconds(0.4f);
+        }
+
+        while (!HatsLoader.DownloadComplete)
+        {
+            var msg = HatsLoader.TotalFiles > 0
+                ? string.Format(ModTranslation.GetString("MainMenu", 2), HatsLoader.DownloadedFiles, HatsLoader.TotalFiles)
+                : ModTranslation.GetString("MainMenu", 3);
+            text.SetText($"<b><color=#FF0000>{msg}</color></b>");
+            yield return new WaitForSeconds(0.2f);
+        }
+
+        text.SetText($"<b><color=#FF0000>{ModTranslation.GetString("MainMenu", 4)}</color></b>");
+        yield return new WaitForSeconds(2f);
+
+        for (var i = 0; i < 3; i++)
+        {
+            textGo.SetActive(false);
+            yield return new WaitForSeconds(0.25f);
+            textGo.SetActive(true);
+            yield return new WaitForSeconds(0.25f);
+        }
+        textGo.SetActive(false);
     }
 
     public static void addSceneChangeCallbacks()

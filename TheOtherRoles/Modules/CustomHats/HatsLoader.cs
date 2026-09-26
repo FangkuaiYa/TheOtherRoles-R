@@ -13,6 +13,11 @@ public class HatsLoader : MonoBehaviour
 {
     private bool isRunning;
 
+    public static bool ManifestFetched;
+    public static bool DownloadComplete;
+    public static int TotalFiles;
+    public static int DownloadedFiles;
+
     public void FetchHats()
     {
         if (isRunning) return;
@@ -23,6 +28,12 @@ public class HatsLoader : MonoBehaviour
     private IEnumerator CoFetchHats()
     {
         isRunning = true;
+
+        ManifestFetched = false;
+        DownloadComplete = false;
+        TotalFiles = 0;
+        DownloadedFiles = 0;
+
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
         TheOtherRolesPlugin.Logger.LogMessage($"Download manifest at: {RepositoryUrl}/{ManifestFileName}");
@@ -35,6 +46,9 @@ public class HatsLoader : MonoBehaviour
         if (www.isNetworkError || www.isHttpError)
         {
             TheOtherRolesPlugin.Logger.LogError(www.error);
+            ManifestFetched = true;
+            DownloadComplete = true;
+            isRunning = false;
             yield break;
         }
 
@@ -51,10 +65,19 @@ public class HatsLoader : MonoBehaviour
         var toDownload = GenerateDownloadList(UnregisteredHats);
         if (EventUtility.isEnabled) UnregisteredHats.AddRange(loadHorseHats());
 
+        TotalFiles = toDownload.Count;
+        DownloadedFiles = 0;
+        ManifestFetched = true;
+
         TheOtherRolesPlugin.Logger.LogMessage($"I'll download {toDownload.Count} hat files");
 
-        foreach (var fileName in toDownload) yield return CoDownloadHatAsset(fileName);
+        foreach (var fileName in toDownload)
+        {
+            yield return CoDownloadHatAsset(fileName);
+            DownloadedFiles++;
+        }
 
+        DownloadComplete = true;
         isRunning = false;
     }
 

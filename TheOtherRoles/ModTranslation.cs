@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using HarmonyLib;
-using Newtonsoft.Json.Linq;
 using TheOtherRoles.Patches;
 using UnityEngine;
 
@@ -171,17 +170,15 @@ namespace TheOtherRoles
 
         public static string GetString(string category, int id, string def = null)
         {
-            if (!stringTable.TryGetValue(category, out var t))
-                return def;
-            if (!t.TryGetValue(id, out var t2))
-                return def;
-            int langId = (int)AmongUs.Data.DataManager.Settings.Language.CurrentLanguage;
-            if (t2.ContainsKey(langId))
-                return t2[langId];
-            else if (t2.ContainsKey(defaultLangId))
-                return t2[defaultLangId];
+            var result = def;
+            if (stringTable.TryGetValue(category, out var t) && t.TryGetValue(id, out var t2))
+            {
+                int langId = (int)AmongUs.Data.DataManager.Settings.Language.CurrentLanguage;
+                if (t2.ContainsKey(langId)) result = t2[langId];
+                else if (t2.ContainsKey(defaultLangId)) result = t2[defaultLangId];
+            }
 
-            return def;
+            return string.IsNullOrEmpty(result) ? $"*{category},{id}*" : result;
         }
 
         public static TranslationInfo GetRoleName(RoleId roleId, Color? color = null)

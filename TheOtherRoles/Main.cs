@@ -10,7 +10,6 @@ global using TheOtherRoles.Roles.Modifier;
 global using TheOtherRoles.Roles.Neutral;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using AmongUs.Data;
@@ -40,7 +39,7 @@ namespace TheOtherRoles;
 public class TheOtherRolesPlugin : BasePlugin
 {
     public const string Id = "me.eisbison.theotherroles";
-    public const string VersionString = "5.0.0";
+    public const string VersionString = "5.1.0";
     public static bool isBeta = true;
 
     public static Version Version = Version.Parse(VersionString);
@@ -69,40 +68,6 @@ public class TheOtherRolesPlugin : BasePlugin
     public static ConfigEntry<bool> ShowChatNotifications { get; set; }
     public static ConfigEntry<string> ShowPopUpVersion { get; set; }
 
-    // This is part of the Mini.RegionInstaller, Licensed under GPLv3
-    // file="RegionInstallPlugin.cs" company="miniduikboot">
-    public static void UpdateRegions()
-    {
-        var serverManager = FastDestroyableSingleton<ServerManager>.Instance;
-        var regions = new[]
-        {
-            new StaticHttpRegionInfo("TheOtherRoles Asia", StringNames.NoTranslation, "imp.amongusclub.cn",
-                new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1]
-                    { new("TheOtherRoles Asia", "https://imp.amongusclub.cn", 443, false) })).CastFast<IRegionInfo>()
-        };
-
-        var currentRegion = serverManager.CurrentRegion;
-        Logger.LogInfo($"Adding {regions.Length} regions");
-        foreach (var region in regions)
-            if (region == null)
-            {
-                Logger.LogError("Could not add region");
-            }
-            else
-            {
-                if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase))
-                    currentRegion = region;
-                serverManager.AddOrUpdateRegion(region);
-            }
-
-        // AU remembers the previous region that was set, so we need to restore it
-        if (currentRegion != null)
-        {
-            Logger.LogDebug("Resetting previous region");
-            serverManager.SetRegion(currentRegion);
-        }
-    }
-
     public override void Load()
     {
         Logger = Log;
@@ -127,16 +92,11 @@ public class TheOtherRolesPlugin : BasePlugin
 
         // Removes vanilla Servers   More extensive testing is needed because I removed the Reactor, so after testing, TOR can temporarily run on the Innerslot server
         // ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
-        UpdateRegions();
-
-        // Reactor Credits (future use?)
-        // Reactor.Utilities.ReactorCredits.Register("TheOtherRoles-R", VersionString, isBeta, location => location == Reactor.Utilities.ReactorCredits.Location.PingTracker);
 
         Harmony.PatchAll();
 
         CustomOptionHolder.Load();
         CustomColors.Load();
-        CustomHatManager.LoadHats();
 
         AddComponent<ModUpdater>();
 
@@ -149,7 +109,7 @@ public class TheOtherRolesPlugin : BasePlugin
         // AMCI: Register mod GUID for mod-only matchmaking
         AmciRegistration.Register();
 
-        Logger.LogInfo("Loading TOR completed!");
+        Logger.LogInfo("Loading TOR-R completed!");
     }
 }
 
