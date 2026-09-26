@@ -860,5 +860,6 @@
     "MainMenu,1": "Fetching Hat List...",
     "MainMenu,2": "Downloading Hats {0}/{1}",
     "MainMenu,3": "Downloading Hats",
-    "MainMenu,4": "Hat Download Complete!"
+    "MainMenu,4": "Hat Download Complete!",
+    "Opt-Guesser,0": "Guesser"
 }
