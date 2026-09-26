@@ -31,6 +31,9 @@ public static class LobbyRoleInfo
     private const int MaxRolePlates = 20;
     private const int RolesPerRow = 4;
 
+    private static readonly Vector3 LobbyButtonOffset = new(0.35f, 4.2f, 0f);
+    private static readonly Vector3 MatchButtonOffset = new(0.35f, 2.7f, 0f);
+
     private static int uiLayer;
     private static string uiSortingLayer = "Default";
     private static int uiOrder;
@@ -47,9 +50,6 @@ public static class LobbyRoleInfo
 
     private static Sprite TeamBackground => Helpers.getRoleSummaryBackground();
     private static Sprite MenuBackground => Helpers.getMenuBackground();
-
-    private static float BgAlpha => ShipStatus.Instance ? 0.2f : 1f;
-    private static float PlateAlpha => ShipStatus.Instance ? 0.5f : 1f;
 
     private static List<(RoleInfoTeam team, string label)> GetEntries()
     {
@@ -197,7 +197,7 @@ public static class LobbyRoleInfo
         bgGo.transform.localScale = new Vector3(width / sprite.bounds.size.x, height / sprite.bounds.size.y, 1f);
         var sr = bgGo.AddComponent<SpriteRenderer>();
         sr.sprite = sprite;
-        sr.color = new Color(1f, 1f, 1f, BgAlpha);
+        sr.color = Color.white;
         StyleRenderer(sr, uiOrder);
 
         screenRoot = go;
@@ -254,7 +254,7 @@ public static class LobbyRoleInfo
         spriteGo.transform.localScale = baseScale;
         var sr = spriteGo.AddComponent<SpriteRenderer>();
         var baseSprite = sprite;
-        var baseColor = new Color(1f, 1f, 1f, PlateAlpha);
+        var baseColor = Color.white;
         sr.sprite = baseSprite;
         sr.color = baseColor;
         StyleRenderer(sr, uiOrder + 1);
@@ -477,7 +477,7 @@ public static class LobbyRoleInfo
             // OnMeetingEnds
             () => CloseAll(),
             Helpers.loadSpriteFromResources("TheOtherRoles.Resources.roleSummaryButton.png", 175f),
-            new Vector3(0.35f, 2.7f, 0f),
+            ShipStatus.Instance ? MatchButtonOffset : LobbyButtonOffset,
             hud,
             null);
 
@@ -510,6 +510,7 @@ public static class LobbyRoleInfo
                 CloseAll();
             }
 
+            roleInfoButton.PositionOffset = inMatch ? MatchButtonOffset : LobbyButtonOffset;
             roleInfoButton.Update();
             roleInfoButton.Timer = -1f;
 

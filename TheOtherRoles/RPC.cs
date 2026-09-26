@@ -264,8 +264,23 @@ public static class RPCProcedure
     public static void shareGamemode(byte gm)
     {
         gameMode = (CustomGamemodes)gm;
-        LobbyViewSettingsPatch.currentButtons?.ForEach(x => x.gameObject?.Destroy());
-        LobbyViewSettingsPatch.currentButtons?.Clear();
+        var buttons = LobbyViewSettingsPatch.currentButtons;
+        if (buttons != null)
+        {
+            foreach (var x in buttons)
+            {
+                try
+                {
+                    x.gameObject?.Destroy();
+                }
+                catch (Exception)
+                {
+                }
+            }
+
+            buttons.Clear();
+        }
+
         LobbyViewSettingsPatch.currentButtonTypes?.Clear();
     }
 
@@ -1513,6 +1528,18 @@ public static class RPCProcedure
 internal class RPCHandlerPatch
 {
     private static void Postfix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader)
+    {
+        try
+        {
+            HandlePacket(callId, reader);
+        }
+        catch (Exception e)
+        {
+            TheOtherRolesPlugin.Logger.LogError($"Error while handling RPC {callId}: {e}");
+        }
+    }
+
+    private static void HandlePacket(byte callId, MessageReader reader)
     {
         var packetId = callId;
         switch (packetId)

@@ -23,8 +23,9 @@ public class GameStartManagerPatch
     [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), "MoveNext")]
     public class PlayerPhysicsCoSpawnPlayerPatch
     {
-        public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance)
+        public static void Postfix(bool __result, PlayerPhysics._CoSpawnPlayer_d__42 __instance)
         {
+            if (__result) return;
             if (PlayerControl.LocalPlayer != null) Helpers.shareGameVersion();
             GameStartManagerUpdatePatch.sendGamemode = true;
         }
@@ -267,12 +268,12 @@ public class GameStartManagerPatch
 
             if (AmongUsClient.Instance.AmHost && sendGamemode && PlayerControl.LocalPlayer != null)
             {
+                sendGamemode = false;
                 var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                     (byte)CustomRPC.ShareGamemode, SendOption.Reliable);
                 writer.Write((byte)TORMapOptions.gameMode);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.shareGamemode((byte)TORMapOptions.gameMode);
-                sendGamemode = false;
             }
         }
     }
