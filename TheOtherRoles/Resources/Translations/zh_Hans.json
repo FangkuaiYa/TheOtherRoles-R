@@ -856,5 +856,10 @@
     "RoleInfo-Text,3": "游戏模式",
     "RoleInfo-Text,4": "我的职业",
     "RoleInfo-Text,5": "游戏开始后即可查看你自己的角色。",
-    "RoleInfo-Text,6": "附加职业:"
+    "RoleInfo-Text,6": "附加职业:",
+    "MainMenu,1": "正在获取模组帽子列表……",
+    "MainMenu,2": "正在下载模组帽子 {0}/{1}",
+    "MainMenu,3": "正在下载模组帽子",
+    "MainMenu,4": "模组帽子下载完成！",
+    "Opt-Guesser,0": "赌怪"
 }
