@@ -426,9 +426,9 @@
     "ModeSwitch-Text,6": "TOR Prop Hunt",
     "CustomOption-Text,1": "Host Info: Pasting vanilla settings failed, TOR Options applied!",
     "CustomOption-Text,2": "Host Info: You tried to paste invalid settings: \"{0}...\"",
-    "CustomOption-Text,3": "Impostor",
-    "CustomOption-Text,4": "Neutral",
-    "CustomOption-Text,5": "Crewmate",
+    "CustomOption-Text,3": "Impostors",
+    "CustomOption-Text,4": "Neutrals",
+    "CustomOption-Text,5": "Crewmates",
     "CustomOption-Text,6": "Modifiers",
     "CustomOption-Text,7": "Spawn Chance",
     "CustomOption-Text,8": "Fill:",
@@ -856,5 +856,9 @@
     "RoleInfo-Text,3": "Game Modes",
     "RoleInfo-Text,4": "My Role",
     "RoleInfo-Text,5": "Your own role can be viewed once the game has started.",
-    "RoleInfo-Text,6": "Modifiers:"
+    "RoleInfo-Text,6": "Modifiers:",
+    "MainMenu,1": "Fetching Hat List...",
+    "MainMenu,2": "Downloading Hats {0}/{1}",
+    "MainMenu,3": "Downloading Hats",
+    "MainMenu,4": "Hat Download Complete!"
 }
