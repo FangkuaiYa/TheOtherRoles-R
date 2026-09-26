@@ -261,7 +261,7 @@
     "Opt-SchrodingersCat,102": "随机",
     "Opt-Trapper,1": "设陷技能冷却",
     "Opt-Trapper,2": "最大陷阱数",
-    "Opt-Trapper,3": "陷阱师充能所需完成任务数",
+    "Opt-Trapper,3": "设陷者充能所需完成任务数",
     "Opt-Trapper,4": "陷阱触发提示所需人数",
     "Opt-Trapper,5": "显示匿名地图",
     "Opt-Trapper,6": "陷阱信息类型",
@@ -609,7 +609,7 @@
     "Role-Name,17": "通灵师",
     "Role-IntroDesc,17": "对死者的灵魂通灵来获取信息",
     "Role-ShortDesc,17": "对灵魂通灵",
-    "Role-Name,18": "陷阱师",
+    "Role-Name,18": "设陷者",
     "Role-IntroDesc,18": "放置陷阱以找出内鬼",
     "Role-ShortDesc,18": "放置陷阱",
     "Role-Name,19": "内鬼",
@@ -853,5 +853,8 @@
     "CustomOption-Text, 30": "长",
     "RoleInfo-Text,1": "返回",
     "RoleInfo-Text,2": "关闭",
-    "RoleInfo-Text,3": "游戏模式"
+    "RoleInfo-Text,3": "游戏模式",
+    "RoleInfo-Text,4": "我的职业",
+    "RoleInfo-Text,5": "游戏开始后即可查看你自己的角色。",
+    "RoleInfo-Text,6": "附加职业:"
 }
