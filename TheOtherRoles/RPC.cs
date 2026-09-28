@@ -183,6 +183,9 @@ internal enum CustomRPC
     ShareTimer,
     ShareGhostInfo,
     EventKick,
+
+    // Time Master shield break animation (appended to not shift the ids of the existing RPCs)
+    TimeMasterShieldBreak,
 }
 
 public static class RPCProcedure
@@ -527,16 +530,27 @@ public static class RPCProcedure
         }
     }
 
-    public static void timeMasterRewindTime()
+    public static void timeMasterRewindTime(float duration, bool shieldTriggered)
     {
-        TimeMaster.shieldActive = false; // Shield is no longer active when rewinding
-        SoundEffectsManager.stop("timemasterShield"); // Shield sound stopped when rewinding
-        if (TimeMaster.timeMaster != null && TimeMaster.timeMaster == PlayerControl.LocalPlayer)
-            resetTimeMasterButton();
+        TimeMaster.rewindDuration = duration;
+        // The positions are rewound at double speed, hence the rewind lasts half of the rewound time span
+        TimeMaster.rewindEndTime = Time.time + duration / 2f;
+
+        if (shieldTriggered)
+        {
+            TimeMaster.shieldActive = false; // Shield is no longer active when rewinding
+            SoundEffectsManager.stop("timemasterShield"); // Shield sound stopped when rewinding
+            if (TimeMaster.timeMaster != null && TimeMaster.timeMaster == PlayerControl.LocalPlayer)
+                resetTimeMasterButton();
+        }
+
+        // Everyone who died within the rewound time span comes back to life
+        TimeMaster.revivePlayersDiedDuringRewind();
+
         FastDestroyableSingleton<HudManager>.Instance.FullScreen.color = new Color(0f, 0.5f, 0.8f, 0.3f);
         FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = true;
         FastDestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.SetActive(true);
-        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(TimeMaster.rewindTime / 2,
+        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(duration / 2,
             new Action<float>(p =>
             {
                 if (p == 1f) FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = false;
@@ -552,6 +566,13 @@ public static class RPCProcedure
         if (Minigame.Instance)
             Minigame.Instance.ForceClose();
         PlayerControl.LocalPlayer.moveable = false;
+    }
+
+    // Shows the broken time shield animation of the Time Master to every player
+    public static void timeMasterShieldBreak()
+    {
+        if (TimeMaster.timeMaster == null || TimeMaster.timeMaster.Data == null) return;
+        TimeMaster.timeMaster.ShowFailedMurder();
     }
 
     public static void timeMasterShield()
@@ -1321,6 +1342,8 @@ public static class RPCProcedure
         Hunted.timeshieldActive.Remove(playerId); // Shield is no longer active when rewinding
         SoundEffectsManager.stop("timemasterShield"); // Shield sound stopped when rewinding
         if (playerId == PlayerControl.LocalPlayer.PlayerId) resetHuntedRewindButton();
+        // The hunter rewinds until the position history is empty, as there is no time limit
+        TimeMaster.rewindEndTime = 0f;
         FastDestroyableSingleton<HudManager>.Instance.FullScreen.color = new Color(0f, 0.5f, 0.8f, 0.3f);
         FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = true;
         FastDestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.SetActive(true);
@@ -1638,7 +1661,10 @@ internal class RPCHandlerPatch
                 RPCProcedure.cleanBody(reader.ReadByte(), reader.ReadByte());
                 break;
             case (byte)CustomRPC.TimeMasterRewindTime:
-                RPCProcedure.timeMasterRewindTime();
+                RPCProcedure.timeMasterRewindTime(reader.ReadSingle(), reader.ReadBoolean());
+                break;
+            case (byte)CustomRPC.TimeMasterShieldBreak:
+                RPCProcedure.timeMasterShieldBreak();
                 break;
             case (byte)CustomRPC.TimeMasterShield:
                 RPCProcedure.timeMasterShield();

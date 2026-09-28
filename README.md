@@ -1756,7 +1756,10 @@ If a player tries to kill the Time Master while the time shield is active, the k
 time will rewind for a set amount of time.\
 The kill cooldown of the killer won't be reset, so the Time Master
 has to make sure that the game won't result in the same situation.\
-The Time Master won't be affected by the rewind.
+The Time Master won't be affected by the rewind.\
+If "Time Master Can Rewind Time" is enabled, the Time Master also gets a rewind button with its own cooldown,
+which triggers the rewind without needing to be attacked. The time span rewound by the button is equal to the
+time shield duration.
 
 **NOTE:**
 - Only the movement is affected by the rewind.
@@ -1764,6 +1767,8 @@ The Time Master won't be affected by the rewind.
 - If the Time Master was bitten and has their shield active before when a meeting is called, they survive but the time won't be rewound.
 - If the Time Master has a Medic shield, they won't rewind.
 - The shield itself ends immediately when triggered. So the Time Master can be attacked again as soon as the rewind ends.
+- Whenever the rewind is triggered (by an attack or by the rewind button), every player sees the broken time shield animation of the Time Master.
+- If "Rewind Revives Dead Players" is enabled, every player who died during the rewound time span is brought back to life (their role is restored as well).
 
 ### Game Options
 | Name | Description |
@@ -1772,6 +1777,9 @@ The Time Master won't be affected by the rewind.
 | Time Master Cooldown | - |
 | Rewind Duration | How much time to rewind |
 | Time Master Shield Duration |
+| Time Master Can Rewind Time | If set to true, the Time Master can trigger the rewind on their own with a button |
+| Time Master Rewind Cooldown | Cooldown of the rewind button (only visible if the Time Master can rewind) |
+| Rewind Revives Dead Players | If set to true, players that died during the rewound time span are revived |
 -----------------------
 
 ## Medic

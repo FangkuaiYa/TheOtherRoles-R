@@ -26,6 +26,7 @@ internal static class HudManagerStartPatch
     public static CustomButton sheriffKillButton;
     private static CustomButton deputyHandcuffButton;
     private static CustomButton timeMasterShieldButton;
+    private static CustomButton timeMasterRewindButton;
     private static CustomButton medicShieldButton;
     private static CustomButton shifterShiftButton;
     private static CustomButton morphlingButton;
@@ -117,6 +118,7 @@ internal static class HudManagerStartPatch
         sheriffKillButton.MaxTimer = Sheriff.cooldown;
         deputyHandcuffButton.MaxTimer = Deputy.handcuffCooldown;
         timeMasterShieldButton.MaxTimer = TimeMaster.cooldown;
+        timeMasterRewindButton.MaxTimer = TimeMaster.rewindCooldown;
         medicShieldButton.MaxTimer = 0f;
         shifterShiftButton.MaxTimer = 0f;
         morphlingButton.MaxTimer = Morphling.cooldown;
@@ -608,6 +610,37 @@ internal static class HudManagerStartPatch
                 SoundEffectsManager.stop("timemasterShield");
             },
             buttonText: new CustomButton.ButtonText(4, FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.UseButton].FontMaterial)
+        );
+
+        // Time Master active rewind (the duration of the rewind is the time shield duration)
+        timeMasterRewindButton = new CustomButton(
+            () =>
+            {
+                var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                    (byte)CustomRPC.TimeMasterRewindTime, SendOption.Reliable);
+                writer.Write(TimeMaster.shieldDuration);
+                writer.Write(false);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.timeMasterRewindTime(TimeMaster.shieldDuration, false);
+
+                timeMasterRewindButton.Timer = timeMasterRewindButton.MaxTimer;
+            },
+            () =>
+            {
+                return TimeMaster.canRewind && TimeMaster.timeMaster != null &&
+                       TimeMaster.timeMaster == PlayerControl.LocalPlayer &&
+                       !PlayerControl.LocalPlayer.Data.IsDead;
+            },
+            () =>
+            {
+                return PlayerControl.LocalPlayer.CanMove && !TimeMaster.isRewinding;
+            },
+            () => { },
+            TimeMaster.getRewindButtonSprite(),
+            CustomButton.ButtonPositions.lowerRowCenter,
+            __instance,
+            KeyCode.G,
+            buttonText: new CustomButton.ButtonText(48, FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.UseButton].FontMaterial)
         );
 
         // Medic Shield

@@ -610,11 +610,19 @@ public static class Helpers
         {
             if (!blockRewind)
             {
-                // Only rewind the attempt was not called because a meeting startet 
+                // Show the broken time shield animation of the Time Master to everyone
+                var shieldBreakWriter = AmongUsClient.Instance.StartRpcImmediately(killer.NetId,
+                    (byte)CustomRPC.TimeMasterShieldBreak, SendOption.Reliable);
+                AmongUsClient.Instance.FinishRpcImmediately(shieldBreakWriter);
+                RPCProcedure.timeMasterShieldBreak();
+
+                // Only rewind the attempt was not called because a meeting startet
                 var writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId,
                     (byte)CustomRPC.TimeMasterRewindTime, SendOption.Reliable);
+                writer.Write(TimeMaster.rewindTime);
+                writer.Write(true);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.timeMasterRewindTime();
+                RPCProcedure.timeMasterRewindTime(TimeMaster.rewindTime, true);
             }
 
             return MurderAttemptResult.SuppressKill;

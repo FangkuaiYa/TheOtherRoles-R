@@ -166,6 +166,9 @@ public class CustomOptionHolder
     public static CustomOption timeMasterCooldown;
     public static CustomOption timeMasterRewindTime;
     public static CustomOption timeMasterShieldDuration;
+    public static CustomOption timeMasterCanRewind;
+    public static CustomOption timeMasterRewindCooldown;
+    public static CustomOption timeMasterReviveDuringRewind;
 
     public static CustomOption medicSpawnRate;
     public static CustomOption medicShowShielded;
@@ -764,6 +767,12 @@ public class CustomOptionHolder
             CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-TimeMaster", 2), 3f, 1f, 10f, 1f, timeMasterSpawnRate);
         timeMasterShieldDuration = CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-TimeMaster", 3), 3f, 1f, 20f,
             1f, timeMasterSpawnRate);
+        timeMasterCanRewind = CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-TimeMaster", 4), false,
+            timeMasterSpawnRate);
+        timeMasterRewindCooldown = CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-TimeMaster", 5), 30f,
+            10f, 120f, 2.5f, timeMasterCanRewind);
+        timeMasterReviveDuringRewind = CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-TimeMaster", 6),
+            false, timeMasterSpawnRate);
 
         medicSpawnRate = CustomOption.Create(Types.Crewmate, new TranslationInfo(RoleId.Medic, Medic.color), rates, null, true);
         medicShowShielded = CustomOption.Create(Types.Crewmate, new TranslationInfo("Opt-Medic", 1),
