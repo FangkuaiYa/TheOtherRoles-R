@@ -136,6 +136,9 @@ internal class IntroCutsceneOnDestroyPatch
             }
         }
 
+        var hudManager = HudManager.Instance;
+        if (hudManager != null) hudManager.ShowVanillaKeyGuide();
+
         TORMapOptions.firstKillName = "";
 
         EventUtility.gameStartsUpdate();
@@ -418,13 +421,7 @@ internal class IntroPatch
         var infos = CustomRoleManager.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
         var roleInfo = infos.Where(info => !info.isModifier).FirstOrDefault();
         var neutralColor = new Color32(76, 84, 78, 255);
-        if (roleInfo == null || roleInfo == CustomRoleManager.crewmate)
-        {
-            if (RoleDraft.isEnabled && CustomOptionHolder.neutralRolesCountMax.getSelection() > 0)
-                __instance.TeamTitle.text = $"<size=60%>{RoleInfo.roleInfoById[RoleId.Crewmate].name}" + Helpers.cs(Color.white, " / ") +
-                                            Helpers.cs(neutralColor, ModTranslation.GetString("Intro-Text", 1)) + "</size>";
-            return;
-        }
+        if (roleInfo == null || roleInfo == CustomRoleManager.crewmate) return;
 
         if (roleInfo.isNeutral)
         {

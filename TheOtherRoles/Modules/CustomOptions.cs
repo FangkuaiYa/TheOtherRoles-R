@@ -680,7 +680,7 @@ internal static class TORRoleSettingsManager
         }
     }
 
-    private static void SwitchCategory(RolesSettingsMenu menu, string category)
+    private static void SwitchCategory(RolesSettingsMenu menu, string category, bool resetScroll = true)
     {
         if (createdHeaders.ContainsKey(currentCategory))
             foreach (var h in createdHeaders[currentCategory])
@@ -704,10 +704,10 @@ internal static class TORRoleSettingsManager
 
         var opts = FilterForCategory(category);
         if (HeaderPrefab != null && menu.stringOptionOrigin != null)
-            CreateSettingsInContainer(menu, opts);
+            CreateSettingsInContainer(menu, opts, resetScroll);
     }
 
-    private static void CreateSettingsInContainer(RolesSettingsMenu menu, List<CustomOption> opts)
+    private static void CreateSettingsInContainer(RolesSettingsMenu menu, List<CustomOption> opts, bool resetScroll = true)
     {
         var parent = menu.AdvancedRolesSettings.transform;
         var clickMask = menu.ButtonClickMask;
@@ -771,14 +771,14 @@ internal static class TORRoleSettingsManager
             if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost)
                 ob.SetAsPlayer();
 
-        if (menu.scrollBar != null) menu.scrollBar.ScrollToTop();
+        if (resetScroll && menu.scrollBar != null) menu.scrollBar.ScrollToTop();
     }
 
     public static void RebuildCurrent()
     {
         if (string.IsNullOrEmpty(currentCategory)) return;
         var menu = Object.FindObjectOfType<RolesSettingsMenu>();
-        if (menu != null) SwitchCategory(menu, currentCategory);
+        if (menu != null) SwitchCategory(menu, currentCategory, false);
     }
 
     public static void OnUpdate(RolesSettingsMenu menu)
@@ -1330,20 +1330,6 @@ public class RpcSyncSettingsPatch
     }
 }
 
-[HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), "MoveNext")]
-public class PlayerPhysicsCoSpawnPlayerPatch
-{
-    public static void Postfix(bool __result, PlayerPhysics._CoSpawnPlayer_d__42 __instance)
-    {
-        if (__result) return;
-        if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost)
-        {
-            GameManager.Instance.LogicOptions.SyncOptions();
-            ShareOptionSelections();
-        }
-    }
-}
-
 [HarmonyPatch]
 internal class LegacyGameOptionsPatch
 {
@@ -1826,6 +1812,7 @@ public class HudManagerUpdate
 
             button.OnClick.RemoveAllListeners();
             button.OnClick.AddListener((Action)(() => { TheOtherRolesPlugin.optionsPage = pageIndex; }));
+            if (pageIndex < 7) ButtonEffect.SetKeyGuide(button.gameObject, KeyCode.Alpha1 + pageIndex);
 
             tabButtons.Add(button);
         }
@@ -1907,6 +1894,7 @@ public class HudManagerUpdate
             toggleSettingsButton = toggleSettingsButtonObject.GetComponent<PassiveButton>();
             toggleSettingsButton.OnClick.RemoveAllListeners();
             toggleSettingsButton.OnClick.AddListener((Action)(() => ToggleSettings(__instance)));
+            ButtonEffect.SetKeyGuide(toggleSettingsButtonObject, KeyCode.F1);
         }
 
         toggleSettingsButtonObject.SetActive(__instance.MapButton.gameObject.active &&
@@ -1979,6 +1967,7 @@ public class HudManagerUpdate
             toggleSummaryButton = toggleSummaryButtonObject.GetComponent<PassiveButton>();
             toggleSummaryButton.OnClick.RemoveAllListeners();
             toggleSummaryButton.OnClick.AddListener((Action)(() => ToggleSummary(__instance)));
+            ButtonEffect.SetKeyGuide(toggleSummaryButtonObject, KeyCode.F2);
         }
 
         toggleSummaryButtonObject.SetActive(__instance.SettingsButton.gameObject.active && LobbyBehaviour.Instance &&

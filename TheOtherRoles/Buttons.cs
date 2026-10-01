@@ -5,6 +5,7 @@ using AmongUs.GameOptions;
 using HarmonyLib;
 using Hazel;
 using TheOtherRoles.CustomGameModes;
+using TheOtherRoles.Modules;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
@@ -98,6 +99,8 @@ internal static class HudManagerStartPatch
     public static TMP_Text portalmakerButtonText1;
     public static TMP_Text portalmakerButtonText2;
     public static TMP_Text huntedShieldCountText;
+    public static TMP_Text engineerRepairText;
+    public static TMP_Text vultureRemainingText;
 
     public static void setCustomButtonCooldowns()
     {
@@ -408,6 +411,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
+                if (engineerRepairText != null) engineerRepairText.text = Engineer.remainingFixes.ToString();
                 var sabotageActive = false;
                 foreach (var task in PlayerControl.LocalPlayer.myTasks.GetFastEnumerator())
                     if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy ||
@@ -425,6 +429,8 @@ internal static class HudManagerStartPatch
             KeyCode.F,
             buttonText: new CustomButton.ButtonText(1, FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.UseButton].FontMaterial)
         );
+
+        engineerRepairText = engineerRepairButton.ShowUsesIcon(3);
 
         // Janitor Clean
         janitorCleanButton = new CustomButton(
@@ -569,12 +575,7 @@ internal static class HudManagerStartPatch
             buttonText: new CustomButton.ButtonText(3, FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.UseButton].FontMaterial)
         );
         // Deputy Handcuff button handcuff counter
-        deputyButtonHandcuffsText = GameObject.Instantiate(deputyHandcuffButton.actionButton.cooldownTimerText,
-            deputyHandcuffButton.actionButton.cooldownTimerText.transform.parent);
-        deputyButtonHandcuffsText.text = "";
-        deputyButtonHandcuffsText.enableWordWrapping = false;
-        deputyButtonHandcuffsText.transform.localScale = Vector3.one * 0.5f;
-        deputyButtonHandcuffsText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+        deputyButtonHandcuffsText = deputyHandcuffButton.ShowUsesIcon(3);
 
         // Time Master Rewind Time
         timeMasterShieldButton = new CustomButton(
@@ -1990,6 +1991,8 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
+                if (vultureRemainingText != null)
+                    vultureRemainingText.text = (Vulture.vultureNumberToWin - Vulture.eatenBodies).ToString();
                 return __instance.ReportButton.graphic.color == Palette.EnabledColor &&
                        PlayerControl.LocalPlayer.CanMove;
             },
@@ -2000,6 +2003,8 @@ internal static class HudManagerStartPatch
             KeyCode.F,
             buttonText: new CustomButton.ButtonText(24, FastDestroyableSingleton<RoleManager>.Instance.GetRole(RoleTypes.Tracker).Ability.FontMaterial)
         );
+
+        vultureRemainingText = vultureEatButton.ShowUsesIcon(2);
 
         // Medium button
         mediumButton = new CustomButton(
@@ -2143,12 +2148,7 @@ internal static class HudManagerStartPatch
         );
 
         // Pursuer button blanks left
-        pursuerButtonBlanksText = GameObject.Instantiate(pursuerButton.actionButton.cooldownTimerText,
-            pursuerButton.actionButton.cooldownTimerText.transform.parent);
-        pursuerButtonBlanksText.text = "";
-        pursuerButtonBlanksText.enableWordWrapping = false;
-        pursuerButtonBlanksText.transform.localScale = Vector3.one * 0.5f;
-        pursuerButtonBlanksText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+        pursuerButtonBlanksText = pursuerButton.ShowUsesIcon(1);
 
 
         // Witch Spell button
@@ -2899,12 +2899,7 @@ internal static class HudManagerStartPatch
             buttonText: new CustomButton.ButtonText(5, FastDestroyableSingleton<HudManager>.Instance.UseButton.fastUseSettings[ImageNames.UseButton].FontMaterial)
         );
 
-        huntedShieldCountText = GameObject.Instantiate(huntedShieldButton.actionButton.cooldownTimerText,
-            huntedShieldButton.actionButton.cooldownTimerText.transform.parent);
-        huntedShieldCountText.text = "";
-        huntedShieldCountText.enableWordWrapping = false;
-        huntedShieldCountText.transform.localScale = Vector3.one * 0.5f;
-        huntedShieldCountText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+        huntedShieldCountText = huntedShieldButton.ShowUsesIcon(3);
 
 
         propDisguiseButton = new CustomButton(

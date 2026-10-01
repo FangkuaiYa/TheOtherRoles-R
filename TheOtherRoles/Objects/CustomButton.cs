@@ -82,6 +82,25 @@ public class CustomButton
         button.OnClick = new Button.ButtonClickedEvent();
         button.OnClick.AddListener((UnityAction)onClickEvent);
         setActive(false);
+        setKeyBind();
+    }
+
+    public void setKeyBind()
+    {
+        if (!hotkey.HasValue || hotkey.Value == KeyCode.None) return;
+        if (actionButtonGameObject == null) return;
+        ButtonEffect.SetKeyGuide(actionButtonGameObject, hotkey.Value);
+    }
+
+    private GameObject UsesIcon;
+
+    public TextMeshPro ShowUsesIcon(int iconVariation)
+    {
+        if (actionButton == null) return null;
+        if (UsesIcon != null) Object.Destroy(UsesIcon);
+        var icon = actionButton.ShowUsesIcon(iconVariation, out var text);
+        UsesIcon = icon;
+        return text;
     }
 
     public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite,
@@ -184,6 +203,8 @@ public class CustomButton
 
             if (button.originalHotkey == KeyCode.G) button.hotkey = Action2Keycode;
             if (button.originalHotkey == KeyCode.H) button.hotkey = Action3Keycode;
+
+            button.setKeyBind();
         }
     }
 

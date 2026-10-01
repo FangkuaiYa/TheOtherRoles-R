@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using HarmonyLib;
 using Hazel;
+using TheOtherRoles.Modules;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
@@ -23,11 +24,18 @@ public class GameStartManagerPatch
     [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), "MoveNext")]
     public class PlayerPhysicsCoSpawnPlayerPatch
     {
-        public static void Postfix(bool __result, PlayerPhysics._CoSpawnPlayer_d__42 __instance)
+        public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance)
         {
-            if (__result) return;
-            if (PlayerControl.LocalPlayer != null) Helpers.shareGameVersion();
+            if (PlayerControl.LocalPlayer != null)
+                Helpers.shareGameVersion();
+            
             GameStartManagerUpdatePatch.sendGamemode = true;
+            
+            if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost)
+            {
+                GameManager.Instance.LogicOptions.SyncOptions();
+                CustomOption.ShareOptionSelections();
+            }
         }
     }
 

@@ -43,7 +43,7 @@
 
     <ItemGroup>
         <PackageReference Include="AmongUs.GameLibs.Android" Version="2026.8.18" Condition="'$(Platform)' == 'Android'" />
-        <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.8.18" Condition="'$(Platform)' == 'Windows'" />
+        <PackageReference Include="AmongUs.GameLibs.Steam" Version="2026.9.29" Condition="'$(Platform)' == 'Windows'" />
         <PackageReference Include="BepInEx.IL2CPP.MSBuild" Version="2.1.0-rc.1" />
         <PackageReference Include="BepInEx.Unity.IL2CPP" Version="6.0.0-be.735" />
     </ItemGroup>
