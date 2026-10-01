@@ -68,6 +68,7 @@ The [Role Assignment](#role-assignment) section explains how the roles are being
 # Releases
 | Among Us - Version| Mod Version | Link |
 |----------|-------------|-----------------|
+| 18.0 | v5.1.0-BETA| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/tag/v5.1.0) |
 | 18.0 | v5.0.0-BETA| [Download](https://github.com/FangkuaiYa/TheOtherRoles-R/releases/tag/v5.0.0) |
 
 
